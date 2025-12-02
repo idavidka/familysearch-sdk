@@ -1,0 +1,78 @@
+{
+	"name": "@gedcom-visualiser/familysearch-sdk",
+	"version": "1.0.0",
+	"description": "Modern TypeScript SDK for FamilySearch API v3 - OAuth, Places API, Tree API, and GEDCOM utilities",
+	"type": "module",
+	"main": "./dist/index.js",
+	"module": "./dist/index.js",
+	"types": "./dist/index.d.ts",
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"import": "./dist/index.js",
+			"require": "./dist/index.cjs"
+		},
+		"./auth": {
+			"types": "./dist/auth/index.d.ts",
+			"import": "./dist/auth/index.js",
+			"require": "./dist/auth/index.cjs"
+		},
+		"./places": {
+			"types": "./dist/places/index.d.ts",
+			"import": "./dist/places/index.js",
+			"require": "./dist/places/index.cjs"
+		},
+		"./tree": {
+			"types": "./dist/tree/index.d.ts",
+			"import": "./dist/tree/index.js",
+			"require": "./dist/tree/index.cjs"
+		},
+		"./utils": {
+			"types": "./dist/utils/index.d.ts",
+			"import": "./dist/utils/index.js",
+			"require": "./dist/utils/index.cjs"
+		}
+	},
+	"files": [
+		"dist",
+		"README.md",
+		"LICENSE"
+	],
+	"scripts": {
+		"build": "tsup",
+		"dev": "tsup --watch",
+		"test": "vitest run",
+		"test:watch": "vitest",
+		"lint": "tsc --noEmit",
+		"clean": "rm -rf dist",
+		"prepublishOnly": "npm run build"
+	},
+	"keywords": [
+		"familysearch",
+		"gedcom",
+		"genealogy",
+		"api",
+		"sdk",
+		"oauth",
+		"typescript"
+	],
+	"author": "gedcom-visualiser contributors",
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/idavidka/familysearch-sdk.git"
+	},
+	"homepage": "https://github.com/idavidka/familysearch-sdk#readme",
+	"bugs": {
+		"url": "https://github.com/idavidka/familysearch-sdk/issues"
+	},
+	"devDependencies": {
+		"jsdom": "^27.2.0",
+		"tsup": "^8.0.0",
+		"typescript": "^5.1.6",
+		"vitest": "^3.0.7"
+	},
+	"engines": {
+		"node": ">=18.0.0"
+	}
+}

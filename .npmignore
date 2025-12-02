@@ -1,0 +1,8 @@
+# Ignore for npm publish
+src/
+tsconfig.json
+tsup.config.ts
+.gitignore
+*.test.ts
+__tests__/
+coverage/
