@@ -1,4 +1,4 @@
-# @gedcom-visualiser/familysearch-sdk
+# familysearch-sdk
 
 A modern, TypeScript-first SDK for the FamilySearch API v3.
 
@@ -15,7 +15,7 @@ A modern, TypeScript-first SDK for the FamilySearch API v3.
 ## Installation
 
 ```bash
-npm install @gedcom-visualiser/familysearch-sdk
+npm install familysearch-sdk
 ```
 
 ## Quick Start
@@ -25,7 +25,7 @@ import {
   createFamilySearchSDK,
   fetchPedigree,
   convertToGedcom
-} from '@gedcom-visualiser/familysearch-sdk';
+} from 'familysearch-sdk';
 
 // Create SDK instance with your OAuth access token
 const sdk = createFamilySearchSDK({
@@ -59,7 +59,7 @@ import {
   buildAuthorizationUrl,
   exchangeCodeForToken,
   validateAccessToken
-} from '@gedcom-visualiser/familysearch-sdk/auth';
+} from 'familysearch-sdk/auth';
 
 // Generate state for CSRF protection
 const state = generateOAuthState();
@@ -89,8 +89,8 @@ const isValid = await validateAccessToken(tokens.access_token, 'production');
 Search and retrieve place information from FamilySearch.
 
 ```typescript
-import { createFamilySearchSDK } from '@gedcom-visualiser/familysearch-sdk';
-import { searchPlaces, getPlaceDetails } from '@gedcom-visualiser/familysearch-sdk/places';
+import { createFamilySearchSDK } from 'familysearch-sdk';
+import { searchPlaces, getPlaceDetails } from 'familysearch-sdk/places';
 
 const sdk = createFamilySearchSDK({ accessToken: 'token' });
 
@@ -110,8 +110,8 @@ console.log(details.name, details.latitude, details.longitude);
 Fetch and manage family tree data.
 
 ```typescript
-import { createFamilySearchSDK } from '@gedcom-visualiser/familysearch-sdk';
-import { fetchPedigree, getCurrentUser } from '@gedcom-visualiser/familysearch-sdk/tree';
+import { createFamilySearchSDK } from 'familysearch-sdk';
+import { fetchPedigree, getCurrentUser } from 'familysearch-sdk/tree';
 
 const sdk = createFamilySearchSDK({ accessToken: 'token' });
 
@@ -132,7 +132,7 @@ const pedigree = await fetchPedigree(sdk, undefined, {
 Convert FamilySearch data to GEDCOM 5.5 format.
 
 ```typescript
-import { convertToGedcom } from '@gedcom-visualiser/familysearch-sdk/utils';
+import { convertToGedcom } from 'familysearch-sdk/utils';
 
 const gedcom = convertToGedcom(pedigreeData, {
   treeName: 'Family Tree',
@@ -155,7 +155,7 @@ The SDK supports three FamilySearch environments:
 | `integration` | Sandbox for development | api-integ.familysearch.org |
 
 ```typescript
-import { createFamilySearchSDK, ENVIRONMENT_CONFIGS } from '@gedcom-visualiser/familysearch-sdk';
+import { createFamilySearchSDK, ENVIRONMENT_CONFIGS } from 'familysearch-sdk';
 
 // Create SDK for production
 const sdk = createFamilySearchSDK({

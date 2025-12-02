@@ -12,7 +12,7 @@
  *   createFamilySearchSDK,
  *   fetchPedigree,
  *   convertToGedcom
- * } from '@gedcom-visualiser/familysearch-sdk';
+ * } from 'familysearch-sdk';
  *
  * // Create SDK instance
  * const sdk = createFamilySearchSDK({
