@@ -1,5 +1,5 @@
 {
-	"name": "@gedcom-visualiser/familysearch-sdk",
+	"name": "familysearch-sdk",
 	"version": "1.0.0",
 	"description": "Modern TypeScript SDK for FamilySearch API v3 - OAuth, Places API, Tree API, and GEDCOM utilities",
 	"type": "module",
