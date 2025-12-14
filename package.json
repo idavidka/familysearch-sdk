@@ -1,6 +1,6 @@
 {
 	"name": "familysearch-sdk",
-	"version": "1.0.3",
+	"version": "1.0.6",
 	"description": "Modern TypeScript SDK for FamilySearch API v3 - OAuth, Places API, Tree API, and GEDCOM utilities",
 	"type": "module",
 	"main": "./dist/index.js",
