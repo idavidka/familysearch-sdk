@@ -20,6 +20,8 @@ import type {
 	FamilySearchPerson,
 	FamilySearchSDKConfig,
 	FamilySearchUser,
+	PersonWithRelationships,
+	PedigreeData,
 	SDKLogger,
 } from "./types";
 
@@ -145,7 +147,9 @@ export class FamilySearchSDK {
 			headers["X-FS-App-Key"] = this.appKey;
 		}
 
-		this.logger.log(`[FamilySearch SDK] ${options.method || "GET"} ${fullUrl}`);
+		this.logger.log(
+			`[FamilySearch SDK] ${options.method || "GET"} ${fullUrl}`
+		);
 
 		try {
 			const response = await fetch(fullUrl, {
@@ -272,7 +276,10 @@ export class FamilySearchSDK {
 			const user = response.data?.users?.[0];
 			return user || null;
 		} catch (error) {
-			this.logger.error("[FamilySearch SDK] Failed to get current user:", error);
+			this.logger.error(
+				"[FamilySearch SDK] Failed to get current user:",
+				error
+			);
 			return null;
 		}
 	}
@@ -304,12 +311,14 @@ export class FamilySearchSDK {
 	/**
 	 * Get person with full details including sources
 	 */
-	async getPersonWithDetails(personId: string): Promise<unknown> {
+	async getPersonWithDetails(
+		personId: string
+	): Promise<PersonWithRelationships | null> {
 		try {
 			const response = await this.get(
 				`/platform/tree/persons/${personId}?sourceDescriptions=true`
 			);
-			return response.data || null;
+			return (response.data as PersonWithRelationships) || null;
 		} catch (error) {
 			this.logger.error(
 				`[FamilySearch SDK] Failed to get person details ${personId}:`,
@@ -399,8 +408,8 @@ export class FamilySearchSDK {
 	async getAncestry(
 		personId: string,
 		generations: number = 4
-	): Promise<FamilySearchApiResponse<unknown>> {
-		return this.get(
+	): Promise<FamilySearchApiResponse<PedigreeData>> {
+		return this.get<PedigreeData>(
 			`/platform/tree/ancestry?person=${personId}&generations=${generations}`
 		);
 	}
@@ -411,8 +420,8 @@ export class FamilySearchSDK {
 	async getDescendancy(
 		personId: string,
 		generations: number = 2
-	): Promise<FamilySearchApiResponse<unknown>> {
-		return this.get(
+	): Promise<FamilySearchApiResponse<PedigreeData>> {
+		return this.get<PedigreeData>(
 			`/platform/tree/descendancy?person=${personId}&generations=${generations}`
 		);
 	}
@@ -474,7 +483,10 @@ export class FamilySearchSDK {
 
 			return response.data || null;
 		} catch (error) {
-			this.logger.error("[FamilySearch SDK] Failed to search places:", error);
+			this.logger.error(
+				"[FamilySearch SDK] Failed to search places:",
+				error
+			);
 			return null;
 		}
 	}
@@ -519,7 +531,10 @@ export class FamilySearchSDK {
 
 			return response.data || null;
 		} catch (error) {
-			this.logger.error("[FamilySearch SDK] Failed to export GEDCOM:", error);
+			this.logger.error(
+				"[FamilySearch SDK] Failed to export GEDCOM:",
+				error
+			);
 			return null;
 		}
 	}

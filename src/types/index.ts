@@ -204,7 +204,7 @@ export interface PersonData {
 // ====================================
 
 /**
- * Relationship between persons
+ * Relationship between persons (couple relationships)
  */
 export interface Relationship {
 	id: string;
@@ -216,6 +216,20 @@ export interface Relationship {
 	child?: { resourceId?: string };
 	facts?: PersonFact[];
 	details?: RelationshipDetails;
+}
+
+/**
+ * Child and parents relationship
+ */
+export interface ChildAndParentsRelationship {
+	id: string;
+	parent1?: { resourceId?: string };
+	parent2?: { resourceId?: string };
+	child?: { resourceId?: string };
+	parent1Facts?: PersonFact[];
+	parent2Facts?: PersonFact[];
+	sources?: Array<{ description?: string }>;
+	notes?: Array<{ text?: string }>;
 }
 
 /**
@@ -344,21 +358,18 @@ export interface PedigreeData {
  * Enhanced person with additional details
  */
 export interface EnhancedPerson extends PersonData {
-	fullDetails?: {
-		persons?: PersonData[];
-		childAndParentsRelationships?: Array<{
-			id: string;
-			parent1?: { resourceId: string };
-			parent2?: { resourceId: string };
-			child?: { resourceId: string };
-		}>;
-		relationships?: Relationship[];
-	};
-	notes?: {
-		persons?: Array<{
-			notes?: Array<{ text?: string }>;
-		}>;
-	};
+	fullDetails?: PersonWithRelationships;
+	notes?: unknown;
+}
+
+/**
+ * Person with relationships response from getPersonWithDetails API
+ */
+export interface PersonWithRelationships {
+	persons?: PersonData[];
+	relationships?: Relationship[];
+	childAndParentsRelationships?: ChildAndParentsRelationship[];
+	sourceDescriptions?: Array<unknown>;
 }
 
 /**
