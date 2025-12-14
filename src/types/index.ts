@@ -355,11 +355,28 @@ export interface PedigreeData {
 }
 
 /**
+ * Person notes response from API
+ */
+export interface PersonNotesResponse {
+	persons?: Array<{
+		notes?: Array<{
+			id?: string;
+			subject?: string;
+			text?: string;
+			attribution?: {
+				contributor?: { resourceId?: string };
+				modified?: string;
+			};
+		}>;
+	}>;
+}
+
+/**
  * Enhanced person with additional details
  */
 export interface EnhancedPerson extends PersonData {
 	fullDetails?: PersonWithRelationships;
-	notes?: unknown;
+	notes?: PersonNotesResponse;
 }
 
 /**

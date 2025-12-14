@@ -21,6 +21,7 @@ import type {
 	FamilySearchSDKConfig,
 	FamilySearchUser,
 	PersonWithRelationships,
+	PersonNotesResponse,
 	PedigreeData,
 	SDKLogger,
 } from "./types";
@@ -331,9 +332,11 @@ export class FamilySearchSDK {
 	/**
 	 * Get notes for a person
 	 */
-	async getPersonNotes(personId: string): Promise<unknown> {
+	async getPersonNotes(
+		personId: string
+	): Promise<PersonNotesResponse | null> {
 		try {
-			const response = await this.get(
+			const response = await this.get<PersonNotesResponse>(
 				`/platform/tree/persons/${personId}/notes`
 			);
 			return response.data || null;
