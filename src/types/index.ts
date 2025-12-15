@@ -454,6 +454,12 @@ export interface EnhancedPedigreeData {
 	persons: EnhancedPerson[];
 	relationships: Relationship[];
 	environment?: FamilySearchEnvironment;
+	/**
+	 * IDs of persons in the direct ancestry before fullTree expansion.
+	 * These are the persons returned by the ancestry API (typically 8-15 persons for 4 generations).
+	 * Used to determine which persons are "connectable" to the root person.
+	 */
+	ancestryPersonIds?: string[];
 }
 
 // ====================================

@@ -6,7 +6,6 @@
 
 import type {
 	EnhancedPedigreeData,
-	EnhancedPerson,
 	PersonData,
 	PersonFact,
 	Relationship,
@@ -251,12 +250,9 @@ function convertFactToGedcom(fact: PersonFact): string[] {
 		lines.push(`1 ${gedcomTag}`);
 	}
 
-	// Add FamilySearch link for this fact
+	// Add FamilySearch link for this specific fact/event (conclusion link)
 	if (fact.links?.conclusion?.href) {
 		const webUrl = transformFamilySearchUrl(fact.links.conclusion.href);
-		lines.push(`2 _FS_LINK ${webUrl}`);
-	} else if (fact.links?.person?.href) {
-		const webUrl = transformFamilySearchUrl(fact.links.person.href);
 		lines.push(`2 _FS_LINK ${webUrl}`);
 	}
 
@@ -290,8 +286,19 @@ export interface GedcomConversionOptions {
 	includeLinks?: boolean;
 	/** Include notes in output */
 	includeNotes?: boolean;
-	/** FamilySearch environment for URL generation (default: production) */
+
+	/** FamilySearch environment (production, beta, integration) */
 	environment?: "production" | "beta" | "integration";
+
+	/** Allow orphan families (families not connected to root person) */
+	allowOrphanFamilies?: boolean;
+
+	/**
+	 * Set of person IDs who are in the direct ancestry of the root person.
+	 * These are the persons returned by the ancestry API before fullTree expansion.
+	 * Used to determine which persons are "connectable" to the root person.
+	 */
+	ancestryPersonIds?: Set<string>;
 }
 
 /**
@@ -340,7 +347,6 @@ export function convertToGedcom(
 
 	// Submitter record
 	lines.push("0 @SUBM1@ SUBM");
-	lines.push("1 NAME FamilySearch User");
 
 	// ==============================================
 	// COLLECT AND CREATE SOURCE RECORDS
@@ -388,12 +394,330 @@ export function convertToGedcom(
 		}
 	});
 
-	// Convert persons to INDI records
+	// ==============================================
+	// STEP 1: BUILD PERSON ID MAPPING ONLY
+	// Create GEDCOM IDs for all persons (for relationship processing)
+	// INDI records will be created later after filtering
+	// ==============================================
 	const personIdMap = new Map<string, string>();
-
 	pedigreeData.persons.forEach((person, index) => {
 		const gedcomId = `@I${index + 1}@`;
 		personIdMap.set(person.id, gedcomId);
+	});
+
+	// Build family data structures
+	const families = new Map<
+		string,
+		{ spouses: Set<string>; children: string[] }
+	>();
+	const childToParents = new Map<string, string[]>();
+
+	// ==============================================
+	// COLLECT ALL RELATIONSHIPS (from pedigree AND person details)
+	// ==============================================
+	const allRelationships: Relationship[] = [
+		...(pedigreeData.relationships || []),
+	];
+
+	// Extract relationships from person.fullDetails.relationships
+	pedigreeData.persons.forEach((person) => {
+		const personRelationships = person.fullDetails
+			?.relationships as Relationship[];
+
+		if (personRelationships && Array.isArray(personRelationships)) {
+			personRelationships.forEach((rel) => {
+				const exists = allRelationships.some((r) => r.id === rel.id);
+				if (!exists) {
+					allRelationships.push(rel);
+				}
+			});
+		}
+
+		// Extract childAndParentsRelationships and convert to standard format
+		const childAndParentsRels = person.fullDetails
+			?.childAndParentsRelationships as Array<{
+			id: string;
+			parent1?: { resourceId: string };
+			parent2?: { resourceId: string };
+			child?: { resourceId: string };
+		}>;
+
+		if (childAndParentsRels && Array.isArray(childAndParentsRels)) {
+			childAndParentsRels.forEach((capRel) => {
+				// Convert to ParentChild relationship format
+				if (capRel.parent1 && capRel.child) {
+					const rel: Relationship = {
+						id: `${capRel.id}-p1`,
+						type: "http://gedcomx.org/ParentChild",
+						person1: { resourceId: capRel.parent1.resourceId },
+						person2: { resourceId: capRel.child.resourceId },
+						parent2: capRel.parent2
+							? { resourceId: capRel.parent2.resourceId }
+							: undefined,
+					};
+
+					const exists = allRelationships.some(
+						(r) => r.id === rel.id
+					);
+					if (!exists) {
+						allRelationships.push(rel);
+					}
+				}
+
+				// If parent2 exists, also add relationship for parent2
+				if (capRel.parent2 && capRel.child) {
+					const rel: Relationship = {
+						id: `${capRel.id}-p2`,
+						type: "http://gedcomx.org/ParentChild",
+						person1: { resourceId: capRel.parent2.resourceId },
+						person2: { resourceId: capRel.child.resourceId },
+						parent2: capRel.parent1
+							? { resourceId: capRel.parent1.resourceId }
+							: undefined,
+					};
+
+					const exists = allRelationships.some(
+						(r) => r.id === rel.id
+					);
+					if (!exists) {
+						allRelationships.push(rel);
+					}
+				}
+			});
+		}
+	});
+
+	// Create a Set of valid person IDs for fast lookup
+	const validPersonIds = new Set(pedigreeData.persons.map((p) => p.id));
+
+	// Process all relationships, filtering out invalid person IDs
+	allRelationships.forEach((rel) => {
+		if (rel.type?.includes("ParentChild")) {
+			const parentId = rel.person1?.resourceId;
+			const childId = rel.person2?.resourceId;
+			const parent2Id = rel.parent2?.resourceId;
+
+			// Validate all person IDs exist in dataset
+			if (!parentId || !childId) {
+				return;
+			}
+
+			// Skip if child doesn't exist in dataset
+			if (!validPersonIds.has(childId)) {
+				return;
+			}
+
+			// Filter parent IDs - only include parents who exist in dataset
+			const validParents: string[] = [];
+			if (validPersonIds.has(parentId)) {
+				validParents.push(parentId);
+			}
+			if (parent2Id && validPersonIds.has(parent2Id)) {
+				validParents.push(parent2Id);
+			}
+
+			// Only add relationship if at least one parent exists
+			if (validParents.length > 0) {
+				if (!childToParents.has(childId)) {
+					childToParents.set(childId, []);
+				}
+				const parents = childToParents.get(childId)!;
+				validParents.forEach((parentId) => {
+					if (!parents.includes(parentId)) {
+						parents.push(parentId);
+					}
+				});
+			}
+		} else if (rel.type?.includes("Couple")) {
+			const person1 = rel.person1?.resourceId;
+			const person2 = rel.person2?.resourceId;
+
+			if (!person1 || !person2) {
+				return;
+			}
+
+			// Only add couple if BOTH persons exist in dataset
+			if (validPersonIds.has(person1) && validPersonIds.has(person2)) {
+				const famKey = [person1, person2].sort().join("-");
+				if (!families.has(famKey)) {
+					families.set(famKey, {
+						spouses: new Set([person1, person2]),
+						children: [],
+					});
+				}
+			}
+		}
+	});
+
+	// Add children to their families
+	childToParents.forEach((parents, childId) => {
+		if (parents.length >= 2) {
+			const famKey = parents.slice(0, 2).sort().join("-");
+			if (!families.has(famKey)) {
+				families.set(famKey, {
+					spouses: new Set(parents.slice(0, 2)),
+					children: [],
+				});
+			}
+			families.get(famKey)!.children.push(childId);
+		} else if (parents.length === 1) {
+			const famKey = `single-${parents[0]}`;
+			if (!families.has(famKey)) {
+				families.set(famKey, {
+					spouses: new Set([parents[0]]),
+					children: [],
+				});
+			}
+			families.get(famKey)!.children.push(childId);
+		}
+	});
+
+	// Build set of persons who are "connectable" to the root person
+	// A person is connectable if:
+	// 1. They are in the direct ancestry (ancestryPersonIds)
+	// 2. They are a spouse of someone in the ancestry
+	// 3. They are a descendant of someone in the ancestry (recursive)
+	// 4. They are a spouse of a descendant (recursive)
+	const connectablePersons = new Set<string>();
+
+	// If ancestryPersonIds is provided, use graph traversal
+	// Otherwise, fall back to old logic (everyone in childToParents)
+	if (options.ancestryPersonIds && options.ancestryPersonIds.size > 0) {
+		// Step 1: Add all ancestry persons
+		options.ancestryPersonIds.forEach((personId) => {
+			connectablePersons.add(personId);
+		});
+
+		// Step 2: Add spouses of ancestry persons
+		families.forEach((family) => {
+			const spouses = Array.from(family.spouses);
+			// If any spouse is in ancestry, add all spouses
+			if (spouses.some((spouseId) => connectablePersons.has(spouseId))) {
+				spouses.forEach((spouseId) => connectablePersons.add(spouseId));
+			}
+		});
+
+		// Step 3: Recursively expand the graph DOWNWARD and SIDEWAYS only
+		// Add: descendants + their spouses (NO upward traversal to parents)
+		// Keep iterating until no new persons are added
+		let addedNewPersons = true;
+		while (addedNewPersons) {
+			addedNewPersons = false;
+			const beforeSize = connectablePersons.size;
+
+			// 3a. Add children of connectable persons (downward traversal)
+			childToParents.forEach((parents, childId) => {
+				// If any parent is connectable, the child is connectable
+				if (
+					parents.some((parentId) => connectablePersons.has(parentId))
+				) {
+					if (!connectablePersons.has(childId)) {
+						connectablePersons.add(childId);
+						addedNewPersons = true;
+					}
+				}
+			});
+
+			// 3b. Add spouses of connectable persons (sideways traversal)
+			families.forEach((family) => {
+				const spouses = Array.from(family.spouses);
+				const hasConnectableSpouse = spouses.some((spouseId) =>
+					connectablePersons.has(spouseId)
+				);
+				const hasConnectableChild = family.children.some((childId) =>
+					connectablePersons.has(childId)
+				);
+
+				// If any spouse OR child is connectable, add all spouses
+				if (hasConnectableSpouse || hasConnectableChild) {
+					spouses.forEach((spouseId) => {
+						if (!connectablePersons.has(spouseId)) {
+							connectablePersons.add(spouseId);
+							addedNewPersons = true;
+						}
+					});
+				}
+			});
+
+			const afterSize = connectablePersons.size;
+			if (afterSize > beforeSize) {
+				addedNewPersons = afterSize !== beforeSize;
+			}
+		}
+	} else {
+		// Fallback: old logic (everyone in parent-child relationships)
+		childToParents.forEach((parents, childId) => {
+			connectablePersons.add(childId);
+			parents.forEach((parentId) => connectablePersons.add(parentId));
+		});
+	}
+
+	// ==============================================
+	// STEP 4: DETECT ORPHAN FAMILIES AND BUILD PERSON-TO-FAMILY MAPPING
+	// Identify which families are orphan (disconnected from ancestry)
+	// ==============================================
+	const allowOrphanFamilies = options.allowOrphanFamilies === true; // Default to false
+	const orphanFamKeys = new Set<string>(); // Keys of families that are orphan
+
+	// Build a map from personId to all their FAM keys (as spouse or child)
+	const personToFamKeys = new Map<string, Set<string>>();
+	families.forEach((family, key) => {
+		const spouseArray = Array.from(family.spouses);
+
+		// Check if this is an orphan family
+		const anyMemberConnectable =
+			spouseArray.some((spouseId) => connectablePersons.has(spouseId)) ||
+			family.children.some((childId) => connectablePersons.has(childId));
+
+		const isOrphanFamily = !anyMemberConnectable;
+
+		// Track orphan family keys
+		if (isOrphanFamily) {
+			orphanFamKeys.add(key);
+		}
+
+		// Map each person to their families
+		spouseArray.forEach((spouseId) => {
+			if (!personToFamKeys.has(spouseId))
+				personToFamKeys.set(spouseId, new Set());
+			personToFamKeys.get(spouseId)!.add(key);
+		});
+		family.children.forEach((childId) => {
+			if (!personToFamKeys.has(childId))
+				personToFamKeys.set(childId, new Set());
+			personToFamKeys.get(childId)!.add(key);
+		});
+	});
+
+	// ==============================================
+	// STEP 5: CREATE INDI RECORDS (WITH ORPHAN FILTERING)
+	// ==============================================
+
+	pedigreeData.persons.forEach((person) => {
+		const gedcomId = personIdMap.get(person.id);
+		if (!gedcomId) {
+			// eslint-disable-next-line no-console
+			console.warn(
+				`[GEDCOM] Person ${person.id} not found in personIdMap`
+			);
+			return;
+		}
+
+		// ==============================================
+		// ORPHAN PERSON FILTERING
+		// If allowOrphanFamilies=false, skip persons who are ONLY in orphan families
+		// ==============================================
+		if (!allowOrphanFamilies) {
+			const famKeys = personToFamKeys.get(person.id);
+			// If person belongs to families, check if ALL of them are orphan families
+			if (
+				famKeys &&
+				famKeys.size > 0 &&
+				Array.from(famKeys).every((key) => orphanFamKeys.has(key))
+			) {
+				return; // Skip this orphan person
+			}
+		}
 
 		lines.push(`0 ${gedcomId} INDI`);
 
@@ -522,146 +846,9 @@ export function convertToGedcom(
 		}
 	});
 
-	// Build family data structures
-	const families = new Map<
-		string,
-		{ spouses: Set<string>; children: string[] }
-	>();
-	const childToParents = new Map<string, string[]>();
-
 	// ==============================================
-	// COLLECT ALL RELATIONSHIPS (from pedigree AND person details)
+	// STEP 6: CREATE FAM RECORDS (WITH ORPHAN FILTERING)
 	// ==============================================
-	const allRelationships: Relationship[] = [
-		...(pedigreeData.relationships || []),
-	];
-
-	// Extract relationships from person.fullDetails.relationships
-	pedigreeData.persons.forEach((person) => {
-		const personRelationships = person.fullDetails
-			?.relationships as Relationship[];
-
-		if (personRelationships && Array.isArray(personRelationships)) {
-			personRelationships.forEach((rel) => {
-				// Deduplicate by relationship ID
-				const exists = allRelationships.some((r) => r.id === rel.id);
-				if (!exists) {
-					allRelationships.push(rel);
-				}
-			});
-		}
-
-		// Extract childAndParentsRelationships and convert to standard format
-		const childAndParentsRels = person.fullDetails
-			?.childAndParentsRelationships as Array<{
-			id: string;
-			parent1?: { resourceId: string };
-			parent2?: { resourceId: string };
-			child?: { resourceId: string };
-		}>;
-
-		if (childAndParentsRels && Array.isArray(childAndParentsRels)) {
-			childAndParentsRels.forEach((capRel) => {
-				// Convert to ParentChild relationship format
-				if (capRel.parent1 && capRel.child) {
-					const rel: Relationship = {
-						id: `${capRel.id}-p1`,
-						type: "http://gedcomx.org/ParentChild",
-						person1: { resourceId: capRel.parent1.resourceId },
-						person2: { resourceId: capRel.child.resourceId },
-						parent2: capRel.parent2
-							? { resourceId: capRel.parent2.resourceId }
-							: undefined,
-					};
-
-					const exists = allRelationships.some(
-						(r) => r.id === rel.id
-					);
-					if (!exists) {
-						allRelationships.push(rel);
-					}
-				}
-
-				// If parent2 exists, also add relationship for parent2
-				if (capRel.parent2 && capRel.child) {
-					const rel: Relationship = {
-						id: `${capRel.id}-p2`,
-						type: "http://gedcomx.org/ParentChild",
-						person1: { resourceId: capRel.parent2.resourceId },
-						person2: { resourceId: capRel.child.resourceId },
-						parent2: capRel.parent1
-							? { resourceId: capRel.parent1.resourceId }
-							: undefined,
-					};
-
-					const exists = allRelationships.some(
-						(r) => r.id === rel.id
-					);
-					if (!exists) {
-						allRelationships.push(rel);
-					}
-				}
-			});
-		}
-	});
-
-	// Process all relationships
-	allRelationships.forEach((rel) => {
-		if (rel.type?.includes("ParentChild")) {
-			const parentId = rel.person1?.resourceId;
-			const childId = rel.person2?.resourceId;
-			const parent2Id = rel.parent2?.resourceId;
-
-			if (parentId && childId) {
-				if (!childToParents.has(childId)) {
-					childToParents.set(childId, []);
-				}
-				const parents = childToParents.get(childId)!;
-				if (!parents.includes(parentId)) {
-					parents.push(parentId);
-				}
-				if (parent2Id && !parents.includes(parent2Id)) {
-					parents.push(parent2Id);
-				}
-			}
-		} else if (rel.type?.includes("Couple")) {
-			const person1 = rel.person1?.resourceId;
-			const person2 = rel.person2?.resourceId;
-
-			if (person1 && person2) {
-				const famKey = [person1, person2].sort().join("-");
-				if (!families.has(famKey)) {
-					families.set(famKey, {
-						spouses: new Set([person1, person2]),
-						children: [],
-					});
-				}
-			}
-		}
-	});
-
-	// Add children to their families
-	childToParents.forEach((parents, childId) => {
-		if (parents.length >= 2) {
-			const famKey = parents.slice(0, 2).sort().join("-");
-			if (!families.has(famKey)) {
-				families.set(famKey, {
-					spouses: new Set(parents.slice(0, 2)),
-					children: [],
-				});
-			}
-			families.get(famKey)!.children.push(childId);
-		} else if (parents.length === 1) {
-			const famKey = `single-${parents[0]}`;
-			if (!families.has(famKey)) {
-				families.set(famKey, {
-					spouses: new Set([parents[0]]),
-					children: [],
-				});
-			}
-			families.get(famKey)!.children.push(childId);
-		}
-	});
 
 	// Create FAM records
 	let famIndex = 1;
@@ -698,11 +885,29 @@ export function convertToGedcom(
 			return; // Skip this FAM record
 		}
 
-		// Valid FAM record - create it
+		// Check if this is an orphan family
+		// Family is orphan if NO members (neither spouses NOR children) are connectable to root person
+		// This means the family is isolated and doesn't connect to the ancestry tree
+		const anyMemberConnectable =
+			spouseArray.some((spouseId) => connectablePersons.has(spouseId)) ||
+			family.children.some((childId) => connectablePersons.has(childId));
+
+		const isOrphanFamily = !anyMemberConnectable;
+
+		// If orphan families are NOT allowed, skip them entirely
+		if (isOrphanFamily && !allowOrphanFamilies) {
+			return; // Skip this family - no FAM record created
+		}
+
 		const famId = `@F${famIndex++}@`;
 		familyIdMap.set(key, famId);
 
 		lines.push(`0 ${famId} FAM`);
+
+		// Add _IS_ORPHAN_FAMILY tag if this is an orphan family (and allowed)
+		if (isOrphanFamily && allowOrphanFamilies) {
+			lines.push(`1 _IS_ORPHAN_FAMILY Y`);
+		}
 
 		if (spouseArray.length === 2) {
 			const [person1, person2] = spouseArray;
@@ -803,6 +1008,13 @@ export function convertToGedcom(
 				lines.splice(insertIndex, 0, `1 FAMS ${famId}`);
 			}
 		});
+	});
+
+	// Final validation: Check for orphaned persons (not in any family)
+	const personsInFamilies = new Set<string>();
+	families.forEach((family) => {
+		family.spouses.forEach((id) => personsInFamilies.add(id));
+		family.children.forEach((id) => personsInFamilies.add(id));
 	});
 
 	// GEDCOM Trailer
