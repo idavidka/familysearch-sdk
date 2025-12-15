@@ -22,7 +22,10 @@ import type {
 	FamilySearchUser,
 	PersonWithRelationships,
 	PersonNotesResponse,
+	PersonMemoriesResponse,
+	PersonSearchResponse,
 	PedigreeData,
+	RelationshipDetails,
 	SDKLogger,
 } from "./types";
 
@@ -352,9 +355,11 @@ export class FamilySearchSDK {
 	/**
 	 * Get memories for a person
 	 */
-	async getPersonMemories(personId: string): Promise<unknown> {
+	async getPersonMemories(
+		personId: string
+	): Promise<PersonMemoriesResponse | null> {
 		try {
-			const response = await this.get(
+			const response = await this.get<PersonMemoriesResponse>(
 				`/platform/tree/persons/${personId}/memories`
 			);
 			return response.data || null;
@@ -370,9 +375,11 @@ export class FamilySearchSDK {
 	/**
 	 * Get couple relationship details
 	 */
-	async getCoupleRelationship(relationshipId: string): Promise<unknown> {
+	async getCoupleRelationship(
+		relationshipId: string
+	): Promise<RelationshipDetails | null> {
 		try {
-			const response = await this.get(
+			const response = await this.get<RelationshipDetails>(
 				`/platform/tree/couple-relationships/${relationshipId}`
 			);
 			return response.data || null;
@@ -390,9 +397,9 @@ export class FamilySearchSDK {
 	 */
 	async getChildAndParentsRelationship(
 		relationshipId: string
-	): Promise<unknown> {
+	): Promise<RelationshipDetails | null> {
 		try {
-			const response = await this.get(
+			const response = await this.get<RelationshipDetails>(
 				`/platform/tree/child-and-parents-relationships/${relationshipId}`
 			);
 			return response.data || null;
@@ -435,7 +442,7 @@ export class FamilySearchSDK {
 	async searchPersons(
 		query: Record<string, string>,
 		options: { start?: number; count?: number } = {}
-	): Promise<FamilySearchApiResponse<unknown>> {
+	): Promise<FamilySearchApiResponse<PersonSearchResponse>> {
 		const params = new URLSearchParams({
 			...query,
 			...(options.start !== undefined && {
@@ -446,7 +453,9 @@ export class FamilySearchSDK {
 			}),
 		});
 
-		return this.get(`/platform/tree/search?${params.toString()}`);
+		return this.get<PersonSearchResponse>(
+			`/platform/tree/search?${params.toString()}`
+		);
 	}
 
 	// ====================================

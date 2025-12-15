@@ -206,11 +206,19 @@ export interface PersonData {
 /**
  * Relationship between persons (couple relationships)
  */
+/**
+ * Person reference in a relationship (can have different structures from API)
+ */
+export interface PersonReference {
+	resourceId?: string;
+	resource?: { resourceId?: string };
+}
+
 export interface Relationship {
 	id: string;
 	type?: string;
-	person1?: { resourceId?: string };
-	person2?: { resourceId?: string };
+	person1?: PersonReference;
+	person2?: PersonReference;
 	parent1?: { resourceId?: string };
 	parent2?: { resourceId?: string };
 	child?: { resourceId?: string };
@@ -240,6 +248,35 @@ export interface RelationshipDetails {
 	persons?: Array<{
 		facts?: PersonFact[];
 	}>;
+}
+
+/**
+ * Person memories response from FamilySearch API
+ */
+export interface PersonMemoriesResponse {
+	/** Array of source descriptions (memories) */
+	sourceDescriptions?: SourceDescription[];
+	/** Pagination info */
+	links?: Record<string, { href: string }>;
+}
+
+/**
+ * Person search response from FamilySearch API
+ */
+export interface PersonSearchResponse {
+	/** Search results */
+	results?: Array<{
+		/** Person ID */
+		id?: string;
+		/** Title (person's name) */
+		title?: string;
+		/** Score */
+		score?: number;
+		/** Person data */
+		person?: PersonData;
+	}>;
+	/** Pagination info */
+	links?: Record<string, { href: string }>;
 }
 
 // ====================================
@@ -386,7 +423,28 @@ export interface PersonWithRelationships {
 	persons?: PersonData[];
 	relationships?: Relationship[];
 	childAndParentsRelationships?: ChildAndParentsRelationship[];
-	sourceDescriptions?: Array<unknown>;
+	sourceDescriptions?: SourceDescription[];
+	sources?: SourceReference[];
+}
+
+/**
+ * FamilySearch Source Description
+ */
+export interface SourceDescription {
+	id: string;
+	about?: string;
+	titles?: Array<{ value: string }>;
+	citations?: Array<{ value: string }>;
+	resourceType?: string;
+}
+
+/**
+ * FamilySearch Source Reference
+ */
+export interface SourceReference {
+	description?: string;
+	descriptionId?: string;
+	qualifiers?: Array<{ name: string; value: string }>;
 }
 
 /**

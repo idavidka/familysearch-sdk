@@ -10,8 +10,6 @@ import type {
 	PersonData,
 	PersonFact,
 	Relationship,
-	SourceDescription,
-	SourceReference,
 } from "../types";
 
 /**
@@ -46,60 +44,6 @@ function transformFamilySearchUrl(url: string): string {
 	}
 
 	return `${baseUrl}/tree/person/${personId}`;
-}
-
-/**
- * Transform FamilySearch source URLs to web-accessible ARK URLs
- *
- * FamilySearch API returns source URLs in the format:
- * - https://api.familysearch.org/platform/sources/ark:/NAAN/Name
- * - https://apibeta.familysearch.org/platform/sources/ark:/NAAN/Name
- * - https://api-integ.familysearch.org/platform/sources/ark:/NAAN/Name
- *
- * These need to be transformed to web-accessible URLs:
- * - https://www.familysearch.org/ark:/NAAN/Name
- * - https://beta.familysearch.org/ark:/NAAN/Name
- * - https://integration.familysearch.org/ark:/NAAN/Name
- *
- * ARK (Archival Resource Key) format: ark:/NAAN/Name
- * - NAAN: Name Assigning Authority Number
- * - Name: Unique identifier
- *
- * @param url - FamilySearch API source URL
- * @returns Web-accessible ARK URL
- */
-function transformSourceUrl(url: string): string {
-	if (!url) return url;
-
-	// If it's already a web URL (not API URL with /platform/), return as-is
-	if (!url.includes("/platform/") && url.includes("ark:")) {
-		return url;
-	}
-
-	// Extract ARK identifier from URL
-	const arkMatch = url.match(/ark:\/[^/?]+\/[^/?]+/);
-	if (!arkMatch) {
-		return url;
-	}
-
-	const arkId = arkMatch[0];
-
-	// Detect environment from URL
-	let baseUrl = "https://www.familysearch.org";
-
-	if (
-		url.includes("integration.familysearch.org") ||
-		url.includes("api-integ.familysearch.org")
-	) {
-		baseUrl = "https://integration.familysearch.org";
-	} else if (
-		url.includes("beta.familysearch.org") ||
-		url.includes("apibeta.familysearch.org")
-	) {
-		baseUrl = "https://beta.familysearch.org";
-	}
-
-	return `${baseUrl}/${arkId}`;
 }
 
 /**
@@ -290,8 +234,6 @@ export interface GedcomConversionOptions {
 	includeLinks?: boolean;
 	/** Include notes in output */
 	includeNotes?: boolean;
-	/** FamilySearch environment for URL generation (default: production) */
-	environment?: "production" | "beta" | "integration";
 }
 
 /**
@@ -315,7 +257,6 @@ export function convertToGedcom(
 		treeName = "FamilySearch Import",
 		includeLinks = true,
 		includeNotes = true,
-		environment = "production",
 	} = options;
 
 	if (!pedigreeData || !pedigreeData.persons) {
@@ -342,52 +283,6 @@ export function convertToGedcom(
 	lines.push("0 @SUBM1@ SUBM");
 	lines.push("1 NAME FamilySearch User");
 
-	// ==============================================
-	// COLLECT AND CREATE SOURCE RECORDS
-	// ==============================================
-	const sourceMap = new Map<string, SourceDescription>();
-	let sourceCounter = 1;
-
-	// Extract source descriptions from all persons
-	pedigreeData.persons.forEach((person) => {
-		const sourceDescriptions = person.fullDetails?.sourceDescriptions;
-
-		if (sourceDescriptions && Array.isArray(sourceDescriptions)) {
-			sourceDescriptions.forEach((source) => {
-				if (source.id && !sourceMap.has(source.id)) {
-					sourceMap.set(source.id, source);
-				}
-			});
-		}
-	});
-
-	// Create GEDCOM SOUR records for each source
-	sourceMap.forEach((source) => {
-		const sourceId = `@S${sourceCounter++}@`;
-
-		lines.push(`0 ${sourceId} SOUR`);
-
-		// Add title (use titles[0] if available, otherwise default)
-		const title = source.titles?.[0]?.value || "FamilySearch Source";
-		lines.push(`1 TITL ${title}`);
-
-		// Add citation as TEXT
-		if (source.citations?.[0]?.value) {
-			lines.push(`1 TEXT ${source.citations[0].value}`);
-		}
-
-		// Add web link if available
-		if (source.about) {
-			const webUrl = transformSourceUrl(source.about);
-			lines.push(`1 WWW ${webUrl}`);
-		}
-
-		// Add resource type as NOTE
-		if (source.resourceType) {
-			lines.push(`1 NOTE Resource Type: ${source.resourceType}`);
-		}
-	});
-
 	// Convert persons to INDI records
 	const personIdMap = new Map<string, string>();
 
@@ -397,30 +292,40 @@ export function convertToGedcom(
 
 		lines.push(`0 ${gedcomId} INDI`);
 
-		// Add FamilySearch ID tag
-		if (person.id) {
-			lines.push(`1 _FS_ID ${person.id}`);
-		}
-
 		// Add FamilySearch link for this person
 		if (includeLinks) {
 			const personLink =
 				person.links?.person?.href ||
 				person.identifiers?.["http://gedcomx.org/Persistent"]?.[0];
 
+			console.log(`[FS SDK GEDCOM] Person ${index + 1} (${gedcomId}):`, {
+				personId: person.id,
+				hasLinks: !!person.links,
+				hasPersonLink: !!person.links?.person?.href,
+				hasIdentifiers: !!person.identifiers,
+				personLink: personLink,
+				name: extractName(person.fullDetails?.persons?.[0] || person),
+			});
+
 			if (personLink) {
 				const webUrl = transformFamilySearchUrl(personLink);
+				console.log(
+					`[FS SDK GEDCOM]   -> Using link from API: ${webUrl}`
+				);
 				lines.push(`1 _FS_LINK ${webUrl}`);
 			} else if (person.id) {
 				// Fallback: construct web URL from person ID if no link provided
-				let baseUrl = "https://www.familysearch.org";
-				if (environment === "beta") {
-					baseUrl = "https://beta.familysearch.org";
-				} else if (environment === "integration") {
-					baseUrl = "https://integration.familysearch.org";
-				}
+				// Use production by default (SDK doesn't have access to config)
+				const baseUrl = "https://www.familysearch.org";
 				const webUrl = `${baseUrl}/tree/person/${person.id}`;
+				console.log(
+					`[FS SDK GEDCOM]   -> Constructed link from ID: ${webUrl}`
+				);
 				lines.push(`1 _FS_LINK ${webUrl}`);
+			} else {
+				console.warn(
+					`[FS SDK GEDCOM]   -> WARNING: No link and no person ID for ${gedcomId}`
+				);
 			}
 		}
 
@@ -484,42 +389,6 @@ export function convertToGedcom(
 				}
 			});
 		}
-
-		// ==============================================
-		// ADD SOURCE CITATIONS TO PERSON
-		// ==============================================
-		const personSources = (
-			personData as PersonData & { sources?: SourceReference[] }
-		)?.sources;
-
-		if (personSources && Array.isArray(personSources)) {
-			personSources.forEach((sourceRef) => {
-				const sourceId = sourceRef.descriptionId;
-				if (!sourceId) return;
-
-				// Find source index
-				const sourceIds = Array.from(sourceMap.keys());
-				const sourceIndex = sourceIds.indexOf(sourceId);
-				if (sourceIndex === -1) return;
-
-				const gedcomSourceId = `@S${sourceIndex + 1}@`;
-				lines.push(`1 SOUR ${gedcomSourceId}`);
-
-				// Add qualifiers as notes
-				if (
-					sourceRef.qualifiers &&
-					Array.isArray(sourceRef.qualifiers)
-				) {
-					sourceRef.qualifiers.forEach((qualifier) => {
-						if (qualifier.name && qualifier.value) {
-							lines.push(
-								`2 NOTE ${qualifier.name}: ${qualifier.value}`
-							);
-						}
-					});
-				}
-			});
-		}
 	});
 
 	// Build family data structures
@@ -529,84 +398,7 @@ export function convertToGedcom(
 	>();
 	const childToParents = new Map<string, string[]>();
 
-	// ==============================================
-	// COLLECT ALL RELATIONSHIPS (from pedigree AND person details)
-	// ==============================================
-	const allRelationships: Relationship[] = [
-		...(pedigreeData.relationships || []),
-	];
-
-	// Extract relationships from person.fullDetails.relationships
-	pedigreeData.persons.forEach((person) => {
-		const personRelationships = person.fullDetails
-			?.relationships as Relationship[];
-
-		if (personRelationships && Array.isArray(personRelationships)) {
-			personRelationships.forEach((rel) => {
-				// Deduplicate by relationship ID
-				const exists = allRelationships.some((r) => r.id === rel.id);
-				if (!exists) {
-					allRelationships.push(rel);
-				}
-			});
-		}
-
-		// Extract childAndParentsRelationships and convert to standard format
-		const childAndParentsRels = person.fullDetails
-			?.childAndParentsRelationships as Array<{
-			id: string;
-			parent1?: { resourceId: string };
-			parent2?: { resourceId: string };
-			child?: { resourceId: string };
-		}>;
-
-		if (childAndParentsRels && Array.isArray(childAndParentsRels)) {
-			childAndParentsRels.forEach((capRel) => {
-				// Convert to ParentChild relationship format
-				if (capRel.parent1 && capRel.child) {
-					const rel: Relationship = {
-						id: `${capRel.id}-p1`,
-						type: "http://gedcomx.org/ParentChild",
-						person1: { resourceId: capRel.parent1.resourceId },
-						person2: { resourceId: capRel.child.resourceId },
-						parent2: capRel.parent2
-							? { resourceId: capRel.parent2.resourceId }
-							: undefined,
-					};
-
-					const exists = allRelationships.some(
-						(r) => r.id === rel.id
-					);
-					if (!exists) {
-						allRelationships.push(rel);
-					}
-				}
-
-				// If parent2 exists, also add relationship for parent2
-				if (capRel.parent2 && capRel.child) {
-					const rel: Relationship = {
-						id: `${capRel.id}-p2`,
-						type: "http://gedcomx.org/ParentChild",
-						person1: { resourceId: capRel.parent2.resourceId },
-						person2: { resourceId: capRel.child.resourceId },
-						parent2: capRel.parent1
-							? { resourceId: capRel.parent1.resourceId }
-							: undefined,
-					};
-
-					const exists = allRelationships.some(
-						(r) => r.id === rel.id
-					);
-					if (!exists) {
-						allRelationships.push(rel);
-					}
-				}
-			});
-		}
-	});
-
-	// Process all relationships
-	allRelationships.forEach((rel) => {
+	pedigreeData.relationships?.forEach((rel) => {
 		if (rel.type?.includes("ParentChild")) {
 			const parentId = rel.person1?.resourceId;
 			const childId = rel.person2?.resourceId;
@@ -668,41 +460,12 @@ export function convertToGedcom(
 	const familyIdMap = new Map<string, string>();
 
 	families.forEach((family, key) => {
-		// ==============================================
-		// INVALID FAM RECORD PREVENTION
-		// ==============================================
-
-		// Check if parents exist in personIdMap
-		const spouseArray = Array.from(family.spouses);
-		const parentsInMap = spouseArray.filter((id) => personIdMap.has(id));
-
-		const hasNoParents = parentsInMap.length === 0;
-		const hasSingleParentNoChildren =
-			parentsInMap.length === 1 && family.children.length === 0;
-
-		// Skip invalid FAM records
-		if (hasNoParents) {
-			// Orphaned child - no parents exist in dataset
-			if (family.children.length > 0) {
-				// eslint-disable-next-line no-console
-				console.warn(
-					`[FS SDK GEDCOM] Skipping FAM for orphaned child(ren): ${family.children.length} child(ren) with 0 parents`
-				);
-			}
-			return; // Skip this FAM record
-		}
-
-		if (hasSingleParentNoChildren) {
-			// Single spouse with no children and no other spouse
-			// This is an orphaned single-spouse family (invalid per GEDCOM 5.5)
-			return; // Skip this FAM record
-		}
-
-		// Valid FAM record - create it
 		const famId = `@F${famIndex++}@`;
 		familyIdMap.set(key, famId);
 
 		lines.push(`0 ${famId} FAM`);
+
+		const spouseArray = Array.from(family.spouses);
 
 		if (spouseArray.length === 2) {
 			const [person1, person2] = spouseArray;
@@ -731,7 +494,12 @@ export function convertToGedcom(
 			}
 
 			// Add marriage facts
-			addMarriageFacts(lines, allRelationships, person1, person2);
+			addMarriageFacts(
+				lines,
+				pedigreeData.relationships || [],
+				person1,
+				person2
+			);
 		} else if (spouseArray.length === 1) {
 			const parentData = pedigreeData.persons?.find(
 				(p) => p.id === spouseArray[0]
@@ -823,8 +591,8 @@ function addMarriageFacts(
 	const relKey = [person1, person2].sort().join("-");
 
 	const rel = relationships.find((r) => {
-		const a = r.person1?.resourceId || r.person1?.resource?.resourceId;
-		const b = r.person2?.resourceId || r.person2?.resource?.resourceId;
+		const a = r.person1?.resourceId;
+		const b = r.person2?.resourceId;
 		if (!a || !b) return false;
 		return [a, b].sort().join("-") === relKey;
 	});
