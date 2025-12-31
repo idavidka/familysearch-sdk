@@ -1,6 +1,8 @@
-# familysearch-sdk
+# @treeviz/familysearch-sdk
 
 A modern, TypeScript-first SDK for the FamilySearch API v3.
+
+> **Note:** This package was previously published as `familysearch-sdk`. It has been moved to the `@treeviz` organization.
 
 ## Features
 
@@ -15,7 +17,7 @@ A modern, TypeScript-first SDK for the FamilySearch API v3.
 ## Installation
 
 ```bash
-npm install familysearch-sdk
+npm install @treeviz/familysearch-sdk
 ```
 
 ## Quick Start
@@ -25,7 +27,7 @@ import {
   createFamilySearchSDK,
   fetchPedigree,
   convertToGedcom
-} from 'familysearch-sdk';
+} from '@treeviz/familysearch-sdk';
 
 // Create SDK instance with your OAuth access token
 const sdk = createFamilySearchSDK({
