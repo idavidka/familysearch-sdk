@@ -56,7 +56,7 @@
 		"oauth",
 		"typescript"
 	],
-	"author": "gedcom-visualiser contributors",
+	"author": "idavidka and @treeviz contributors",
 	"license": "MIT",
 	"repository": {
 		"type": "git",
