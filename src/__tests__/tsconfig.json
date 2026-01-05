@@ -1,0 +1,15 @@
+{
+	"compilerOptions": {
+		"noEmit": true,
+		"skipLibCheck": true,
+		"types": [
+			"vitest/globals"
+		]
+	},
+	"exclude": [],
+	"extends": "../../tsconfig.json",
+	"include": [
+		"**/*.ts",
+		"**/*.tsx"
+	]
+}
