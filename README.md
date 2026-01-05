@@ -1,5 +1,7 @@
 # @treeviz/familysearch-sdk
 
+> Part of the [@treeviz](https://www.npmjs.com/org/treeviz) organization - A collection of tools for genealogy data processing and visualization.
+
 A modern, TypeScript-first SDK for the FamilySearch API v3.
 
 > **Note:** This package was previously published as `familysearch-sdk`. It has been moved to the `@treeviz` organization.
