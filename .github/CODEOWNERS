@@ -1,0 +1,12 @@
+# Code owners for familysearch-sdk package
+# These owners will be requested for review when someone opens a pull request.
+
+# Default owner for everything in the package
+* @idavidka
+
+# Source code
+/src/ @idavidka
+
+# Configuration
+/package.json @idavidka
+/tsconfig.json @idavidka
