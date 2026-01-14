@@ -8,22 +8,14 @@
 		"plugin:@typescript-eslint/recommended",
 		"prettier"
 	],
-	"ignorePatterns": [
-		"node_modules/",
-		"dist/",
-		"coverage/"
-	],
+	"ignorePatterns": ["node_modules/", "dist/", "coverage/"],
 	"parserOptions": {
 		"ecmaVersion": "latest",
-		"project": [
-			"./tsconfig.json"
-		],
+		"project": ["./tsconfig.json"],
 		"sourceType": "module"
 	},
-	"plugins": [
-		"@typescript-eslint",
-		"import"
-	],
+	"plugins": ["@typescript-eslint", "import"],
+	"root": true,
 	"rules": {
 		"@typescript-eslint/consistent-type-assertions": "off",
 		"@typescript-eslint/consistent-type-imports": [
@@ -58,10 +50,7 @@
 		"@typescript-eslint/restrict-plus-operands": "off",
 		"@typescript-eslint/restrict-template-expressions": "off",
 		"@typescript-eslint/strict-boolean-expressions": "off",
-		"import/consistent-type-specifier-style": [
-			"error",
-			"prefer-top-level"
-		],
+		"import/consistent-type-specifier-style": ["error", "prefer-top-level"],
 		"import/no-duplicates": [
 			"error",
 			{
@@ -99,9 +88,6 @@
 		],
 		"no-console": "error",
 		"no-unused-vars": "off",
-		"semi": [
-			2,
-			"always"
-		]
+		"semi": [2, "always"]
 	}
 }
