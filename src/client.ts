@@ -24,6 +24,7 @@ import type {
 	PersonNotesResponse,
 	PersonMemoriesResponse,
 	PersonSearchResponse,
+	PersonSourcesResponse,
 	PedigreeData,
 	RelationshipDetails,
 	SDKLogger,
@@ -366,6 +367,40 @@ export class FamilySearchSDK {
 		} catch (error) {
 			this.logger.error(
 				`[FamilySearch SDK] Failed to get memories for ${personId}:`,
+				error
+			);
+			return null;
+		}
+	}
+
+	/**
+	 * Get sources for a person
+	 * Fetches all source references linked to a person
+	 *
+	 * @param personId - FamilySearch person ID
+	 * @returns Person sources response with source references and descriptions, or null if error
+	 *
+	 * @example
+	 * ```typescript
+	 * const sources = await sdk.getPersonSources('KWQS-BBQ');
+	 * if (sources?.persons?.[0]?.sources) {
+	 *   sources.persons[0].sources.forEach(source => {
+	 *     console.log('Source:', source.descriptionId);
+	 *   });
+	 * }
+	 * ```
+	 */
+	async getPersonSources(
+		personId: string
+	): Promise<PersonSourcesResponse | null> {
+		try {
+			const response = await this.get<PersonSourcesResponse>(
+				`/platform/tree/persons/${personId}/sources`
+			);
+			return response.data || null;
+		} catch (error) {
+			this.logger.error(
+				`[FamilySearch SDK] Failed to get sources for ${personId}:`,
 				error
 			);
 			return null;

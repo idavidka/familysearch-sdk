@@ -448,6 +448,22 @@ export interface SourceReference {
 }
 
 /**
+ * Person sources response from FamilySearch API
+ * Returned by GET /platform/tree/persons/{personId}/sources
+ */
+export interface PersonSourcesResponse {
+	/** Array of persons with their sources */
+	persons?: Array<{
+		/** Person ID */
+		id?: string;
+		/** Source references attached to the person */
+		sources?: SourceReference[];
+	}>;
+	/** Source descriptions providing details about sources */
+	sourceDescriptions?: SourceDescription[];
+}
+
+/**
  * Enhanced pedigree with full details
  */
 export interface EnhancedPedigreeData {

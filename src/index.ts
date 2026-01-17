@@ -62,6 +62,11 @@ export type {
 	ChildAndParentsRelationship,
 	PersonWithRelationships,
 	PersonNotesResponse,
+	PersonMemoriesResponse,
+	PersonSearchResponse,
+	PersonSourcesResponse,
+	SourceDescription,
+	SourceReference,
 	// Places
 	FamilySearchPlace,
 	PlaceDescription,
