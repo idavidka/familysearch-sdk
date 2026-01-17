@@ -836,3 +836,105 @@ export interface ChangeEntry {
 export interface PersonChangeHistoryResponse {
 	entries?: ChangeEntry[];
 }
+
+// ====================================
+// Source Detail Types
+// ====================================
+
+/**
+ * Enhanced source description with full details
+ */
+export interface SourceDescriptionDetail extends SourceDescription {
+	mediaType?: string;
+	repository?: {
+		resource?: string;
+		resourceId?: string;
+	};
+	created?: number;
+	modified?: number;
+	coverage?: Array<{
+		spatial?: {
+			original?: string;
+		};
+		temporal?: {
+			original?: string;
+			formal?: string;
+		};
+	}>;
+	identifiers?: Record<string, string[]>;
+}
+
+/**
+ * Source descriptions list response
+ */
+export interface SourceDescriptionsResponse {
+	sourceDescriptions?: SourceDescriptionDetail[];
+}
+
+/**
+ * Single source description response
+ */
+export interface SourceDescriptionResponse {
+	sourceDescriptions?: SourceDescriptionDetail[];
+}
+
+// ====================================
+// Memory Detail Types
+// ====================================
+
+/**
+ * Memory artifact (photo/document/story)
+ */
+export interface MemoryArtifact {
+	id?: string;
+	about?: string;
+	mediaType?: string;
+	resourceType?: string;
+	titles?: Array<{ value?: string }>;
+	descriptions?: Array<{ value?: string }>;
+	created?: number;
+	modified?: number;
+	contributors?: Array<{
+		resourceId?: string;
+		resource?: string;
+	}>;
+	coverage?: Array<{
+		spatial?: {
+			original?: string;
+		};
+		temporal?: {
+			original?: string;
+		};
+	}>;
+}
+
+/**
+ * Memory comments
+ */
+export interface MemoryComment {
+	id?: string;
+	text?: string;
+	created?: number;
+	contributor?: {
+		resourceId?: string;
+		resource?: string;
+	};
+}
+
+/**
+ * Memory with comments response
+ */
+export interface MemoryWithCommentsResponse {
+	sourceDescriptions?: MemoryArtifact[];
+	discussions?: Array<{
+		id?: string;
+		comments?: MemoryComment[];
+	}>;
+}
+
+/**
+ * User uploaded memories response
+ */
+export interface UserMemoriesResponse {
+	sourceDescriptions?: MemoryArtifact[];
+}

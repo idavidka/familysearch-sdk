@@ -73,6 +73,9 @@ export type {
 	PersonMatchOptions,
 	SourceDescription,
 	SourceReference,
+	SourceDescriptionDetail,
+	SourceDescriptionResponse,
+	SourceDescriptionsResponse,
 	// Discussions
 	Discussion,
 	DiscussionComment,
@@ -83,6 +86,11 @@ export type {
 	// Change History
 	ChangeEntry,
 	PersonChangeHistoryResponse,
+	// Memories
+	MemoryArtifact,
+	MemoryComment,
+	MemoryWithCommentsResponse,
+	UserMemoriesResponse,
 	// Places
 	FamilySearchPlace,
 	PlaceDescription,

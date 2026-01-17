@@ -15,7 +15,12 @@ A modern, TypeScript-first SDK for the FamilySearch API v3.
 - 📝 **GEDCOM export** - Convert FamilySearch data to GEDCOM 5.5 format
 - 📍 **Places API** helpers for location searches
 - 👨‍👩‍👧 **Tree/Pedigree API** for ancestry data
-- 📚 **Sources API** - Fetch source references linked to persons
+- 📚 **Sources API** - Fetch source references and descriptions
+- 💬 **Discussions API** - Access person discussions and comments
+- 🖼️ **Memories API** - Work with photos, documents, and stories
+- 🔄 **Rate Limiting** - Built-in rate limiting with automatic retry on 429 errors
+- ⚡ **Enhanced Error Handling** - Typed error classes for better error management
+- 📜 **Change History** - Access person change history and audit logs
 
 ## Installation
 
@@ -226,6 +231,149 @@ const gedcom = convertToGedcom(pedigreeData, {
 fs.writeFileSync('family.ged', gedcom);
 ```
 
+## Discussions API
+
+Access person discussions and comments.
+
+```typescript
+import { createFamilySearchSDK } from 'familysearch-sdk';
+
+const sdk = createFamilySearchSDK({ accessToken: 'token' });
+
+// Get discussions for a person
+const discussions = await sdk.getPersonDiscussions('KWQS-BBQ');
+
+if (discussions?.discussions) {
+  discussions.discussions.forEach(discussion => {
+    console.log('Title:', discussion.title);
+    console.log('Details:', discussion.details);
+    console.log('Comments:', discussion.numberOfComments);
+  });
+}
+```
+
+## Portraits API
+
+Fetch portrait photos for persons.
+
+```typescript
+import { createFamilySearchSDK } from 'familysearch-sdk';
+
+const sdk = createFamilySearchSDK({ accessToken: 'token' });
+
+// Get portraits for a person
+const portraits = await sdk.getPersonPortraits('KWQS-BBQ');
+
+if (portraits?.sourceDescriptions) {
+  portraits.sourceDescriptions.forEach(portrait => {
+    console.log('Portrait URL:', portrait.about);
+    console.log('Title:', portrait.titles?.[0]?.value);
+  });
+}
+```
+
+## Memories API
+
+Work with photos, documents, and stories.
+
+```typescript
+import { createFamilySearchSDK } from 'familysearch-sdk';
+
+const sdk = createFamilySearchSDK({ accessToken: 'token' });
+
+// Get a specific memory
+const memory = await sdk.getMemory('MEM-123');
+
+// Get user's uploaded memories
+const userMemories = await sdk.getUserMemories({ count: 50 });
+
+// Get comments on a memory
+const comments = await sdk.getMemoryComments('MEM-123');
+if (comments?.discussions?.[0]?.comments) {
+  comments.discussions[0].comments.forEach(comment => {
+    console.log('Comment:', comment.text);
+  });
+}
+```
+
+## Change History API
+
+Access person change history and audit logs.
+
+```typescript
+import { createFamilySearchSDK } from 'familysearch-sdk';
+
+const sdk = createFamilySearchSDK({ accessToken: 'token' });
+
+// Get change history for a person
+const history = await sdk.getPersonChangeHistory('KWQS-BBQ');
+
+if (history?.entries) {
+  history.entries.forEach(entry => {
+    console.log('Change:', entry.title);
+    console.log('Date:', new Date(entry.updated || 0));
+    entry.changeInfo?.forEach(info => {
+      console.log('Operation:', info.operation);
+      console.log('Object Type:', info.objectType);
+    });
+  });
+}
+```
+
+## Rate Limiting
+
+The SDK includes built-in rate limiting with automatic retry on 429 errors.
+
+```typescript
+import { createFamilySearchSDK } from 'familysearch-sdk';
+
+const sdk = createFamilySearchSDK({
+  accessToken: 'token',
+  rateLimiter: {
+    requestsPerSecond: 10,  // Max requests per second
+    maxBurst: 20,            // Max burst size
+    maxRetries: 3,           // Max retry attempts on 429
+    initialBackoffMs: 1000,  // Initial backoff delay
+    maxBackoffMs: 30000      // Max backoff delay
+  }
+});
+
+// Requests are automatically rate limited and retried on 429 errors
+const person = await sdk.getPerson('KWQS-BBQ');
+```
+
+## Error Handling
+
+The SDK provides typed error classes for better error management.
+
+```typescript
+import {
+  createFamilySearchSDK,
+  AuthenticationError,
+  NotFoundError,
+  RateLimitError,
+  ValidationError,
+  ServerError,
+  NetworkError
+} from 'familysearch-sdk';
+
+const sdk = createFamilySearchSDK({ accessToken: 'token' });
+
+try {
+  const person = await sdk.getPerson('INVALID-ID');
+} catch (error) {
+  if (error instanceof NotFoundError) {
+    console.error('Person not found:', error.resourceId);
+  } else if (error instanceof AuthenticationError) {
+    console.error('Authentication failed:', error.statusCode);
+  } else if (error instanceof RateLimitError) {
+    console.error('Rate limit exceeded. Retry after:', error.retryAfter);
+  } else if (error instanceof NetworkError) {
+    console.error('Network error:', error.originalError);
+  }
+}
+```
+
 ## Environment Configuration
 
 The SDK supports three FamilySearch environments:
@@ -296,9 +444,44 @@ const sdk = createFamilySearchSDK({
 - `getPersonWithDetails(sdk, personId)` - Get person details
 - `fetchMultiplePersons(sdk, personIds)` - Batch fetch persons
 
-### Person Sources
+### Person APIs
 
+- `sdk.getPerson(personId)` - Get person by ID
 - `sdk.getPersonSources(personId)` - Get source references for a person
+- `sdk.getPersonNotes(personId)` - Get notes for a person
+- `sdk.getPersonMemories(personId)` - Get memories for a person
+- `sdk.getPersonDiscussions(personId)` - Get discussions for a person
+- `sdk.getPersonPortraits(personId)` - Get portrait photos for a person
+- `sdk.getPersonChangeHistory(personId)` - Get change history for a person
+- `sdk.searchPersons(query, options)` - Search for persons
+
+### Sources APIs
+
+- `sdk.getSourceDescription(sourceId)` - Get source description by ID
+- `sdk.searchSourceDescriptions(query, options)` - Search source descriptions
+
+### Memories APIs
+
+- `sdk.getMemory(memoryId)` - Get memory by ID
+- `sdk.getUserMemories(options)` - Get user's uploaded memories
+- `sdk.getMemoryComments(memoryId)` - Get comments for a memory
+
+### Relationships APIs
+
+- `sdk.getCoupleRelationship(relationshipId)` - Get couple relationship details
+- `sdk.getChildAndParentsRelationship(relationshipId)` - Get parent-child relationship details
+- `sdk.getAncestry(personId, generations)` - Get ancestry for a person
+- `sdk.getDescendancy(personId, generations)` - Get descendancy for a person
+
+### Error Classes
+
+- `FamilySearchError` - Base error class
+- `AuthenticationError` - 401/403 authentication errors
+- `NotFoundError` - 404 resource not found errors
+- `RateLimitError` - 429 rate limit errors
+- `ValidationError` - 400 validation errors
+- `ServerError` - 5xx server errors
+- `NetworkError` - Network/connection errors
 
 ### Person Matching
 

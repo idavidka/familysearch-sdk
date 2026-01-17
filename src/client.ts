@@ -38,6 +38,10 @@ import type {
 	PersonDiscussionsResponse,
 	PersonPortraitsResponse,
 	PersonChangeHistoryResponse,
+	SourceDescriptionResponse,
+	SourceDescriptionsResponse,
+	MemoryWithCommentsResponse,
+	UserMemoriesResponse,
 	PedigreeData,
 	RelationshipDetails,
 } from "./types";
@@ -1079,6 +1083,202 @@ export class FamilySearchSDK {
 		} catch (error) {
 			this.logger.error(
 				`[FamilySearch SDK] Failed to get place ${placeId}:`,
+				error
+			);
+			return null;
+		}
+	}
+
+	// ====================================
+	// Sources API
+	// ====================================
+
+	/**
+	 * Get source description by ID
+	 * Fetches detailed information about a source
+	 *
+	 * @param sourceId - FamilySearch source description ID
+	 * @returns Source description response, or null if error
+	 *
+	 * @example
+	 * ```typescript
+	 * const source = await sdk.getSourceDescription('SOURCE-123');
+	 * if (source?.sourceDescriptions?.[0]) {
+	 *   console.log('Title:', source.sourceDescriptions[0].titles?.[0]?.value);
+	 * }
+	 * ```
+	 */
+	async getSourceDescription(
+		sourceId: string
+	): Promise<SourceDescriptionResponse | null> {
+		try {
+			const response = await this.get<SourceDescriptionResponse>(
+				`/platform/sources/descriptions/${sourceId}`
+			);
+			return response.data || null;
+		} catch (error) {
+			this.logger.error(
+				`[FamilySearch SDK] Failed to get source description ${sourceId}:`,
+				error
+			);
+			return null;
+		}
+	}
+
+	/**
+	 * Search for source descriptions
+	 * Searches user-uploaded sources
+	 *
+	 * @param query - Search query parameters
+	 * @param options - Pagination options
+	 * @returns Source descriptions response, or null if error
+	 *
+	 * @example
+	 * ```typescript
+	 * const sources = await sdk.searchSourceDescriptions(
+	 *   { title: 'Census' },
+	 *   { count: 20 }
+	 * );
+	 * ```
+	 */
+	async searchSourceDescriptions(
+		query: Record<string, string>,
+		options: { start?: number; count?: number } = {}
+	): Promise<SourceDescriptionsResponse | null> {
+		try {
+			const params = new URLSearchParams({
+				...query,
+				...(options.start !== undefined && {
+					start: options.start.toString(),
+				}),
+				...(options.count !== undefined && {
+					count: options.count.toString(),
+				}),
+			});
+
+			const response = await this.get<SourceDescriptionsResponse>(
+				`/platform/sources/descriptions?${params.toString()}`
+			);
+			return response.data || null;
+		} catch (error) {
+			this.logger.error(
+				"[FamilySearch SDK] Failed to search source descriptions:",
+				error
+			);
+			return null;
+		}
+	}
+
+	// ====================================
+	// Memories API
+	// ====================================
+
+	/**
+	 * Get memory (photo/document/story) by ID
+	 * Fetches detailed information about a memory artifact
+	 *
+	 * @param memoryId - FamilySearch memory artifact ID
+	 * @returns Memory with comments response, or null if error
+	 *
+	 * @example
+	 * ```typescript
+	 * const memory = await sdk.getMemory('MEM-123');
+	 * if (memory?.sourceDescriptions?.[0]) {
+	 *   console.log('Title:', memory.sourceDescriptions[0].titles?.[0]?.value);
+	 * }
+	 * ```
+	 */
+	async getMemory(
+		memoryId: string
+	): Promise<MemoryWithCommentsResponse | null> {
+		try {
+			const response = await this.get<MemoryWithCommentsResponse>(
+				`/platform/memories/${memoryId}`
+			);
+			return response.data || null;
+		} catch (error) {
+			this.logger.error(
+				`[FamilySearch SDK] Failed to get memory ${memoryId}:`,
+				error
+			);
+			return null;
+		}
+	}
+
+	/**
+	 * Get user's uploaded memories
+	 * Fetches all memories uploaded by the current user
+	 *
+	 * @param options - Pagination options
+	 * @returns User memories response, or null if error
+	 *
+	 * @example
+	 * ```typescript
+	 * const memories = await sdk.getUserMemories({ count: 50 });
+	 * if (memories?.sourceDescriptions) {
+	 *   memories.sourceDescriptions.forEach(memory => {
+	 *     console.log('Memory:', memory.titles?.[0]?.value);
+	 *   });
+	 * }
+	 * ```
+	 */
+	async getUserMemories(
+		options: { start?: number; count?: number } = {}
+	): Promise<UserMemoriesResponse | null> {
+		try {
+			const params = new URLSearchParams({
+				...(options.start !== undefined && {
+					start: options.start.toString(),
+				}),
+				...(options.count !== undefined && {
+					count: options.count.toString(),
+				}),
+			});
+
+			const queryString = params.toString();
+			const url = queryString
+				? `/platform/memories?${queryString}`
+				: "/platform/memories";
+
+			const response = await this.get<UserMemoriesResponse>(url);
+			return response.data || null;
+		} catch (error) {
+			this.logger.error(
+				"[FamilySearch SDK] Failed to get user memories:",
+				error
+			);
+			return null;
+		}
+	}
+
+	/**
+	 * Get comments for a memory
+	 * Fetches all comments on a memory artifact
+	 *
+	 * @param memoryId - FamilySearch memory artifact ID
+	 * @returns Memory with comments response, or null if error
+	 *
+	 * @example
+	 * ```typescript
+	 * const comments = await sdk.getMemoryComments('MEM-123');
+	 * if (comments?.discussions?.[0]?.comments) {
+	 *   comments.discussions[0].comments.forEach(comment => {
+	 *     console.log('Comment:', comment.text);
+	 *   });
+	 * }
+	 * ```
+	 */
+	async getMemoryComments(
+		memoryId: string
+	): Promise<MemoryWithCommentsResponse | null> {
+		try {
+			const response = await this.get<MemoryWithCommentsResponse>(
+				`/platform/memories/${memoryId}/comments`
+			);
+			return response.data || null;
+		} catch (error) {
+			this.logger.error(
+				`[FamilySearch SDK] Failed to get memory comments ${memoryId}:`,
 				error
 			);
 			return null;
