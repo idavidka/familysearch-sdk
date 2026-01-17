@@ -906,6 +906,59 @@ export function convertToGedcom(
 				}
 			});
 		}
+
+		// ==============================================
+		// ADD PERSON MATCHES (_FS_MATCHES custom tags)
+		// These are matches from person.matches (TreePersonMatchesResponse)
+		// ==============================================
+		if (person.matches?.entries) {
+			// Build a map of sourceDescriptions by ID for fast lookup
+			const matchSourceDescMap = new Map<string, SourceDescription>();
+			if (person.matches.sourceDescriptions && Array.isArray(person.matches.sourceDescriptions)) {
+				person.matches.sourceDescriptions.forEach((desc) => {
+					if (desc.id) {
+						matchSourceDescMap.set(desc.id, desc);
+					}
+				});
+			}
+
+			person.matches.entries.forEach((entry) => {
+				if (entry.id) {
+					lines.push(`1 _FS_MATCHES ${entry.id}`);
+					
+					// Add title if available
+					if (entry.title) {
+						lines.push(`2 TITL ${entry.title}`);
+					}
+					
+					// Add match score as note
+					if (entry.content?.score !== undefined) {
+						lines.push(`2 NOTE Match Score: ${entry.content.score}`);
+					}
+					
+					// Add source description details if available
+					if (entry.content?.sourceDescription) {
+						const sourceDesc = entry.content.sourceDescription;
+						
+						// Add citation as TEXT
+						if (sourceDesc.citations?.[0]?.value) {
+							lines.push(`2 TEXT ${sourceDesc.citations[0].value}`);
+						}
+						
+						// Add web link (about URL)
+						if (sourceDesc.about) {
+							const webUrl = transformSourceUrl(sourceDesc.about);
+							lines.push(`2 WWW ${webUrl}`);
+						}
+						
+						// Add resource type as NOTE
+						if (sourceDesc.resourceType) {
+							lines.push(`2 NOTE Resource Type: ${sourceDesc.resourceType}`);
+						}
+					}
+				}
+			});
+		}
 	});
 
 	// ==============================================
