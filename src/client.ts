@@ -25,6 +25,7 @@ import type {
 	PersonMemoriesResponse,
 	PersonSearchResponse,
 	PersonSourcesResponse,
+	TreePersonMatchesResponse,
 	PedigreeData,
 	RelationshipDetails,
 	SDKLogger,
@@ -401,6 +402,59 @@ export class FamilySearchSDK {
 		} catch (error) {
 			this.logger.error(
 				`[FamilySearch SDK] Failed to get sources for ${personId}:`,
+				error
+			);
+			return null;
+		}
+	}
+
+	/**
+	 * Get tree person matches
+	 * Fetches possible matches between a person in the FamilySearch Tree and historical records
+	 *
+	 * @param personId - FamilySearch person ID
+	 * @param options - Optional query parameters
+	 * @returns Tree person matches response with match information, or null if error
+	 *
+	 * @example
+	 * ```typescript
+	 * const matches = await sdk.getTreePersonMatches('KWQS-BBQ');
+	 * if (matches?.sourceDescriptions) {
+	 *   matches.sourceDescriptions.forEach(match => {
+	 *     console.log('Match:', match.titles?.[0]?.value);
+	 *   });
+	 * }
+	 * ```
+	 */
+	async getTreePersonMatches(
+		personId: string,
+		options: {
+			status?: string;
+			collection?: string;
+			count?: number;
+			start?: number;
+		} = {}
+	): Promise<TreePersonMatchesResponse | null> {
+		try {
+			const params = new URLSearchParams();
+			if (options.status) params.append("status", options.status);
+			if (options.collection)
+				params.append("collection", options.collection);
+			if (options.count !== undefined)
+				params.append("count", options.count.toString());
+			if (options.start !== undefined)
+				params.append("start", options.start.toString());
+
+			const queryString = params.toString();
+			const url = `/platform/tree/persons/${personId}/matches${
+				queryString ? `?${queryString}` : ""
+			}`;
+
+			const response = await this.get<TreePersonMatchesResponse>(url);
+			return response.data || null;
+		} catch (error) {
+			this.logger.error(
+				`[FamilySearch SDK] Failed to get matches for ${personId}:`,
 				error
 			);
 			return null;

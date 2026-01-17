@@ -465,6 +465,55 @@ export interface PersonSourcesResponse {
 }
 
 /**
+ * Person match information
+ * Represents a potential match between a tree person and a historical record
+ */
+export interface PersonMatch {
+	/** Match ID */
+	id?: string;
+	/** Match status (e.g., "pending", "accepted", "rejected") */
+	status?: string;
+	/** Match collection information */
+	collection?: {
+		/** Collection ID */
+		id?: string;
+		/** Collection title */
+		title?: string;
+	};
+	/** Match person information */
+	person?: PersonData;
+	/** Match score/confidence */
+	score?: number;
+	/** Source description for the match */
+	sourceDescription?: SourceDescription;
+}
+
+/**
+ * Tree person matches response from FamilySearch API
+ * Returned by GET /platform/tree/persons/{personId}/matches
+ */
+export interface TreePersonMatchesResponse {
+	/** Array of source descriptions (match records) */
+	sourceDescriptions?: SourceDescription[];
+	/** Array of persons */
+	persons?: PersonData[];
+	/** Entries with match information */
+	entries?: Array<{
+		/** Entry ID */
+		id?: string;
+		/** Entry title */
+		title?: string;
+		/** Content information */
+		content?: {
+			/** Source reference */
+			sourceDescription?: SourceDescription;
+			/** Match score */
+			score?: number;
+		};
+	}>;
+}
+
+/**
  * Enhanced pedigree with full details
  */
 export interface EnhancedPedigreeData {

@@ -65,6 +65,8 @@ export type {
 	PersonMemoriesResponse,
 	PersonSearchResponse,
 	PersonSourcesResponse,
+	TreePersonMatchesResponse,
+	PersonMatch,
 	SourceDescription,
 	SourceReference,
 	// Places
