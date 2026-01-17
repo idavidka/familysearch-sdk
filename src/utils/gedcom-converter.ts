@@ -852,7 +852,10 @@ export function convertToGedcom(
 		if (person.sources?.persons?.[0]?.sources) {
 			// Build a map of sourceDescriptions by ID for fast lookup
 			const sourceDescMap = new Map<string, SourceDescription>();
-			if (person.sources.sourceDescriptions && Array.isArray(person.sources.sourceDescriptions)) {
+			if (
+				person.sources.sourceDescriptions &&
+				Array.isArray(person.sources.sourceDescriptions)
+			) {
 				person.sources.sourceDescriptions.forEach((desc) => {
 					if (desc.id) {
 						sourceDescMap.set(desc.id, desc);
@@ -863,43 +866,54 @@ export function convertToGedcom(
 			person.sources.persons[0].sources.forEach((sourceRef) => {
 				if (sourceRef.descriptionId) {
 					lines.push(`1 _FS_SOUR ${sourceRef.descriptionId}`);
-					
+
 					// Find the full source description for this ID
-					const sourceDesc = sourceDescMap.get(sourceRef.descriptionId);
-					
+					const sourceDesc = sourceDescMap.get(
+						sourceRef.descriptionId
+					);
+
 					if (sourceDesc) {
 						// Add title
 						if (sourceDesc.titles?.[0]?.value) {
 							lines.push(`2 TITL ${sourceDesc.titles[0].value}`);
 						}
-						
+
 						// Add citation as TEXT
 						if (sourceDesc.citations?.[0]?.value) {
-							lines.push(`2 TEXT ${sourceDesc.citations[0].value}`);
+							lines.push(
+								`2 TEXT ${sourceDesc.citations[0].value}`
+							);
 						}
-						
+
 						// Add web link (about URL)
 						if (sourceDesc.about) {
 							const webUrl = transformSourceUrl(sourceDesc.about);
 							lines.push(`2 WWW ${webUrl}`);
 						}
-						
+
 						// Add resource type as NOTE
 						if (sourceDesc.resourceType) {
-							lines.push(`2 NOTE Resource Type: ${sourceDesc.resourceType}`);
+							lines.push(
+								`2 NOTE Resource Type: ${sourceDesc.resourceType}`
+							);
 						}
 					}
-					
+
 					// Add sourceRef description as note if available
 					if (sourceRef.description) {
 						lines.push(`2 NOTE ${sourceRef.description}`);
 					}
-					
+
 					// Add qualifiers as notes
-					if (sourceRef.qualifiers && Array.isArray(sourceRef.qualifiers)) {
+					if (
+						sourceRef.qualifiers &&
+						Array.isArray(sourceRef.qualifiers)
+					) {
 						sourceRef.qualifiers.forEach((qualifier) => {
 							if (qualifier.name && qualifier.value) {
-								lines.push(`2 NOTE ${qualifier.name}: ${qualifier.value}`);
+								lines.push(
+									`2 NOTE ${qualifier.name}: ${qualifier.value}`
+								);
 							}
 						});
 					}
@@ -908,13 +922,16 @@ export function convertToGedcom(
 		}
 
 		// ==============================================
-		// ADD PERSON MATCHES (_FS_MATCHES custom tags)
+		// ADD PERSON MATCHES (_FS_MATCH custom tags)
 		// These are matches from person.matches (TreePersonMatchesResponse)
 		// ==============================================
 		if (person.matches?.entries) {
 			// Build a map of sourceDescriptions by ID for fast lookup
 			const matchSourceDescMap = new Map<string, SourceDescription>();
-			if (person.matches.sourceDescriptions && Array.isArray(person.matches.sourceDescriptions)) {
+			if (
+				person.matches.sourceDescriptions &&
+				Array.isArray(person.matches.sourceDescriptions)
+			) {
 				person.matches.sourceDescriptions.forEach((desc) => {
 					if (desc.id) {
 						matchSourceDescMap.set(desc.id, desc);
@@ -924,37 +941,54 @@ export function convertToGedcom(
 
 			person.matches.entries.forEach((entry) => {
 				if (entry.id) {
-					lines.push(`1 _FS_MATCHES ${entry.id}`);
-					
+					lines.push(`1 _FS_MATCH ${entry.id}`);
+
 					// Add title if available
 					if (entry.title) {
 						lines.push(`2 TITL ${entry.title}`);
 					}
-					
-					// Add match score as note
+
+					// Add match score as NOTE (for compatibility)
 					if (entry.content?.score !== undefined) {
-						lines.push(`2 NOTE Match Score: ${entry.content.score}`);
+						lines.push(
+							`2 NOTE Match Score: ${entry.content.score}`
+						);
 					}
-					
+
 					// Add source description details if available
 					if (entry.content?.sourceDescription) {
 						const sourceDesc = entry.content.sourceDescription;
-						
+
 						// Add citation as TEXT
 						if (sourceDesc.citations?.[0]?.value) {
-							lines.push(`2 TEXT ${sourceDesc.citations[0].value}`);
+							lines.push(
+								`2 TEXT ${sourceDesc.citations[0].value}`
+							);
 						}
-						
+
 						// Add web link (about URL)
 						if (sourceDesc.about) {
 							const webUrl = transformSourceUrl(sourceDesc.about);
 							lines.push(`2 WWW ${webUrl}`);
 						}
-						
+
 						// Add resource type as NOTE
 						if (sourceDesc.resourceType) {
-							lines.push(`2 NOTE Resource Type: ${sourceDesc.resourceType}`);
+							lines.push(
+								`2 NOTE Resource Type: ${sourceDesc.resourceType}`
+							);
 						}
+					}
+
+					// Add TYPE field (default to TREE since we don't have this info from API)
+					lines.push(`2 TYPE TREE`);
+
+					// Add REF field (reference to match ID)
+					lines.push(`2 REF ${entry.id}`);
+
+					// Add SCORE field as dedicated tag
+					if (entry.content?.score !== undefined) {
+						lines.push(`2 SCORE ${entry.content.score}`);
 					}
 				}
 			});
