@@ -465,27 +465,21 @@ export interface PersonSourcesResponse {
 }
 
 /**
- * Person match information
- * Represents a potential match between a tree person and a historical record
+ * Tree person match entry
+ * Represents a single match entry in the response
  */
-export interface PersonMatch {
-	/** Match ID */
+export interface TreePersonMatchEntry {
+	/** Entry ID */
 	id?: string;
-	/** Match status (e.g., "pending", "accepted", "rejected") */
-	status?: string;
-	/** Match collection information */
-	collection?: {
-		/** Collection ID */
-		id?: string;
-		/** Collection title */
-		title?: string;
+	/** Entry title */
+	title?: string;
+	/** Content information */
+	content?: {
+		/** Source reference */
+		sourceDescription?: SourceDescription;
+		/** Match score */
+		score?: number;
 	};
-	/** Match person information */
-	person?: PersonData;
-	/** Match score/confidence */
-	score?: number;
-	/** Source description for the match */
-	sourceDescription?: SourceDescription;
 }
 
 /**
@@ -498,19 +492,7 @@ export interface TreePersonMatchesResponse {
 	/** Array of persons */
 	persons?: PersonData[];
 	/** Entries with match information */
-	entries?: Array<{
-		/** Entry ID */
-		id?: string;
-		/** Entry title */
-		title?: string;
-		/** Content information */
-		content?: {
-			/** Source reference */
-			sourceDescription?: SourceDescription;
-			/** Match score */
-			score?: number;
-		};
-	}>;
+	entries?: TreePersonMatchEntry[];
 }
 
 /**
