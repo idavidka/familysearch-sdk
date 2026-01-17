@@ -46,6 +46,7 @@ export type {
 	// Configuration
 	FamilySearchSDKConfig,
 	SDKLogger,
+	RateLimiterConfig,
 	// API Response
 	FamilySearchApiResponse,
 	FamilySearchApiError,
@@ -72,6 +73,16 @@ export type {
 	PersonMatchOptions,
 	SourceDescription,
 	SourceReference,
+	// Discussions
+	Discussion,
+	DiscussionComment,
+	PersonDiscussionsResponse,
+	// Portraits
+	PersonPortrait,
+	PersonPortraitsResponse,
+	// Change History
+	ChangeEntry,
+	PersonChangeHistoryResponse,
 	// Places
 	FamilySearchPlace,
 	PlaceDescription,
@@ -90,6 +101,9 @@ export type {
 	// Progress
 	ProgressCallback,
 } from "./types";
+
+// Errors
+export * from "./errors";
 
 // Auth module
 export * from "./auth";

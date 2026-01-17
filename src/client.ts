@@ -11,6 +11,12 @@
  * - Configurable logging
  */
 
+import { createErrorFromResponse, createNetworkError } from "./errors";
+import type { FamilySearchError } from "./errors";
+import type {
+	RateLimiterConfig,
+	RelationshipDeRateLimiter,
+} from "./rate-limiter";
 import type {
 	EnvironmentConfig,
 	FamilySearchApiError,
@@ -29,9 +35,11 @@ import type {
 	TreePersonMatchesOptions,
 	PersonMatchInput,
 	PersonMatchOptions,
+	PersonDiscussionsResponse,
+	PersonPortraitsResponse,
+	PersonChangeHistoryResponse,
 	PedigreeData,
 	RelationshipDetails,
-	SDKLogger,
 } from "./types";
 
 // Environment configuration
@@ -77,12 +85,17 @@ export class FamilySearchSDK {
 	private accessToken: string | null = null;
 	private appKey: string | null = null;
 	private logger: SDKLogger;
+	private rateLimiter: RateLimiter;
 
 	constructor(config: FamilySearchSDKConfig = {}) {
 		this.environment = config.environment || "integration";
 		this.accessToken = config.accessToken || null;
 		this.appKey = config.appKey || null;
 		this.logger = config.logger || noopLogger;
+
+		// Initialize rate limiter with optional config
+		const rateLimiterConfig: RateLimiterConfig = config.rateLimiter || {};
+		this.rateLimiter = new RateLimiter(rateLimiterConfig);
 	}
 
 	/**
@@ -128,83 +141,111 @@ export class FamilySearchSDK {
 	}
 
 	/**
-	 * Make authenticated API request
+	 * Make authenticated API request with rate limiting and error handling
 	 */
 	private async request<T>(
 		url: string,
-		options: RequestInit = {}
+		options: RequestInit = {},
+		context?: { resourceType?: string; resourceId?: string }
 	): Promise<FamilySearchApiResponse<T>> {
-		const config = this.getConfig();
-		const fullUrl = url.startsWith("http")
-			? url
-			: `${config.platformHost}${url}`;
+		// Use rate limiter to execute request with automatic retry on 429
+		return this.rateLimiter.execute(
+			async () => {
+				const config = this.getConfig();
+				const fullUrl = url.startsWith("http")
+					? url
+					: `${config.platformHost}${url}`;
 
-		const headers: Record<string, string> = {
-			Accept: "application/json",
-			...(options.headers as Record<string, string>),
-		};
+				const headers: Record<string, string> = {
+					Accept: "application/json",
+					...(options.headers as Record<string, string>),
+				};
 
-		// Add authorization header if token is available
-		// FamilySearch API endpoints that require auth start with /platform/
-		const requiresAuth = fullUrl.includes("/platform/");
-		if (this.accessToken && requiresAuth) {
-			headers.Authorization = `Bearer ${this.accessToken}`;
-		}
+				// Add authorization header if token is available
+				// FamilySearch API endpoints that require auth start with /platform/
+				const requiresAuth = fullUrl.includes("/platform/");
+				if (this.accessToken && requiresAuth) {
+					headers.Authorization = `Bearer ${this.accessToken}`;
+				}
 
-		// Add app key if available
-		if (this.appKey) {
-			headers["X-FS-App-Key"] = this.appKey;
-		}
+				// Add app key if available
+				if (this.appKey) {
+					headers["X-FS-App-Key"] = this.appKey;
+				}
 
-		this.logger.log(
-			`[FamilySearch SDK] ${options.method || "GET"} ${fullUrl}`
-		);
+				this.logger.log(
+					`[FamilySearch SDK] ${options.method || "GET"} ${fullUrl}`
+				);
 
-		try {
-			const response = await fetch(fullUrl, {
-				...options,
-				headers,
-			});
-
-			const responseHeaders: Record<string, string> = {};
-			response.headers.forEach((value, key) => {
-				responseHeaders[key] = value;
-			});
-
-			let data: T | undefined;
-			const contentType = response.headers.get("content-type");
-			if (contentType && contentType.includes("application/json")) {
 				try {
-					data = await response.json();
+					const response = await fetch(fullUrl, {
+						...options,
+						headers,
+					});
+
+					const responseHeaders: Record<string, string> = {};
+					response.headers.forEach((value, key) => {
+						responseHeaders[key] = value;
+					});
+
+					let data: T | undefined;
+					const contentType = response.headers.get("content-type");
+					if (
+						contentType &&
+						contentType.includes("application/json")
+					) {
+						try {
+							data = await response.json();
+						} catch (error) {
+							this.logger.warn(
+								"[FamilySearch SDK] Failed to parse JSON response:",
+								error
+							);
+						}
+					}
+
+					const apiResponse: FamilySearchApiResponse<T> = {
+						data,
+						statusCode: response.status,
+						statusText: response.statusText,
+						headers: responseHeaders,
+					};
+
+					if (!response.ok) {
+						// Use enhanced error handling
+						const error = createErrorFromResponse(
+							apiResponse,
+							context
+						);
+						// Add response to error for backward compatibility
+						(error as FamilySearchApiError).response = apiResponse;
+						(error as FamilySearchApiError).statusCode =
+							response.status;
+						throw error;
+					}
+
+					return apiResponse;
 				} catch (error) {
-					this.logger.warn(
-						"[FamilySearch SDK] Failed to parse JSON response:",
+					// If it's already a FamilySearchError, rethrow
+					if ((error as FamilySearchError).code) {
+						throw error;
+					}
+					// Otherwise, wrap in NetworkError
+					this.logger.error(
+						"[FamilySearch SDK] Request failed:",
 						error
 					);
+					throw createNetworkError(error);
 				}
+			},
+			{
+				onRetry: (attempt, delay) => {
+					this.logger.warn(
+						`[FamilySearch SDK] Rate limit hit, retrying (attempt ${attempt}) after ${delay}ms`
+					);
+				},
 			}
-
-			const apiResponse: FamilySearchApiResponse<T> = {
-				data,
-				statusCode: response.status,
-				statusText: response.statusText,
-				headers: responseHeaders,
-			};
-
-			if (!response.ok) {
-				const error = new Error(
-					`FamilySearch API error: ${response.status} ${response.statusText}`
-				) as FamilySearchApiError;
-				error.statusCode = response.status;
-				error.response = apiResponse;
-				throw error;
-			}
-
-			return apiResponse;
-		} catch (error) {
-			this.logger.error("[FamilySearch SDK] Request failed:", error);
-			throw error;
-		}
+		);
 	}
 
 	/**
@@ -667,6 +708,40 @@ export class FamilySearchSDK {
 	}
 
 	/**
+	 * Get discussions for a person
+	 * Fetches all discussions attached to a person
+	 *
+	 * @param personId - FamilySearch person ID
+	 * @returns Person discussions response, or null if error
+	 *
+	 * @example
+	 * ```typescript
+	 * const discussions = await sdk.getPersonDiscussions('KWQS-BBQ');
+	 * if (discussions?.discussions) {
+	 *   discussions.discussions.forEach(discussion => {
+	 *     console.log('Discussion:', discussion.title);
+	 *   });
+	 * }
+	 * ```
+	 */
+	async getPersonDiscussions(
+		personId: string
+	): Promise<PersonDiscussionsResponse | null> {
+		try {
+			const response = await this.get<PersonDiscussionsResponse>(
+				`/platform/tree/persons/${personId}/discussion-references`
+			);
+			return response.data || null;
+		} catch (error) {
+			this.logger.error(
+				`[FamilySearch SDK] Failed to get discussions for ${personId}:`,
+				error
+			);
+			return null;
+		}
+	}
+
+	/**
 	 * Search for persons using external GEDCOM data
 	 * Converts person data to search query parameters and searches FamilySearch
 	 * Works with both Tree and Records collections
@@ -763,6 +838,74 @@ export class FamilySearchSDK {
 		}
 
 		return this.searchPersons(query, options);
+	}
+
+	/**
+	 * Get portraits (photos) for a person
+	 * Fetches all portrait/photo memories attached to a person
+	 *
+	 * @param personId - FamilySearch person ID
+	 * @returns Person portraits response, or null if error
+	 *
+	 * @example
+	 * ```typescript
+	 * const portraits = await sdk.getPersonPortraits('KWQS-BBQ');
+	 * if (portraits?.sourceDescriptions) {
+	 *   portraits.sourceDescriptions.forEach(portrait => {
+	 *     console.log('Portrait:', portrait.about);
+	 *   });
+	 * }
+	 * ```
+	 */
+	async getPersonPortraits(
+		personId: string
+	): Promise<PersonPortraitsResponse | null> {
+		try {
+			const response = await this.get<PersonPortraitsResponse>(
+				`/platform/tree/persons/${personId}/portraits`
+			);
+			return response.data || null;
+		} catch (error) {
+			this.logger.error(
+				`[FamilySearch SDK] Failed to get portraits for ${personId}:`,
+				error
+			);
+			return null;
+		}
+	}
+
+	/**
+	 * Get change history for a person
+	 * Fetches the change log showing all modifications to a person record
+	 *
+	 * @param personId - FamilySearch person ID
+	 * @returns Person change history response, or null if error
+	 *
+	 * @example
+	 * ```typescript
+	 * const history = await sdk.getPersonChangeHistory('KWQS-BBQ');
+	 * if (history?.entries) {
+	 *   history.entries.forEach(entry => {
+	 *     console.log('Change:', entry.title, 'at', entry.updated);
+	 *   });
+	 * }
+	 * ```
+	 */
+	async getPersonChangeHistory(
+		personId: string
+	): Promise<PersonChangeHistoryResponse | null> {
+		try {
+			const response = await this.get<PersonChangeHistoryResponse>(
+				`/platform/tree/persons/${personId}/changes`
+			);
+			return response.data || null;
+		} catch (error) {
+			this.logger.error(
+				`[FamilySearch SDK] Failed to get change history for ${personId}:`,
+				error
+			);
+			return null;
+		}
 	}
 
 	/**

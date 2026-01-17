@@ -28,6 +28,22 @@ export interface EnvironmentConfig {
 // ====================================
 
 /**
+ * Rate limiter configuration
+ */
+export interface RateLimiterConfig {
+	/** Maximum requests per second (default: 10) */
+	requestsPerSecond?: number;
+	/** Maximum burst size (default: 20) */
+	maxBurst?: number;
+	/** Maximum retry attempts for 429 errors (default: 3) */
+	maxRetries?: number;
+	/** Initial backoff delay in ms (default: 1000) */
+	initialBackoffMs?: number;
+	/** Maximum backoff delay in ms (default: 30000) */
+	maxBackoffMs?: number;
+}
+
+/**
  * SDK initialization options
  */
 export interface FamilySearchSDKConfig {
@@ -39,6 +55,8 @@ export interface FamilySearchSDKConfig {
 	appKey?: string;
 	/** Optional logger for debugging */
 	logger?: SDKLogger;
+	/** Optional rate limiter configuration */
+	rateLimiter?: RateLimiterConfig;
 }
 
 /**
@@ -707,3 +725,114 @@ export type ProgressCallback = (progress: {
 	total: number;
 	percent: number;
 }) => void;
+
+// ====================================
+// Discussion Types
+// ====================================
+
+/**
+ * Discussion comment
+ */
+export interface DiscussionComment {
+	id?: string;
+	text?: string;
+	contributor?: {
+		resourceId?: string;
+		resource?: string;
+	};
+	created?: number;
+	modified?: number;
+}
+
+/**
+ * Discussion reference
+ */
+export interface Discussion {
+	id?: string;
+	title?: string;
+	details?: string;
+	created?: number;
+	modified?: number;
+	numberOfComments?: number;
+	contributor?: {
+		resourceId?: string;
+		resource?: string;
+	};
+	comments?: DiscussionComment[];
+}
+
+/**
+ * Person discussions response
+ */
+export interface PersonDiscussionsResponse {
+	discussions?: Discussion[];
+	persons?: Array<{
+		id?: string;
+		"discussion-references"?: Array<{
+			resource?: string;
+			resourceId?: string;
+		}>;
+	}>;
+}
+
+// ====================================
+// Portrait/Photo Types
+// ====================================
+
+/**
+ * Person portrait/photo
+ */
+export interface PersonPortrait {
+	id?: string;
+	url?: string;
+	thumbUrl?: string;
+	iconUrl?: string;
+	width?: number;
+	height?: number;
+	mediaType?: string;
+}
+
+/**
+ * Person portraits response
+ */
+export interface PersonPortraitsResponse {
+	sourceDescriptions?: Array<{
+		id?: string;
+		about?: string;
+		mediaType?: string;
+		resourceType?: string;
+		titles?: Array<{ value?: string }>;
+		descriptions?: Array<{ value?: string }>;
+	}>;
+}
+
+// ====================================
+// Change History Types
+// ====================================
+
+/**
+ * Change entry for a person
+ */
+export interface ChangeEntry {
+	id?: string;
+	title?: string;
+	updated?: number;
+	changeInfo?: Array<{
+		operation?: string;
+		objectType?: string;
+		objectModifier?: string;
+		reason?: string;
+	}>;
+	contributors?: Array<{
+		resourceId?: string;
+		resource?: string;
+		name?: string;
+	}>;
+}
+
+/**
+ * Person change history response
+ */
+export interface PersonChangeHistoryResponse {
+	entries?: ChangeEntry[];
+}
