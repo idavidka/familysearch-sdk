@@ -844,6 +844,68 @@ export function convertToGedcom(
 				}
 			});
 		}
+
+		// ==============================================
+		// ADD PERSON SOURCES (_FS_SOUR custom tags)
+		// These are sources from person.sources (PersonSourcesResponse)
+		// ==============================================
+		if (person.sources?.persons?.[0]?.sources) {
+			// Build a map of sourceDescriptions by ID for fast lookup
+			const sourceDescMap = new Map<string, SourceDescription>();
+			if (person.sources.sourceDescriptions && Array.isArray(person.sources.sourceDescriptions)) {
+				person.sources.sourceDescriptions.forEach((desc) => {
+					if (desc.id) {
+						sourceDescMap.set(desc.id, desc);
+					}
+				});
+			}
+
+			person.sources.persons[0].sources.forEach((sourceRef) => {
+				if (sourceRef.descriptionId) {
+					lines.push(`1 _FS_SOUR ${sourceRef.descriptionId}`);
+					
+					// Find the full source description for this ID
+					const sourceDesc = sourceDescMap.get(sourceRef.descriptionId);
+					
+					if (sourceDesc) {
+						// Add title
+						if (sourceDesc.titles?.[0]?.value) {
+							lines.push(`2 TITL ${sourceDesc.titles[0].value}`);
+						}
+						
+						// Add citation as TEXT
+						if (sourceDesc.citations?.[0]?.value) {
+							lines.push(`2 TEXT ${sourceDesc.citations[0].value}`);
+						}
+						
+						// Add web link (about URL)
+						if (sourceDesc.about) {
+							const webUrl = transformSourceUrl(sourceDesc.about);
+							lines.push(`2 WWW ${webUrl}`);
+						}
+						
+						// Add resource type as NOTE
+						if (sourceDesc.resourceType) {
+							lines.push(`2 NOTE Resource Type: ${sourceDesc.resourceType}`);
+						}
+					}
+					
+					// Add sourceRef description as note if available
+					if (sourceRef.description) {
+						lines.push(`2 NOTE ${sourceRef.description}`);
+					}
+					
+					// Add qualifiers as notes
+					if (sourceRef.qualifiers && Array.isArray(sourceRef.qualifiers)) {
+						sourceRef.qualifiers.forEach((qualifier) => {
+							if (qualifier.name && qualifier.value) {
+								lines.push(`2 NOTE ${qualifier.name}: ${qualifier.value}`);
+							}
+						});
+					}
+				}
+			});
+		}
 	});
 
 	// ==============================================

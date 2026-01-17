@@ -414,6 +414,7 @@ export interface PersonNotesResponse {
 export interface EnhancedPerson extends PersonData {
 	fullDetails?: PersonWithRelationships;
 	notes?: PersonNotesResponse;
+	sources?: PersonSourcesResponse;
 }
 
 /**
