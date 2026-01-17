@@ -15,6 +15,7 @@ A modern, TypeScript-first SDK for the FamilySearch API v3.
 - 📝 **GEDCOM export** - Convert FamilySearch data to GEDCOM 5.5 format
 - 📍 **Places API** helpers for location searches
 - 👨‍👩‍👧 **Tree/Pedigree API** for ancestry data
+- 📚 **Sources API** - Fetch source references linked to persons
 
 ## Installation
 
@@ -131,6 +132,36 @@ const pedigree = await fetchPedigree(sdk, undefined, {
 });
 ```
 
+## Sources API
+
+Retrieve source references linked to persons.
+
+```typescript
+import { createFamilySearchSDK } from 'familysearch-sdk';
+
+const sdk = createFamilySearchSDK({ accessToken: 'token' });
+
+// Fetch sources for a person
+const sources = await sdk.getPersonSources('KWQS-BBQ');
+
+// Access source references
+if (sources?.persons?.[0]?.sources) {
+  sources.persons[0].sources.forEach(source => {
+    console.log('Source ID:', source.descriptionId);
+    console.log('Qualifiers:', source.qualifiers);
+  });
+}
+
+// Access source descriptions
+if (sources?.sourceDescriptions) {
+  sources.sourceDescriptions.forEach(desc => {
+    console.log('Title:', desc.titles?.[0]?.value);
+    console.log('Citation:', desc.citations?.[0]?.value);
+    console.log('About:', desc.about);
+  });
+}
+```
+
 ## GEDCOM Conversion
 
 Convert FamilySearch data to GEDCOM 5.5 format.
@@ -217,6 +248,10 @@ const sdk = createFamilySearchSDK({
 - `getCurrentUser(sdk)` - Get current user info
 - `getPersonWithDetails(sdk, personId)` - Get person details
 - `fetchMultiplePersons(sdk, personIds)` - Batch fetch persons
+
+### Person Sources
+
+- `sdk.getPersonSources(personId)` - Get source references for a person
 
 ### Utils (`/utils`)
 
