@@ -475,11 +475,25 @@ export interface TreePersonMatchEntry {
 	title?: string;
 	/** Content information */
 	content?: {
-		/** Source reference */
+		/** Source description */
 		sourceDescription?: SourceDescription;
 		/** Match score */
 		score?: number;
 	};
+}
+
+/**
+ * Options for querying tree person matches
+ */
+export interface TreePersonMatchesOptions {
+	/** Filter by match status */
+	status?: string;
+	/** Filter by collection ID */
+	collection?: string;
+	/** Number of results to return */
+	count?: number;
+	/** Pagination start index */
+	start?: number;
 }
 
 /**

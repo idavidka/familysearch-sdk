@@ -26,6 +26,7 @@ import type {
 	PersonSearchResponse,
 	PersonSourcesResponse,
 	TreePersonMatchesResponse,
+	TreePersonMatchesOptions,
 	PedigreeData,
 	RelationshipDetails,
 	SDKLogger,
@@ -428,12 +429,7 @@ export class FamilySearchSDK {
 	 */
 	async getTreePersonMatches(
 		personId: string,
-		options: {
-			status?: string;
-			collection?: string;
-			count?: number;
-			start?: number;
-		} = {}
+		options: TreePersonMatchesOptions = {}
 	): Promise<TreePersonMatchesResponse | null> {
 		try {
 			const params = new URLSearchParams();

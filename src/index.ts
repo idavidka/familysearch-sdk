@@ -66,6 +66,7 @@ export type {
 	PersonSearchResponse,
 	PersonSourcesResponse,
 	TreePersonMatchesResponse,
+	TreePersonMatchesOptions,
 	TreePersonMatchEntry,
 	SourceDescription,
 	SourceReference,
