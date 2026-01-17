@@ -5,18 +5,7 @@
  * with exponential backoff for 429 responses.
  */
 
-export interface RateLimiterConfig {
-	/** Maximum requests per second (default: 10) */
-	requestsPerSecond?: number;
-	/** Maximum burst size (default: 20) */
-	maxBurst?: number;
-	/** Maximum retry attempts for 429 errors (default: 3) */
-	maxRetries?: number;
-	/** Initial backoff delay in ms (default: 1000) */
-	initialBackoffMs?: number;
-	/** Maximum backoff delay in ms (default: 30000) */
-	maxBackoffMs?: number;
-}
+import type { RateLimiterConfig } from "./types";
 
 export class RateLimiter {
 	private tokens: number;
@@ -26,6 +15,8 @@ export class RateLimiter {
 	private readonly maxRetries: number;
 	private readonly initialBackoffMs: number;
 	private readonly maxBackoffMs: number;
+	/** Jitter factor (0-1) to add randomness to backoff delays (default: 0.3 = 30%) */
+	private readonly jitterFactor = 0.3;
 
 	constructor(config: RateLimiterConfig = {}) {
 		this.requestsPerSecond = config.requestsPerSecond ?? 10;
@@ -81,7 +72,8 @@ export class RateLimiter {
 		// Exponential backoff with jitter
 		const exponentialDelay =
 			this.initialBackoffMs * Math.pow(2, attempt - 1);
-		const jitter = Math.random() * 0.3 * exponentialDelay; // 0-30% jitter
+		// Add jitter (randomness) to prevent thundering herd problem
+		const jitter = Math.random() * this.jitterFactor * exponentialDelay;
 		return Math.min(exponentialDelay + jitter, this.maxBackoffMs);
 	}
 

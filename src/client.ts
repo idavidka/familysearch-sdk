@@ -11,12 +11,10 @@
  * - Configurable logging
  */
 
-import { createErrorFromResponse, createNetworkError } from "./errors";
 import type { FamilySearchError } from "./errors";
-import type {
-	RateLimiterConfig,
-	RelationshipDeRateLimiter,
-} from "./rate-limiter";
+import { createErrorFromResponse, createNetworkError } from "./errors";
+import { RateLimiter } from "./rate-limiter";
+import type { RelationshipDeRateLimiter } from "./rate-limiter";
 import type {
 	EnvironmentConfig,
 	FamilySearchApiError,
@@ -44,6 +42,8 @@ import type {
 	UserMemoriesResponse,
 	PedigreeData,
 	RelationshipDetails,
+	RateLimiterConfig,
+	SDKLogger,
 } from "./types";
 
 // Environment configuration
