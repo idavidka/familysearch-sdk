@@ -41,6 +41,8 @@ export interface RateLimiterConfig {
 	initialBackoffMs?: number;
 	/** Maximum backoff delay in ms (default: 30000) */
 	maxBackoffMs?: number;
+	/** Jitter factor (0-1) to add randomness to backoff delays (default: 0.3 = 30%) */
+	jitterFactor?: number;
 }
 
 /**

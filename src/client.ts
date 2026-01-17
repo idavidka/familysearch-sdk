@@ -11,8 +11,12 @@
  * - Configurable logging
  */
 
-import type { FamilySearchError } from "./errors";
-import { createErrorFromResponse, createNetworkError } from "./errors";
+import type { FamilySearchError as FamilySearchErrorType } from "./errors";
+import {
+	createErrorFromResponse,
+	createNetworkError,
+	FamilySearchError,
+} from "./errors";
 import { RateLimiter } from "./rate-limiter";
 import type { RelationshipDeRateLimiter } from "./rate-limiter";
 import type {
@@ -217,21 +221,24 @@ export class FamilySearchSDK {
 
 					if (!response.ok) {
 						// Use enhanced error handling
-						const error = createErrorFromResponse(
+						const fsError = createErrorFromResponse(
 							apiResponse,
 							context
 						);
 						// Add response to error for backward compatibility
-						(error as FamilySearchApiError).response = apiResponse;
-						(error as FamilySearchApiError).statusCode =
-							response.status;
-						throw error;
+						// Since all errors from createErrorFromResponse extend FamilySearchError,
+						// we can safely add these properties
+						Object.assign(fsError, {
+							response: apiResponse,
+							statusCode: response.status,
+						} as Partial<FamilySearchApiError>);
+						throw fsError;
 					}
 
 					return apiResponse;
 				} catch (error) {
-					// If it's already a FamilySearchError, rethrow
-					if ((error as FamilySearchError).code) {
+					// If it's already a FamilySearchError (from our error handling), rethrow
+					if (error instanceof FamilySearchError) {
 						throw error;
 					}
 					// Otherwise, wrap in NetworkError

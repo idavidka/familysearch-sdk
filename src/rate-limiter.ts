@@ -15,8 +15,7 @@ export class RateLimiter {
 	private readonly maxRetries: number;
 	private readonly initialBackoffMs: number;
 	private readonly maxBackoffMs: number;
-	/** Jitter factor (0-1) to add randomness to backoff delays (default: 0.3 = 30%) */
-	private readonly jitterFactor = 0.3;
+	private readonly jitterFactor: number;
 
 	constructor(config: RateLimiterConfig = {}) {
 		this.requestsPerSecond = config.requestsPerSecond ?? 10;
@@ -24,6 +23,7 @@ export class RateLimiter {
 		this.maxRetries = config.maxRetries ?? 3;
 		this.initialBackoffMs = config.initialBackoffMs ?? 1000;
 		this.maxBackoffMs = config.maxBackoffMs ?? 30000;
+		this.jitterFactor = config.jitterFactor ?? 0.3;
 
 		this.tokens = this.maxBurst;
 		this.lastRefill = Date.now();
@@ -123,11 +123,36 @@ export class RateLimiter {
 	}
 
 	/**
+	 * Type guard for error with response headers
+	 */
+	private hasResponseHeaders(
+		error: unknown
+	): error is { response: { headers: Record<string, string> } } {
+		return (
+			typeof error === "object" &&
+			error !== null &&
+			"response" in error &&
+			typeof (error as { response?: unknown }).response === "object" &&
+			(error as { response?: unknown }).response !== null &&
+			"headers" in
+				((error as { response?: unknown }).response as object) &&
+			typeof (
+				(error as { response?: unknown }).response as {
+					headers?: unknown;
+				}
+			).headers === "object"
+		);
+	}
+
+	/**
 	 * Extract Retry-After header from error response
 	 */
 	private extractRetryAfter(error: unknown): number | undefined {
-		const response = (error as { response?: { headers?: Record<string, string> } }).response;
-		const retryAfterHeader = response?.headers?.["retry-after"];
+		if (!this.hasResponseHeaders(error)) {
+			return undefined;
+		}
+
+		const retryAfterHeader = error.response.headers["retry-after"];
 
 		if (retryAfterHeader) {
 			const seconds = parseInt(retryAfterHeader, 10);
