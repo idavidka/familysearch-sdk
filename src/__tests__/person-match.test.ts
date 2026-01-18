@@ -623,5 +623,109 @@ describe("Person Match API (External GEDCOM)", () => {
 			// Should still create a persons array with an empty person object
 			expect(body.persons).toHaveLength(1);
 		});
+
+		it("should normalize gender to proper case", async () => {
+			const mockResponse: TreePersonMatchesResponse = {
+				entries: [],
+			};
+
+			(global.fetch as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
+				ok: true,
+				status: 200,
+				statusText: "OK",
+				headers: new Headers({ "content-type": "application/json" }),
+				json: async () => mockResponse,
+			});
+
+			const person: PersonMatchInput = {
+				givenName: "Jane",
+				familyName: "Doe",
+				gender: "female", // lowercase
+			};
+
+			await sdk.matchPerson(person);
+
+			const callArgs = (global.fetch as ReturnType<typeof vi.fn>).mock.calls[0];
+			const body = JSON.parse(callArgs[1].body);
+			// Should normalize to proper case
+			expect(body.persons[0].gender.type).toBe("http://gedcomx.org/Female");
+		});
+
+		it("should ignore invalid gender values", async () => {
+			const mockResponse: TreePersonMatchesResponse = {
+				entries: [],
+			};
+
+			(global.fetch as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
+				ok: true,
+				status: 200,
+				statusText: "OK",
+				headers: new Headers({ "content-type": "application/json" }),
+				json: async () => mockResponse,
+			});
+
+			const person: PersonMatchInput = {
+				givenName: "Test",
+				familyName: "Person",
+				gender: "Invalid", // invalid value
+			};
+
+			await sdk.matchPerson(person);
+
+			const callArgs = (global.fetch as ReturnType<typeof vi.fn>).mock.calls[0];
+			const body = JSON.parse(callArgs[1].body);
+			// Gender should not be included
+			expect(body.persons[0].gender).toBeUndefined();
+		});
+
+		it("should handle name with only familyName without extra spaces", async () => {
+			const mockResponse: TreePersonMatchesResponse = {
+				entries: [],
+			};
+
+			(global.fetch as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
+				ok: true,
+				status: 200,
+				statusText: "OK",
+				headers: new Headers({ "content-type": "application/json" }),
+				json: async () => mockResponse,
+			});
+
+			const person: PersonMatchInput = {
+				familyName: "Smith",
+			};
+
+			await sdk.matchPerson(person);
+
+			const callArgs = (global.fetch as ReturnType<typeof vi.fn>).mock.calls[0];
+			const body = JSON.parse(callArgs[1].body);
+			// Should not have leading/trailing spaces
+			expect(body.persons[0].names[0].nameForms[0].fullText).toBe("Smith");
+		});
+
+		it("should handle name with only givenName without extra spaces", async () => {
+			const mockResponse: TreePersonMatchesResponse = {
+				entries: [],
+			};
+
+			(global.fetch as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
+				ok: true,
+				status: 200,
+				statusText: "OK",
+				headers: new Headers({ "content-type": "application/json" }),
+				json: async () => mockResponse,
+			});
+
+			const person: PersonMatchInput = {
+				givenName: "John",
+			};
+
+			await sdk.matchPerson(person);
+
+			const callArgs = (global.fetch as ReturnType<typeof vi.fn>).mock.calls[0];
+			const body = JSON.parse(callArgs[1].body);
+			// Should not have leading/trailing spaces
+			expect(body.persons[0].names[0].nameForms[0].fullText).toBe("John");
+		});
 	});
 });

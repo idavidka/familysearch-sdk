@@ -606,12 +606,6 @@ export interface PersonMatchInput {
 	marriageDate?: string;
 	/** Marriage place (if searching with spouse context) */
 	marriagePlace?: string;
-	/** Father's name (for additional context) */
-	fatherName?: string;
-	/** Mother's name (for additional context) */
-	motherName?: string;
-	/** Spouse's name (for additional context) */
-	spouseName?: string;
 }
 
 /**

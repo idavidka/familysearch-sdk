@@ -516,19 +516,30 @@ export class FamilySearchSDK {
 					nameParts.push({ type: "http://gedcomx.org/Surname", value: person.familyName });
 				}
 
+				// Build full name, avoiding extra spaces
+				const fullText = person.fullName || 
+					[person.givenName, person.familyName].filter(Boolean).join(" ");
+
 				gedcomxPerson.names = [{
 					nameForms: [{
-						fullText: person.fullName || `${person.givenName || ""} ${person.familyName || ""}`.trim(),
+						fullText,
 						parts: nameParts.length > 0 ? nameParts : undefined,
 					}],
 				}];
 			}
 
-			// Add gender
+			// Add gender (validate against known GedcomX types)
 			if (person.gender) {
-				gedcomxPerson.gender = {
-					type: `http://gedcomx.org/${person.gender}`,
-				};
+				// Normalize gender to proper case and validate
+				const normalizedGender = person.gender.charAt(0).toUpperCase() + 
+					person.gender.slice(1).toLowerCase();
+				
+				// Only add if it's a valid GedcomX gender type
+				if (["Male", "Female", "Unknown"].includes(normalizedGender)) {
+					gedcomxPerson.gender = {
+						type: `http://gedcomx.org/${normalizedGender}`,
+					};
+				}
 			}
 
 			// Add facts (birth, death, marriage)
