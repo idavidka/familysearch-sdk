@@ -16,8 +16,23 @@ import type {
 /**
  * Transform FamilySearch API URLs to web URLs
  * Supports: apibeta.familysearch.org, beta.familysearch.org, integration.familysearch.org
+ * Also handles ARK URLs (already web URLs, just return them)
  */
 function transformFamilySearchUrl(url: string): string {
+	// Special case: API URL with embedded ARK URL as parameter
+	// e.g., https://api.familysearch.org/platform/tree/persons/https://familysearch.org/ark:/61903/1:1:XXX?flag=fsh
+	if (url.includes("/platform/tree/persons/https://")) {
+		const arkMatch = url.match(/\/persons\/(https:\/\/[^?]+)/);
+		if (arkMatch && arkMatch[1]) {
+			return arkMatch[1]; // Return just the ARK URL part (without query params)
+		}
+	}
+
+	// If it's an ARK URL (already a web URL), return as-is
+	if (url.includes("/ark:/")) {
+		return url;
+	}
+
 	// If it's not an API URL, return as-is
 	if (!url.includes("/platform/tree/persons/")) {
 		return url;
@@ -852,7 +867,10 @@ export function convertToGedcom(
 		if (person.sources?.persons?.[0]?.sources) {
 			// Build a map of sourceDescriptions by ID for fast lookup
 			const sourceDescMap = new Map<string, SourceDescription>();
-			if (person.sources.sourceDescriptions && Array.isArray(person.sources.sourceDescriptions)) {
+			if (
+				person.sources.sourceDescriptions &&
+				Array.isArray(person.sources.sourceDescriptions)
+			) {
 				person.sources.sourceDescriptions.forEach((desc) => {
 					if (desc.id) {
 						sourceDescMap.set(desc.id, desc);
@@ -863,45 +881,218 @@ export function convertToGedcom(
 			person.sources.persons[0].sources.forEach((sourceRef) => {
 				if (sourceRef.descriptionId) {
 					lines.push(`1 _FS_SOUR ${sourceRef.descriptionId}`);
-					
+
 					// Find the full source description for this ID
-					const sourceDesc = sourceDescMap.get(sourceRef.descriptionId);
-					
+					const sourceDesc = sourceDescMap.get(
+						sourceRef.descriptionId
+					);
+
 					if (sourceDesc) {
 						// Add title
 						if (sourceDesc.titles?.[0]?.value) {
 							lines.push(`2 TITL ${sourceDesc.titles[0].value}`);
 						}
-						
+
 						// Add citation as TEXT
 						if (sourceDesc.citations?.[0]?.value) {
-							lines.push(`2 TEXT ${sourceDesc.citations[0].value}`);
+							lines.push(
+								`2 TEXT ${sourceDesc.citations[0].value}`
+							);
 						}
-						
+
 						// Add web link (about URL)
 						if (sourceDesc.about) {
 							const webUrl = transformSourceUrl(sourceDesc.about);
 							lines.push(`2 WWW ${webUrl}`);
 						}
-						
+
 						// Add resource type as NOTE
 						if (sourceDesc.resourceType) {
-							lines.push(`2 NOTE Resource Type: ${sourceDesc.resourceType}`);
+							lines.push(
+								`2 NOTE Resource Type: ${sourceDesc.resourceType}`
+							);
 						}
 					}
-					
+
 					// Add sourceRef description as note if available
 					if (sourceRef.description) {
 						lines.push(`2 NOTE ${sourceRef.description}`);
 					}
-					
+
 					// Add qualifiers as notes
-					if (sourceRef.qualifiers && Array.isArray(sourceRef.qualifiers)) {
+					if (
+						sourceRef.qualifiers &&
+						Array.isArray(sourceRef.qualifiers)
+					) {
 						sourceRef.qualifiers.forEach((qualifier) => {
 							if (qualifier.name && qualifier.value) {
-								lines.push(`2 NOTE ${qualifier.name}: ${qualifier.value}`);
+								lines.push(
+									`2 NOTE ${qualifier.name}: ${qualifier.value}`
+								);
 							}
 						});
+					}
+				}
+			});
+		}
+
+		// ==============================================
+		// ADD PERSON MATCHES (_FS_MATCH custom tags)
+		// These are matches from person.matches (TreePersonMatchesResponse)
+		// ==============================================
+		if (person.matches?.entries) {
+			// Build a map of sourceDescriptions by ID for fast lookup
+			const matchSourceDescMap = new Map<string, SourceDescription>();
+			if (
+				person.matches.sourceDescriptions &&
+				Array.isArray(person.matches.sourceDescriptions)
+			) {
+				person.matches.sourceDescriptions.forEach((desc) => {
+					if (desc.id) {
+						matchSourceDescMap.set(desc.id, desc);
+					}
+				});
+			}
+
+			person.matches.entries.forEach((entry) => {
+				if (entry.id) {
+					lines.push(`1 _FS_MATCH ${entry.id}`);
+
+					// Add title if available
+					if (entry.title) {
+						lines.push(`2 TITL ${entry.title}`);
+					}
+
+					// Add match score as SCORE field (dedicated tag)
+					if (entry.content?.score !== undefined) {
+						lines.push(`2 SCORE ${entry.content.score}`);
+					}
+
+					// Add confidence as NOTE
+					if (entry.content?.confidence !== undefined) {
+						lines.push(
+							`2 NOTE Confidence: ${entry.content.confidence}`
+						);
+					}
+
+					// Extract and add collection type from matchInfo
+					let collectionType = "TREE"; // Default
+					if (entry.matchInfo && entry.matchInfo.length > 0) {
+						const matchInfo = entry.matchInfo[0];
+						if (matchInfo.collection) {
+							// Parse collection URL like "tree://MEMORIES" or "records://..."
+							const collectionLower =
+								matchInfo.collection.toLowerCase();
+							if (collectionLower.includes("records")) {
+								collectionType = "RECORDS";
+							} else if (collectionLower.includes("tree")) {
+								collectionType = "TREE";
+							}
+						}
+						// Add status as NOTE (clean format - extract last part after /)
+						if (matchInfo.status) {
+							// Extract status name from URL (e.g., http://familysearch.org/v1/Pending -> Pending)
+							const statusName = matchInfo.status.includes("/")
+								? matchInfo.status.split("/").pop()
+								: matchInfo.status;
+							lines.push(`2 NOTE Status: ${statusName}`);
+						}
+					}
+					lines.push(`2 TYPE ${collectionType}`);
+
+					// Add REF field (reference to match ID)
+					lines.push(`2 REF ${entry.id}`);
+
+					// Extract person link (WWW field for direct FamilySearch person link)
+					if (entry.links?.person?.href) {
+						const personUrl = transformFamilySearchUrl(
+							entry.links.person.href
+						);
+						lines.push(`2 WWW ${personUrl}`);
+					}
+
+					// Add matched person information from gedcomx.persons
+					if (
+						entry.content?.gedcomx?.persons &&
+						entry.content.gedcomx.persons.length > 0
+					) {
+						const matchedPerson = entry.content.gedcomx.persons[0];
+
+						// Add display name as TEXT
+						if (matchedPerson.display?.name) {
+							lines.push(`2 TEXT ${matchedPerson.display.name}`);
+						}
+
+						// Add lifespan as NOTE
+						if (matchedPerson.display?.lifespan) {
+							lines.push(
+								`2 NOTE Lifespan: ${matchedPerson.display.lifespan}`
+							);
+						}
+
+						// Add birth info as NOTE
+						if (
+							matchedPerson.display?.birthDate ||
+							matchedPerson.display?.birthPlace
+						) {
+							const birthInfo = [
+								matchedPerson.display.birthDate,
+								matchedPerson.display.birthPlace,
+							]
+								.filter(Boolean)
+								.join(", ");
+							if (birthInfo) {
+								lines.push(`2 NOTE Birth: ${birthInfo}`);
+							}
+						}
+
+						// Add death info as NOTE
+						if (
+							matchedPerson.display?.deathDate ||
+							matchedPerson.display?.deathPlace
+						) {
+							const deathInfo = [
+								matchedPerson.display.deathDate,
+								matchedPerson.display.deathPlace,
+							]
+								.filter(Boolean)
+								.join(", ");
+							if (deathInfo) {
+								lines.push(`2 NOTE Death: ${deathInfo}`);
+							}
+						}
+
+						// Add gender as NOTE
+						if (matchedPerson.display?.gender) {
+							lines.push(
+								`2 NOTE Gender: ${matchedPerson.display.gender}`
+							);
+						}
+					}
+
+					// Add source description details if available
+					if (entry.content?.sourceDescription) {
+						const sourceDesc = entry.content.sourceDescription;
+
+						// Add citation as NOTE (to preserve existing data)
+						if (sourceDesc.citations?.[0]?.value) {
+							lines.push(
+								`2 NOTE Citation: ${sourceDesc.citations[0].value}`
+							);
+						}
+
+						// Add resource type as NOTE
+						if (sourceDesc.resourceType) {
+							lines.push(
+								`2 NOTE Resource Type: ${sourceDesc.resourceType}`
+							);
+						}
+
+						// Add source link (about URL) as NOTE
+						if (sourceDesc.about) {
+							const webUrl = transformSourceUrl(sourceDesc.about);
+							lines.push(`2 NOTE Source: ${webUrl}`);
+						}
 					}
 				}
 			});

@@ -415,6 +415,7 @@ export interface EnhancedPerson extends PersonData {
 	fullDetails?: PersonWithRelationships;
 	notes?: PersonNotesResponse;
 	sources?: PersonSourcesResponse;
+	matches?: TreePersonMatchesResponse;
 }
 
 /**
@@ -462,6 +463,121 @@ export interface PersonSourcesResponse {
 	}>;
 	/** Source descriptions providing details about sources */
 	sourceDescriptions?: SourceDescription[];
+}
+
+/**
+ * Tree person match entry
+ * Represents a single match entry in the response
+ */
+export interface TreePersonMatchEntry {
+	/** Entry ID */
+	id?: string;
+	/** Entry title */
+	title?: string;
+	/** Links associated with the match entry */
+	links?: {
+		/** Link to the matched person */
+		person?: {
+			href?: string;
+		};
+		[key: string]: unknown;
+	};
+	/** Content information */
+	content?: {
+		/** Source description */
+		sourceDescription?: SourceDescription;
+		/** Match score */
+		score?: number;
+		/** Confidence level (e.g., 4 = high confidence) */
+		confidence?: number;
+		/** GedcomX data containing persons, relationships, places */
+		gedcomx?: {
+			/** Array of persons in the match */
+			persons?: Array<{
+				id?: string;
+				names?: Array<{
+					nameForms?: Array<{
+						fullText?: string;
+						parts?: Array<{
+							type?: string;
+							value?: string;
+						}>;
+					}>;
+				}>;
+				gender?: {
+					type?: string;
+				};
+				facts?: Array<{
+					type?: string;
+					date?: {
+						original?: string;
+						formal?: string;
+					};
+					place?: {
+						original?: string;
+					};
+				}>;
+				display?: {
+					name?: string;
+					gender?: string;
+					lifespan?: string;
+					birthDate?: string;
+					birthPlace?: string;
+					deathDate?: string;
+					deathPlace?: string;
+					marriageDate?: string;
+					marriagePlace?: string;
+				};
+			}>;
+			/** Array of relationships in the match */
+			relationships?: Array<{
+				type?: string;
+				person1?: { resourceId?: string };
+				person2?: { resourceId?: string };
+			}>;
+			/** Array of places referenced */
+			places?: Array<{
+				id?: string;
+				names?: Array<{
+					value?: string;
+				}>;
+			}>;
+		};
+	};
+	/** Match information including collection and status */
+	matchInfo?: Array<{
+		/** Collection URL (e.g., tree://MEMORIES, records://...) */
+		collection?: string;
+		/** Match status (e.g., pending, accepted) */
+		status?: string;
+	}>;
+}
+
+/**
+ * Options for querying tree person matches
+ */
+export interface TreePersonMatchesOptions {
+	/** Filter by match status */
+	status?: string;
+	/** Filter by collection ID */
+	collection?: string;
+	/** Number of results to return */
+	count?: number;
+	/** Pagination start index */
+	start?: number;
+}
+
+/**
+ * Tree person matches response from FamilySearch API
+ * Returned by GET /platform/tree/persons/{personId}/matches
+ */
+export interface TreePersonMatchesResponse {
+	/** Array of source descriptions (match records) */
+	sourceDescriptions?: SourceDescription[];
+	/** Array of persons */
+	persons?: PersonData[];
+	/** Entries with match information */
+	entries?: TreePersonMatchEntry[];
 }
 
 /**
