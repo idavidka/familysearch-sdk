@@ -474,13 +474,83 @@ export interface TreePersonMatchEntry {
 	id?: string;
 	/** Entry title */
 	title?: string;
+	/** Links associated with the match entry */
+	links?: {
+		/** Link to the matched person */
+		person?: {
+			href?: string;
+		};
+		[key: string]: unknown;
+	};
 	/** Content information */
 	content?: {
 		/** Source description */
 		sourceDescription?: SourceDescription;
 		/** Match score */
 		score?: number;
+		/** Confidence level (e.g., 4 = high confidence) */
+		confidence?: number;
+		/** GedcomX data containing persons, relationships, places */
+		gedcomx?: {
+			/** Array of persons in the match */
+			persons?: Array<{
+				id?: string;
+				names?: Array<{
+					nameForms?: Array<{
+						fullText?: string;
+						parts?: Array<{
+							type?: string;
+							value?: string;
+						}>;
+					}>;
+				}>;
+				gender?: {
+					type?: string;
+				};
+				facts?: Array<{
+					type?: string;
+					date?: {
+						original?: string;
+						formal?: string;
+					};
+					place?: {
+						original?: string;
+					};
+				}>;
+				display?: {
+					name?: string;
+					gender?: string;
+					lifespan?: string;
+					birthDate?: string;
+					birthPlace?: string;
+					deathDate?: string;
+					deathPlace?: string;
+					marriageDate?: string;
+					marriagePlace?: string;
+				};
+			}>;
+			/** Array of relationships in the match */
+			relationships?: Array<{
+				type?: string;
+				person1?: { resourceId?: string };
+				person2?: { resourceId?: string };
+			}>;
+			/** Array of places referenced */
+			places?: Array<{
+				id?: string;
+				names?: Array<{
+					value?: string;
+				}>;
+			}>;
+		};
 	};
+	/** Match information including collection and status */
+	matchInfo?: Array<{
+		/** Collection URL (e.g., tree://MEMORIES, records://...) */
+		collection?: string;
+		/** Match status (e.g., pending, accepted) */
+		status?: string;
+	}>;
 }
 
 /**
