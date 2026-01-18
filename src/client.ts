@@ -27,6 +27,8 @@ import type {
 	PersonSourcesResponse,
 	TreePersonMatchesResponse,
 	TreePersonMatchesOptions,
+	PersonMatchInput,
+	PersonMatchOptions,
 	PedigreeData,
 	RelationshipDetails,
 	SDKLogger,
@@ -458,6 +460,130 @@ export class FamilySearchSDK {
 		} catch (error) {
 			this.logger.error(
 				`[FamilySearch SDK] Failed to get matches for ${personId}:`,
+				error
+			);
+			return null;
+		}
+	}
+
+	/**
+	 * Match person from external GEDCOM data
+	 * Submits a virtual person profile to find matching persons in the FamilySearch Tree
+	 * Use this for persons from external GEDCOM files or manually created trees
+	 *
+	 * @param person - Person data to match (name, dates, places, etc.)
+	 * @param options - Optional query parameters
+	 * @returns Tree person matches response with potential matches, or null if error
+	 *
+	 * @example
+	 * ```typescript
+	 * const matches = await sdk.matchPerson({
+	 *   givenName: 'John',
+	 *   familyName: 'Smith',
+	 *   birthDate: '1850',
+	 *   birthPlace: 'London, England',
+	 *   deathDate: '1920',
+	 *   deathPlace: 'New York, USA'
+	 * });
+	 *
+	 * if (matches?.entries) {
+	 *   matches.entries.forEach(match => {
+	 *     console.log('Potential match:', match.title);
+	 *     console.log('Score:', match.content?.score);
+	 *   });
+	 * }
+	 * ```
+	 */
+	async matchPerson(
+		person: PersonMatchInput,
+		options: PersonMatchOptions = {}
+	): Promise<TreePersonMatchesResponse | null> {
+		try {
+			// Build the GedcomX person object for the API
+			const gedcomxPerson: {
+				names?: Array<{ nameForms?: Array<{ fullText?: string; parts?: Array<{ type?: string; value?: string }> }> }>;
+				gender?: { type?: string };
+				facts?: Array<{ type?: string; date?: { original?: string }; place?: { original?: string } }>;
+			} = {};
+
+			// Add name information
+			if (person.fullName || person.givenName || person.familyName) {
+				const nameParts: Array<{ type?: string; value?: string }> = [];
+				if (person.givenName) {
+					nameParts.push({ type: "http://gedcomx.org/Given", value: person.givenName });
+				}
+				if (person.familyName) {
+					nameParts.push({ type: "http://gedcomx.org/Surname", value: person.familyName });
+				}
+
+				gedcomxPerson.names = [{
+					nameForms: [{
+						fullText: person.fullName || `${person.givenName || ""} ${person.familyName || ""}`.trim(),
+						parts: nameParts.length > 0 ? nameParts : undefined,
+					}],
+				}];
+			}
+
+			// Add gender
+			if (person.gender) {
+				gedcomxPerson.gender = {
+					type: `http://gedcomx.org/${person.gender}`,
+				};
+			}
+
+			// Add facts (birth, death, marriage)
+			const facts: Array<{ type?: string; date?: { original?: string }; place?: { original?: string } }> = [];
+
+			if (person.birthDate || person.birthPlace) {
+				facts.push({
+					type: "http://gedcomx.org/Birth",
+					date: person.birthDate ? { original: person.birthDate } : undefined,
+					place: person.birthPlace ? { original: person.birthPlace } : undefined,
+				});
+			}
+
+			if (person.deathDate || person.deathPlace) {
+				facts.push({
+					type: "http://gedcomx.org/Death",
+					date: person.deathDate ? { original: person.deathDate } : undefined,
+					place: person.deathPlace ? { original: person.deathPlace } : undefined,
+				});
+			}
+
+			if (person.marriageDate || person.marriagePlace) {
+				facts.push({
+					type: "http://gedcomx.org/Marriage",
+					date: person.marriageDate ? { original: person.marriageDate } : undefined,
+					place: person.marriagePlace ? { original: person.marriagePlace } : undefined,
+				});
+			}
+
+			if (facts.length > 0) {
+				gedcomxPerson.facts = facts;
+			}
+
+			// Build query parameters
+			const params = new URLSearchParams();
+			if (options.collection) {
+				params.append("collection", options.collection);
+			}
+			if (options.count !== undefined) {
+				params.append("count", options.count.toString());
+			}
+
+			const queryString = params.toString();
+			const url = `/platform/tree/matches${queryString ? `?${queryString}` : ""}`;
+
+			// Submit the person data to the matches endpoint
+			const requestBody = {
+				persons: [gedcomxPerson],
+			};
+
+			const response = await this.post<TreePersonMatchesResponse>(url, requestBody);
+			return response.data || null;
+		} catch (error) {
+			this.logger.error(
+				"[FamilySearch SDK] Failed to match person:",
 				error
 			);
 			return null;

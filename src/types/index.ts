@@ -581,6 +581,50 @@ export interface TreePersonMatchesResponse {
 }
 
 /**
+ * Person match input for external GEDCOM data
+ * Used to search for matching persons in the FamilySearch Tree
+ * based on a virtual person profile without an existing person ID
+ */
+export interface PersonMatchInput {
+	/** Person's given/first name(s) */
+	givenName?: string;
+	/** Person's family/last name(s) */
+	familyName?: string;
+	/** Person's full name (alternative to givenName + familyName) */
+	fullName?: string;
+	/** Person's gender (e.g., "Male", "Female") */
+	gender?: string;
+	/** Birth date in various formats (e.g., "1850", "15 March 1850") */
+	birthDate?: string;
+	/** Birth place name */
+	birthPlace?: string;
+	/** Death date in various formats */
+	deathDate?: string;
+	/** Death place name */
+	deathPlace?: string;
+	/** Marriage date (if searching with spouse context) */
+	marriageDate?: string;
+	/** Marriage place (if searching with spouse context) */
+	marriagePlace?: string;
+	/** Father's name (for additional context) */
+	fatherName?: string;
+	/** Mother's name (for additional context) */
+	motherName?: string;
+	/** Spouse's name (for additional context) */
+	spouseName?: string;
+}
+
+/**
+ * Options for person match queries
+ */
+export interface PersonMatchOptions {
+	/** Number of results to return (default: 20) */
+	count?: number;
+	/** Filter by collection ID */
+	collection?: string;
+}
+
+/**
  * Enhanced pedigree with full details
  */
 export interface EnhancedPedigreeData {

@@ -68,6 +68,8 @@ export type {
 	TreePersonMatchesResponse,
 	TreePersonMatchesOptions,
 	TreePersonMatchEntry,
+	PersonMatchInput,
+	PersonMatchOptions,
 	SourceDescription,
 	SourceReference,
 	// Places
