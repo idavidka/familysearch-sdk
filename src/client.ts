@@ -517,8 +517,7 @@ export class FamilySearchSDK {
 				}
 
 				// Build full name, avoiding extra spaces
-				const fullText = person.fullName || 
-					[person.givenName, person.familyName].filter(Boolean).join(" ");
+				const fullText = person.fullName || [person.givenName, person.familyName].filter(Boolean).join(" ");
 
 				gedcomxPerson.names = [{
 					nameForms: [{
@@ -531,8 +530,7 @@ export class FamilySearchSDK {
 			// Add gender (validate against known GedcomX types)
 			if (person.gender) {
 				// Normalize gender to proper case and validate
-				const normalizedGender = person.gender.charAt(0).toUpperCase() + 
-					person.gender.slice(1).toLowerCase();
+				const normalizedGender = person.gender.charAt(0).toUpperCase() + person.gender.slice(1).toLowerCase();
 				
 				// Only add if it's a valid GedcomX gender type
 				if (["Male", "Female", "Unknown"].includes(normalizedGender)) {
