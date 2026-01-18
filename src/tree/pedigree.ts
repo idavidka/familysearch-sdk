@@ -40,6 +40,7 @@ export async function fetchPedigree(
 		includeDetails?: boolean;
 		includeNotes?: boolean;
 		includeRelationshipDetails?: boolean;
+		includeSourceDescriptions?: boolean;
 	} = {}
 ): Promise<EnhancedPedigreeData> {
 	const {
@@ -48,6 +49,7 @@ export async function fetchPedigree(
 		includeDetails = true,
 		includeNotes = true,
 		includeRelationshipDetails = true,
+		includeSourceDescriptions = false,
 	} = options;
 
 	// Get current user's person ID if not provided
@@ -108,10 +110,11 @@ export async function fetchPedigree(
 		try {
 			const enhanced: EnhancedPerson = { ...person };
 
-			// Fetch full person details with sources
+			// Fetch full person details with optional sources
 			if (includeDetails) {
 				enhanced.fullDetails = (await sdk.getPersonWithDetails(
-					person.id
+					person.id,
+					{ sourceDescriptions: includeSourceDescriptions }
 				)) as EnhancedPerson["fullDetails"];
 			}
 
@@ -246,11 +249,12 @@ export async function getCurrentUser(
  */
 export async function getPersonWithDetails(
 	sdk: FamilySearchSDK,
-	personId: string
+	personId: string,
+	options: { sourceDescriptions?: boolean } = {}
 ): Promise<EnhancedPerson | null> {
 	try {
 		const [details, notes] = await Promise.all([
-			sdk.getPersonWithDetails(personId),
+			sdk.getPersonWithDetails(personId, options),
 			sdk.getPersonNotes(personId),
 		]);
 

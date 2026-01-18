@@ -316,14 +316,21 @@ export class FamilySearchSDK {
 	}
 
 	/**
-	 * Get person with full details including sources
+	 * Get person with full details
+	 * @param personId - FamilySearch person ID
+	 * @param options - Optional query parameters
+	 * @param options.sourceDescriptions - Include source descriptions (default: false)
 	 */
 	async getPersonWithDetails(
-		personId: string
+		personId: string,
+		options: { sourceDescriptions?: boolean } = {}
 	): Promise<PersonWithRelationships | null> {
 		try {
+			const queryParams = options.sourceDescriptions
+				? "?sourceDescriptions=true"
+				: "";
 			const response = await this.get(
-				`/platform/tree/persons/${personId}?sourceDescriptions=true`
+				`/platform/tree/persons/${personId}${queryParams}`
 			);
 			return (response.data as PersonWithRelationships) || null;
 		} catch (error) {

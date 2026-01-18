@@ -11,6 +11,7 @@ import type {
 	Relationship,
 	SourceDescription,
 	SourceReference,
+	TreePersonMatchEntry,
 } from "../types";
 
 /**
@@ -406,6 +407,266 @@ export function convertToGedcom(
 		// Add resource type as NOTE
 		if (source.resourceType) {
 			lines.push(`1 NOTE Resource Type: ${source.resourceType}`);
+		}
+	});
+
+	// ==============================================
+	// CREATE _FS_SOUR RECORDS (FamilySearch Sources)
+	// ==============================================
+	const fsSourMap = new Map<
+		string,
+		{
+			id: string;
+			gedcomId: string;
+			source: SourceDescription;
+			notes: Set<string>;
+		}
+	>();
+	let fsSourCounter = 1;
+
+	pedigreeData.persons.forEach((person) => {
+		if (person.sources?.persons?.[0]?.sources) {
+			// Build a map of sourceDescriptions by ID for fast lookup
+			const sourceDescMap = new Map<string, SourceDescription>();
+			if (
+				person.sources.sourceDescriptions &&
+				Array.isArray(person.sources.sourceDescriptions)
+			) {
+				person.sources.sourceDescriptions.forEach((desc) => {
+					if (desc.id) {
+						sourceDescMap.set(desc.id, desc);
+					}
+				});
+			}
+
+			person.sources.persons[0].sources.forEach((sourceRef) => {
+				const sourceId = sourceRef.descriptionId;
+				if (!sourceId) return;
+
+				const sourceDesc = sourceDescMap.get(sourceId);
+				if (!sourceDesc) return;
+
+				// Get or create _FS_SOUR entry
+				let fsSourEntry = fsSourMap.get(sourceId);
+				if (!fsSourEntry) {
+					const gedcomId = `@FS${fsSourCounter++}@`;
+					fsSourEntry = {
+						id: sourceId,
+						gedcomId,
+						source: sourceDesc,
+						notes: new Set<string>(),
+					};
+					fsSourMap.set(sourceId, fsSourEntry);
+				}
+
+				// Collect notes from sourceRef (person-specific)
+				// Add ID as note (e.g., "#7818-KZ5")
+				if (sourceId) {
+					fsSourEntry.notes.add(`#${sourceId}`);
+				}
+
+				// Add description as note
+				if (sourceRef.description) {
+					fsSourEntry.notes.add(sourceRef.description);
+				}
+
+				// Add qualifiers as notes
+				if (
+					sourceRef.qualifiers &&
+					Array.isArray(sourceRef.qualifiers)
+				) {
+					sourceRef.qualifiers.forEach((qualifier) => {
+						if (qualifier.name && qualifier.value) {
+							fsSourEntry.notes.add(
+								`${qualifier.name}: ${qualifier.value}`
+							);
+						}
+					});
+				}
+			});
+		}
+	});
+
+	// Create _FS_SOUR records
+	fsSourMap.forEach(({ gedcomId, id, source, notes }) => {
+		lines.push(`0 ${gedcomId} _FS_SOUR`);
+		lines.push(`1 _FS_ID ${id}`);
+
+		// Add title
+		if (source.titles?.[0]?.value) {
+			lines.push(`1 TITL ${source.titles[0].value}`);
+		}
+
+		// Add citation as TEXT
+		if (source.citations?.[0]?.value) {
+			lines.push(`1 TEXT ${source.citations[0].value}`);
+		}
+
+		// Add web link (about URL)
+		if (source.about) {
+			const webUrl = transformSourceUrl(source.about);
+			lines.push(`1 WWW ${webUrl}`);
+		}
+
+		// Add resource type as NOTE
+		if (source.resourceType) {
+			lines.push(`1 NOTE Resource Type: ${source.resourceType}`);
+		}
+
+		// Add collected notes from all persons referencing this source
+		notes.forEach((note) => {
+			lines.push(`1 NOTE ${note}`);
+		});
+	});
+
+	// ==============================================
+	// CREATE _FS_MATCH RECORDS (FamilySearch Matches)
+	// ==============================================
+	const fsMatchMap = new Map<
+		string,
+		{ id: string; gedcomId: string; entry: TreePersonMatchEntry }
+	>();
+	let fsMatchCounter = 1;
+
+	pedigreeData.persons.forEach((person) => {
+		if (person.matches?.entries) {
+			person.matches.entries.forEach((entry) => {
+				const matchId = entry.id;
+				if (!matchId || fsMatchMap.has(matchId)) return;
+
+				const gedcomId = `@FM${fsMatchCounter++}@`;
+				fsMatchMap.set(matchId, { id: matchId, gedcomId, entry });
+			});
+		}
+	});
+
+	// Create _FS_MATCH records
+	fsMatchMap.forEach(({ gedcomId, id, entry }) => {
+		lines.push(`0 ${gedcomId} _FS_MATCH`);
+		lines.push(`1 _FS_ID ${id}`);
+
+		// Add title if available
+		if (entry.title) {
+			lines.push(`1 TITL ${entry.title}`);
+		}
+
+		// Add match score as SCORE field
+		if (entry.content?.score !== undefined) {
+			lines.push(`1 SCORE ${entry.content.score}`);
+		}
+
+		// Add confidence as NOTE
+		if (entry.content?.confidence !== undefined) {
+			lines.push(`1 NOTE Confidence: ${entry.content.confidence}`);
+		}
+
+		// Extract and add collection type from matchInfo
+		let collectionType = "TREE"; // Default
+		if (entry.matchInfo && entry.matchInfo.length > 0) {
+			const matchInfo = entry.matchInfo[0];
+			if (matchInfo.collection) {
+				const collectionLower = matchInfo.collection.toLowerCase();
+				if (collectionLower.includes("records")) {
+					collectionType = "RECORDS";
+				} else if (collectionLower.includes("tree")) {
+					collectionType = "TREE";
+				}
+			}
+			// Add status as NOTE
+			if (matchInfo.status) {
+				const statusName = matchInfo.status.includes("/")
+					? matchInfo.status.split("/").pop()
+					: matchInfo.status;
+				lines.push(`1 NOTE Status: ${statusName}`);
+			}
+		}
+		lines.push(`1 TYPE ${collectionType}`);
+
+		// Add REF field (reference to match ID)
+		lines.push(`1 REF ${id}`);
+
+		// Extract person link (WWW field for direct FamilySearch person link)
+		if (entry.links?.person?.href) {
+			const personUrl = transformFamilySearchUrl(entry.links.person.href);
+			lines.push(`1 WWW ${personUrl}`);
+		}
+
+		// Add matched person information from gedcomx.persons
+		if (
+			entry.content?.gedcomx?.persons &&
+			entry.content.gedcomx.persons.length > 0
+		) {
+			const matchedPerson = entry.content.gedcomx.persons[0];
+
+			// Add display name as TEXT
+			if (matchedPerson.display?.name) {
+				lines.push(`1 TEXT ${matchedPerson.display.name}`);
+			}
+
+			// Add lifespan as NOTE
+			if (matchedPerson.display?.lifespan) {
+				lines.push(
+					`1 NOTE Lifespan: ${matchedPerson.display.lifespan}`
+				);
+			}
+
+			// Add birth info as NOTE
+			if (
+				matchedPerson.display?.birthDate ||
+				matchedPerson.display?.birthPlace
+			) {
+				const birthInfo = [
+					matchedPerson.display.birthDate,
+					matchedPerson.display.birthPlace,
+				]
+					.filter(Boolean)
+					.join(", ");
+				if (birthInfo) {
+					lines.push(`1 NOTE Birth: ${birthInfo}`);
+				}
+			}
+
+			// Add death info as NOTE
+			if (
+				matchedPerson.display?.deathDate ||
+				matchedPerson.display?.deathPlace
+			) {
+				const deathInfo = [
+					matchedPerson.display.deathDate,
+					matchedPerson.display.deathPlace,
+				]
+					.filter(Boolean)
+					.join(", ");
+				if (deathInfo) {
+					lines.push(`1 NOTE Death: ${deathInfo}`);
+				}
+			}
+
+			// Add gender as NOTE
+			if (matchedPerson.display?.gender) {
+				lines.push(`1 NOTE Gender: ${matchedPerson.display.gender}`);
+			}
+		}
+
+		// Add source description details if available
+		if (entry.content?.sourceDescription) {
+			const sourceDesc = entry.content.sourceDescription;
+
+			// Add citation as NOTE
+			if (sourceDesc.citations?.[0]?.value) {
+				lines.push(`1 NOTE Citation: ${sourceDesc.citations[0].value}`);
+			}
+
+			// Add resource type as NOTE
+			if (sourceDesc.resourceType) {
+				lines.push(`1 NOTE Resource Type: ${sourceDesc.resourceType}`);
+			}
+
+			// Add source link (about URL) as NOTE
+			if (sourceDesc.about) {
+				const webUrl = transformSourceUrl(sourceDesc.about);
+				lines.push(`1 NOTE Source: ${webUrl}`);
+			}
 		}
 	});
 
@@ -861,240 +1122,36 @@ export function convertToGedcom(
 		}
 
 		// ==============================================
-		// ADD PERSON SOURCES (_FS_SOUR custom tags)
+		// ADD PERSON SOURCES (_FS_SOUR references)
 		// These are sources from person.sources (PersonSourcesResponse)
 		// ==============================================
 		if (person.sources?.persons?.[0]?.sources) {
-			// Build a map of sourceDescriptions by ID for fast lookup
-			const sourceDescMap = new Map<string, SourceDescription>();
-			if (
-				person.sources.sourceDescriptions &&
-				Array.isArray(person.sources.sourceDescriptions)
-			) {
-				person.sources.sourceDescriptions.forEach((desc) => {
-					if (desc.id) {
-						sourceDescMap.set(desc.id, desc);
-					}
-				});
-			}
-
 			person.sources.persons[0].sources.forEach((sourceRef) => {
-				if (sourceRef.descriptionId) {
-					lines.push(`1 _FS_SOUR ${sourceRef.descriptionId}`);
+				const sourceId = sourceRef.descriptionId;
+				if (!sourceId) return;
 
-					// Find the full source description for this ID
-					const sourceDesc = sourceDescMap.get(
-						sourceRef.descriptionId
-					);
+				const fsSour = fsSourMap.get(sourceId);
+				if (!fsSour) return;
 
-					if (sourceDesc) {
-						// Add title
-						if (sourceDesc.titles?.[0]?.value) {
-							lines.push(`2 TITL ${sourceDesc.titles[0].value}`);
-						}
-
-						// Add citation as TEXT
-						if (sourceDesc.citations?.[0]?.value) {
-							lines.push(
-								`2 TEXT ${sourceDesc.citations[0].value}`
-							);
-						}
-
-						// Add web link (about URL)
-						if (sourceDesc.about) {
-							const webUrl = transformSourceUrl(sourceDesc.about);
-							lines.push(`2 WWW ${webUrl}`);
-						}
-
-						// Add resource type as NOTE
-						if (sourceDesc.resourceType) {
-							lines.push(
-								`2 NOTE Resource Type: ${sourceDesc.resourceType}`
-							);
-						}
-					}
-
-					// Add sourceRef description as note if available
-					if (sourceRef.description) {
-						lines.push(`2 NOTE ${sourceRef.description}`);
-					}
-
-					// Add qualifiers as notes
-					if (
-						sourceRef.qualifiers &&
-						Array.isArray(sourceRef.qualifiers)
-					) {
-						sourceRef.qualifiers.forEach((qualifier) => {
-							if (qualifier.name && qualifier.value) {
-								lines.push(
-									`2 NOTE ${qualifier.name}: ${qualifier.value}`
-								);
-							}
-						});
-					}
-				}
+				// Add reference to _FS_SOUR record (no notes here, they're in the record itself)
+				lines.push(`1 _FS_SOUR ${fsSour.gedcomId}`);
 			});
 		}
 
 		// ==============================================
-		// ADD PERSON MATCHES (_FS_MATCH custom tags)
+		// ADD PERSON MATCHES (_FS_MATCH references)
 		// These are matches from person.matches (TreePersonMatchesResponse)
 		// ==============================================
 		if (person.matches?.entries) {
-			// Build a map of sourceDescriptions by ID for fast lookup
-			const matchSourceDescMap = new Map<string, SourceDescription>();
-			if (
-				person.matches.sourceDescriptions &&
-				Array.isArray(person.matches.sourceDescriptions)
-			) {
-				person.matches.sourceDescriptions.forEach((desc) => {
-					if (desc.id) {
-						matchSourceDescMap.set(desc.id, desc);
-					}
-				});
-			}
-
 			person.matches.entries.forEach((entry) => {
-				if (entry.id) {
-					lines.push(`1 _FS_MATCH ${entry.id}`);
+				const matchId = entry.id;
+				if (!matchId) return;
 
-					// Add title if available
-					if (entry.title) {
-						lines.push(`2 TITL ${entry.title}`);
-					}
+				const fsMatch = fsMatchMap.get(matchId);
+				if (!fsMatch) return;
 
-					// Add match score as SCORE field (dedicated tag)
-					if (entry.content?.score !== undefined) {
-						lines.push(`2 SCORE ${entry.content.score}`);
-					}
-
-					// Add confidence as NOTE
-					if (entry.content?.confidence !== undefined) {
-						lines.push(
-							`2 NOTE Confidence: ${entry.content.confidence}`
-						);
-					}
-
-					// Extract and add collection type from matchInfo
-					let collectionType = "TREE"; // Default
-					if (entry.matchInfo && entry.matchInfo.length > 0) {
-						const matchInfo = entry.matchInfo[0];
-						if (matchInfo.collection) {
-							// Parse collection URL like "tree://MEMORIES" or "records://..."
-							const collectionLower =
-								matchInfo.collection.toLowerCase();
-							if (collectionLower.includes("records")) {
-								collectionType = "RECORDS";
-							} else if (collectionLower.includes("tree")) {
-								collectionType = "TREE";
-							}
-						}
-						// Add status as NOTE (clean format - extract last part after /)
-						if (matchInfo.status) {
-							// Extract status name from URL (e.g., http://familysearch.org/v1/Pending -> Pending)
-							const statusName = matchInfo.status.includes("/")
-								? matchInfo.status.split("/").pop()
-								: matchInfo.status;
-							lines.push(`2 NOTE Status: ${statusName}`);
-						}
-					}
-					lines.push(`2 TYPE ${collectionType}`);
-
-					// Add REF field (reference to match ID)
-					lines.push(`2 REF ${entry.id}`);
-
-					// Extract person link (WWW field for direct FamilySearch person link)
-					if (entry.links?.person?.href) {
-						const personUrl = transformFamilySearchUrl(
-							entry.links.person.href
-						);
-						lines.push(`2 WWW ${personUrl}`);
-					}
-
-					// Add matched person information from gedcomx.persons
-					if (
-						entry.content?.gedcomx?.persons &&
-						entry.content.gedcomx.persons.length > 0
-					) {
-						const matchedPerson = entry.content.gedcomx.persons[0];
-
-						// Add display name as TEXT
-						if (matchedPerson.display?.name) {
-							lines.push(`2 TEXT ${matchedPerson.display.name}`);
-						}
-
-						// Add lifespan as NOTE
-						if (matchedPerson.display?.lifespan) {
-							lines.push(
-								`2 NOTE Lifespan: ${matchedPerson.display.lifespan}`
-							);
-						}
-
-						// Add birth info as NOTE
-						if (
-							matchedPerson.display?.birthDate ||
-							matchedPerson.display?.birthPlace
-						) {
-							const birthInfo = [
-								matchedPerson.display.birthDate,
-								matchedPerson.display.birthPlace,
-							]
-								.filter(Boolean)
-								.join(", ");
-							if (birthInfo) {
-								lines.push(`2 NOTE Birth: ${birthInfo}`);
-							}
-						}
-
-						// Add death info as NOTE
-						if (
-							matchedPerson.display?.deathDate ||
-							matchedPerson.display?.deathPlace
-						) {
-							const deathInfo = [
-								matchedPerson.display.deathDate,
-								matchedPerson.display.deathPlace,
-							]
-								.filter(Boolean)
-								.join(", ");
-							if (deathInfo) {
-								lines.push(`2 NOTE Death: ${deathInfo}`);
-							}
-						}
-
-						// Add gender as NOTE
-						if (matchedPerson.display?.gender) {
-							lines.push(
-								`2 NOTE Gender: ${matchedPerson.display.gender}`
-							);
-						}
-					}
-
-					// Add source description details if available
-					if (entry.content?.sourceDescription) {
-						const sourceDesc = entry.content.sourceDescription;
-
-						// Add citation as NOTE (to preserve existing data)
-						if (sourceDesc.citations?.[0]?.value) {
-							lines.push(
-								`2 NOTE Citation: ${sourceDesc.citations[0].value}`
-							);
-						}
-
-						// Add resource type as NOTE
-						if (sourceDesc.resourceType) {
-							lines.push(
-								`2 NOTE Resource Type: ${sourceDesc.resourceType}`
-							);
-						}
-
-						// Add source link (about URL) as NOTE
-						if (sourceDesc.about) {
-							const webUrl = transformSourceUrl(sourceDesc.about);
-							lines.push(`2 NOTE Source: ${webUrl}`);
-						}
-					}
-				}
+				// Add reference to _FS_MATCH record
+				lines.push(`1 _FS_MATCH ${fsMatch.gedcomId}`);
 			});
 		}
 	});
