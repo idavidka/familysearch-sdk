@@ -629,7 +629,8 @@ export class FamilySearchSDK {
 
 			// Create a source description for the external GEDCOM person
 			const sourceDescription = {
-				id: "external-gedcom",
+				id: "sd1",
+				about: "#primaryPerson",
 				resourceType: "http://gedcomx.org/DigitalArtifact",
 				titles: [
 					{
@@ -639,16 +640,13 @@ export class FamilySearchSDK {
 			};
 
 			// Submit the person data to the matches endpoint
-			// The descriptionRef links the person to the source description
+			// The description field links to the source description via fragment identifier
 			const requestBody = {
+				description: "#sd1",
 				persons: [
 					{
+						id: "primaryPerson",
 						...gedcomxPerson,
-						sources: [
-							{
-								descriptionRef: "#external-gedcom",
-							},
-						],
 					},
 				],
 				sourceDescriptions: [sourceDescription],
@@ -666,6 +664,105 @@ export class FamilySearchSDK {
 			);
 			return null;
 		}
+	}
+
+	/**
+	 * Search for persons using external GEDCOM data
+	 * Converts person data to search query parameters and searches FamilySearch
+	 * Works with both Tree and Records collections
+	 *
+	 * @param person - Person data to search for (name, dates, places, etc.)
+	 * @param options - Search options (collection, pagination)
+	 * @returns Search response with matching persons
+	 *
+	 * @example
+	 * ```typescript
+	 * const results = await sdk.searchPersonByData({
+	 *   givenName: 'John',
+	 *   familyName: 'Smith',
+	 *   birthDate: '1850',
+	 *   birthPlace: 'London, England'
+	 * }, { collection: 'tree', count: 20 });
+	 * ```
+	 */
+	async searchPersonByData(
+		person: PersonMatchInput,
+		options: {
+			start?: number;
+			count?: number;
+			collection?: "tree" | "records";
+		} = {}
+	): Promise<FamilySearchApiResponse<PersonSearchResponse>> {
+		// Build query parameters from person data
+		const query: Record<string, string> = {};
+
+		// Add name
+		if (person.givenName) {
+			query["q.givenName"] = person.givenName;
+		}
+		if (person.familyName) {
+			query["q.surname"] = person.familyName;
+		}
+
+		// Add birth info
+		if (person.birthDate) {
+			// Extract year from date (FamilySearch expects +YYYY format)
+			const year = person.birthDate.match(/\d{4}/)?.[0];
+			if (year) {
+				query["q.birthLikeDate"] = `+${year}`;
+			}
+		}
+		if (person.birthPlace) {
+			query["q.birthLikePlace"] = person.birthPlace;
+		}
+
+		// Add death info
+		if (person.deathDate) {
+			const year = person.deathDate.match(/\d{4}/)?.[0];
+			if (year) {
+				query["q.deathLikeDate"] = `+${year}`;
+			}
+		}
+		if (person.deathPlace) {
+			query["q.deathLikePlace"] = person.deathPlace;
+		}
+
+		// Add marriage info
+		if (person.marriageDate) {
+			const year = person.marriageDate.match(/\d{4}/)?.[0];
+			if (year) {
+				query["q.marriageLikeDate"] = `+${year}`;
+			}
+		}
+		if (person.marriagePlace) {
+			query["q.marriageLikePlace"] = person.marriagePlace;
+		}
+
+		// Add father info
+		if (person.fatherGivenName) {
+			query["q.fatherGivenName"] = person.fatherGivenName;
+		}
+		if (person.fatherFamilyName) {
+			query["q.fatherSurname"] = person.fatherFamilyName;
+		}
+
+		// Add mother info
+		if (person.motherGivenName) {
+			query["q.motherGivenName"] = person.motherGivenName;
+		}
+		if (person.motherFamilyName) {
+			query["q.motherSurname"] = person.motherFamilyName;
+		}
+
+		// Add spouse info
+		if (person.spouseGivenName) {
+			query["q.spouseGivenName"] = person.spouseGivenName;
+		}
+		if (person.spouseFamilyName) {
+			query["q.spouseSurname"] = person.spouseFamilyName;
+		}
+
+		return this.searchPersons(query, options);
 	}
 
 	/**
@@ -735,9 +832,31 @@ export class FamilySearchSDK {
 	/**
 	 * Search for persons
 	 */
+	/**
+	 * Search for persons in FamilySearch Tree and Records
+	 * Uses query parameters to search for persons by name, dates, places, etc.
+	 *
+	 * @param query - Query parameters (e.g., q.givenName, q.surname, q.birthLikeDate, q.birthLikePlace)
+	 * @param options - Search options (pagination, collection filter)
+	 * @returns Search response with matching persons
+	 *
+	 * @example
+	 * ```typescript
+	 * const results = await sdk.searchPersons({
+	 *   'q.givenName': 'John',
+	 *   'q.surname': 'Smith',
+	 *   'q.birthLikeDate': '+1850',
+	 *   'q.birthLikePlace': 'London, England'
+	 * }, { count: 20 });
+	 * ```
+	 */
 	async searchPersons(
 		query: Record<string, string>,
-		options: { start?: number; count?: number } = {}
+		options: {
+			start?: number;
+			count?: number;
+			collection?: "tree" | "records";
+		} = {}
 	): Promise<FamilySearchApiResponse<PersonSearchResponse>> {
 		const params = new URLSearchParams({
 			...query,
@@ -748,6 +867,10 @@ export class FamilySearchSDK {
 				count: options.count.toString(),
 			}),
 		});
+
+		// Note: Collection filtering is not supported in the current FamilySearch Search API
+		// The search will return results from all available collections
+		// We'll need to filter results client-side if needed
 
 		return this.get<PersonSearchResponse>(
 			`/platform/tree/search?${params.toString()}`

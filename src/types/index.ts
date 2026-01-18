@@ -584,6 +584,9 @@ export interface TreePersonMatchesResponse {
  * Person match input for external GEDCOM data
  * Used to search for matching persons in the FamilySearch Tree
  * based on a virtual person profile without an existing person ID
+ *
+ * NOTE: FamilySearch Search API supports only ONE value for each relationship field.
+ * If a person has multiple spouses or parents, only the first/primary one should be provided.
  */
 export interface PersonMatchInput {
 	/** Person's given/first name(s) */
@@ -602,10 +605,22 @@ export interface PersonMatchInput {
 	deathDate?: string;
 	/** Death place name */
 	deathPlace?: string;
-	/** Marriage date (if searching with spouse context) */
+	/** Marriage date (if searching with spouse context) - only ONE marriage supported */
 	marriageDate?: string;
-	/** Marriage place (if searching with spouse context) */
+	/** Marriage place (if searching with spouse context) - only ONE marriage supported */
 	marriagePlace?: string;
+	/** Father's given name - only ONE father supported */
+	fatherGivenName?: string;
+	/** Father's family name - only ONE father supported */
+	fatherFamilyName?: string;
+	/** Mother's given name - only ONE mother supported */
+	motherGivenName?: string;
+	/** Mother's family name - only ONE mother supported */
+	motherFamilyName?: string;
+	/** Spouse's given name - only ONE spouse supported */
+	spouseGivenName?: string;
+	/** Spouse's family name - only ONE spouse supported */
+	spouseFamilyName?: string;
 }
 
 /**
