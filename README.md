@@ -162,6 +162,53 @@ if (sources?.sourceDescriptions) {
 }
 ```
 
+## Person Match API
+
+Find potential matches in the FamilySearch Tree for persons from external GEDCOM data or manually created trees.
+
+```typescript
+import { createFamilySearchSDK } from 'familysearch-sdk';
+
+const sdk = createFamilySearchSDK({ accessToken: 'token' });
+
+// Match a person from external GEDCOM data
+const matches = await sdk.matchPerson({
+  givenName: 'John',
+  familyName: 'Smith',
+  gender: 'Male',
+  birthDate: '1850',
+  birthPlace: 'London, England',
+  deathDate: '1920',
+  deathPlace: 'New York, USA'
+});
+
+// Process match results
+if (matches?.entries) {
+  matches.entries.forEach(entry => {
+    console.log('Match title:', entry.title);
+    console.log('Confidence score:', entry.content?.score);
+    console.log('Match ID:', entry.id);
+    
+    // Access matched person details
+    const matchedPerson = entry.content?.gedcomx?.persons?.[0];
+    if (matchedPerson) {
+      console.log('Name:', matchedPerson.display?.name);
+      console.log('Birth:', matchedPerson.display?.birthDate);
+    }
+  });
+}
+
+// Filter by collection and limit results
+const censusMatches = await sdk.matchPerson({
+  givenName: 'Mary',
+  familyName: 'Johnson',
+  birthDate: '1875'
+}, {
+  collection: 'census',
+  count: 10
+});
+```
+
 ## GEDCOM Conversion
 
 Convert FamilySearch data to GEDCOM 5.5 format.
@@ -252,6 +299,11 @@ const sdk = createFamilySearchSDK({
 ### Person Sources
 
 - `sdk.getPersonSources(personId)` - Get source references for a person
+
+### Person Matching
+
+- `sdk.matchPerson(person, options)` - Find matches for external GEDCOM persons
+- `sdk.getTreePersonMatches(personId, options)` - Get matches for existing FamilySearch persons
 
 ### Utils (`/utils`)
 
