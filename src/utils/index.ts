@@ -7,5 +7,6 @@
 export {
 	convertToGedcom,
 	convertFamilySearchToGedcom,
+	transformFamilySearchUrl,
 	type GedcomConversionOptions,
 } from "./gedcom-converter";

@@ -19,7 +19,7 @@ import type {
  * Supports: apibeta.familysearch.org, beta.familysearch.org, integration.familysearch.org
  * Also handles ARK URLs (already web URLs, just return them)
  */
-function transformFamilySearchUrl(url: string): string {
+export function transformFamilySearchUrl(url: string): string {
 	// Special case: API URL with embedded ARK URL as parameter
 	// e.g., https://api.familysearch.org/platform/tree/persons/https://familysearch.org/ark:/61903/1:1:XXX?flag=fsh
 	if (url.includes("/platform/tree/persons/https://")) {
