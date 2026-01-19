@@ -144,10 +144,13 @@ export interface FamilySearchPerson {
 export interface PersonDisplay {
 	name?: string;
 	gender?: string;
+	lifespan?: string; // Lifespan string (e.g., "1899-1960")
 	birthDate?: string;
 	birthPlace?: string;
 	deathDate?: string;
 	deathPlace?: string;
+	marriageDate?: string; // Marriage date
+	marriagePlace?: string; // Marriage place
 }
 
 /**
@@ -262,21 +265,17 @@ export interface PersonMemoriesResponse {
 
 /**
  * Person search response from FamilySearch API
+ * Example: https://api.familysearch.org/platform/tree/search?q.givenName=...
  */
 export interface PersonSearchResponse {
-	/** Search results */
-	results?: Array<{
-		/** Person ID */
-		id?: string;
-		/** Title (person's name) */
-		title?: string;
-		/** Score */
-		score?: number;
-		/** Person data */
-		person?: PersonData;
-	}>;
-	/** Pagination info */
-	links?: Record<string, { href: string }>;
+	/** Total number of results found (e.g., 45854606) */
+	results?: number;
+	/** Current page index */
+	index?: number;
+	/** Array of search result entries (paginated, typically 20 per page) */
+	entries?: TreePersonMatchEntry[];
+	/** Pagination links */
+	links?: Record<string, { href?: string }>;
 }
 
 // ====================================
@@ -474,6 +473,10 @@ export interface TreePersonMatchEntry {
 	id?: string;
 	/** Entry title */
 	title?: string;
+	/** Match score (can be at top level in search results) */
+	score?: number;
+	/** Match confidence level (can be at top level in search results) */
+	confidence?: number;
 	/** Links associated with the match entry */
 	links?: {
 		/** Link to the matched person */
