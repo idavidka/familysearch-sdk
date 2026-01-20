@@ -11,6 +11,19 @@
  * - Configurable logging
  */
 
+import { getPersonNotes as getPersonNotesAPI } from "./api/tree/notes";
+import {
+	getAncestry as getAncestryAPI,
+	getDescendancy as getDescendancyAPI,
+} from "./api/tree/pedigrees";
+import {
+	getPerson as getPersonAPI,
+	getPersonWithDetails as getPersonWithDetailsAPI,
+} from "./api/tree/persons";
+import {
+	getCoupleRelationship as getCoupleRelationshipAPI,
+	getChildAndParentsRelationship as getChildAndParentsRelationshipAPI,
+} from "./api/tree/relationships";
 import {
 	createErrorFromResponse,
 	createNetworkError,
@@ -24,7 +37,17 @@ import type {
 	FamilySearchEnvironment,
 	FamilySearchSDKConfig,
 	FamilySearchUser,
+	FamilySearchPerson,
 	FamilySearchPlace,
+	PersonNotesResponse,
+	PersonMemoriesResponse,
+	PersonSourcesResponse,
+	TreePersonMatchesResponse,
+	TreePersonMatchesOptions,
+	PersonMatchInput,
+	PersonMatchOptions,
+	PedigreeResponse,
+	PersonSearchResponse,
 	RateLimiterConfig,
 	SDKLogger,
 } from "./types";
@@ -328,6 +351,224 @@ export class FamilySearchSDK {
 	// Tree/Pedigree API
 	// ====================================
 
+	/**
+	 * Get person by ID
+	 * 
+	 * @deprecated Use `getPerson` from `@treeviz/familysearch-sdk/api/tree/persons` instead
+	 */
+	async getPerson(personId: string): Promise<FamilySearchPerson | null> {
+		return getPersonAPI(this, personId);
+	}
+
+	/**
+	 * Get person with full details including relationships
+	 * 
+	 * @deprecated Use `getPersonWithDetails` from `@treeviz/familysearch-sdk/api/tree/persons` instead
+	 */
+	async getPersonWithDetails(
+		personId: string,
+		options: { sourceDescriptions?: boolean } = {}
+	) {
+		return getPersonWithDetailsAPI(this, personId, options);
+	}
+
+	/**
+	 * Get person notes
+	 * 
+	 * @deprecated Use `getPersonNotes` from `@treeviz/familysearch-sdk/api/tree/notes` instead
+	 */
+	async getPersonNotes(personId: string): Promise<PersonNotesResponse | null> {
+		return getPersonNotesAPI(this, personId);
+	}
+
+	/**
+	 * Get person memories
+	 * 
+	 * @deprecated Use modular memories API instead
+	 */
+	async getPersonMemories(personId: string): Promise<PersonMemoriesResponse | null> {
+		try {
+			const response = await this.get<PersonMemoriesResponse>(
+				`/platform/tree/persons/${personId}/memories`
+			);
+			return response.data || null;
+		} catch (error) {
+			this.logger.error(
+				`[FamilySearch SDK] Failed to get person memories for ${personId}:`,
+				error
+			);
+			return null;
+		}
+	}
+
+	/**
+	 * Get person sources
+	 * 
+	 * @deprecated Use modular sources API instead
+	 */
+	async getPersonSources(personId: string): Promise<PersonSourcesResponse | null> {
+		try {
+			const response = await this.get<PersonSourcesResponse>(
+				`/platform/tree/persons/${personId}/sources`
+			);
+			return response.data || null;
+		} catch (error) {
+			this.logger.error(
+				`[FamilySearch SDK] Failed to get person sources for ${personId}:`,
+				error
+			);
+			return null;
+		}
+	}
+
+	/**
+	 * Get tree person matches
+	 * 
+	 * @deprecated Use modular matches API instead
+	 */
+	async getTreePersonMatches(
+		personId: string,
+		options: TreePersonMatchesOptions = {}
+	): Promise<TreePersonMatchesResponse | null> {
+		try {
+			const params = new URLSearchParams();
+			if (options.status) params.append("status", options.status);
+			if (options.collection) params.append("collection", options.collection);
+			if (options.count) params.append("count", options.count.toString());
+			if (options.start) params.append("start", options.start.toString());
+
+			const queryString = params.toString();
+			const url = queryString
+				? `/platform/tree/persons/${personId}/matches?${queryString}`
+				: `/platform/tree/persons/${personId}/matches`;
+
+			const response = await this.get<TreePersonMatchesResponse>(url);
+			return response.data || null;
+		} catch (error) {
+			this.logger.error(
+				`[FamilySearch SDK] Failed to get tree person matches for ${personId}:`,
+				error
+			);
+			return null;
+		}
+	}
+
+	/**
+	 * Match person by data
+	 * 
+	 * @deprecated Use modular search/match API instead
+	 */
+	async matchPerson(
+		personData: PersonMatchInput,
+		options: PersonMatchOptions = {}
+	): Promise<PersonSearchResponse | null> {
+		try {
+			const params = new URLSearchParams();
+			
+			if (personData.givenName) params.append("q.givenName", personData.givenName);
+			if (personData.familyName) params.append("q.surname", personData.familyName);
+			if (personData.gender) params.append("q.gender", personData.gender);
+			if (personData.birthDate) params.append("q.birthLikeDate", personData.birthDate);
+			if (personData.birthPlace) params.append("q.birthLikePlace", personData.birthPlace);
+			if (personData.deathDate) params.append("q.deathLikeDate", personData.deathDate);
+			if (personData.deathPlace) params.append("q.deathLikePlace", personData.deathPlace);
+			
+			if (personData.fatherGivenName) params.append("q.fatherGivenName", personData.fatherGivenName);
+			if (personData.fatherFamilyName) params.append("q.fatherSurname", personData.fatherFamilyName);
+			if (personData.motherGivenName) params.append("q.motherGivenName", personData.motherGivenName);
+			if (personData.motherFamilyName) params.append("q.motherSurname", personData.motherFamilyName);
+			if (personData.spouseGivenName) params.append("q.spouseGivenName", personData.spouseGivenName);
+			if (personData.spouseFamilyName) params.append("q.spouseSurname", personData.spouseFamilyName);
+			
+			if (options.count) params.append("count", options.count.toString());
+
+			const response = await this.get<PersonSearchResponse>(
+				`/platform/tree/search?${params.toString()}`
+			);
+			return response.data || null;
+		} catch (error) {
+			this.logger.error(
+				"[FamilySearch SDK] Failed to match person:",
+				error
+			);
+			return null;
+		}
+	}
+
+	/**
+	 * Search person by data (alias for matchPerson)
+	 * 
+	 * @deprecated Use modular search API instead
+	 */
+	async searchPersonByData(
+		personData: PersonMatchInput,
+		options: PersonMatchOptions = {}
+	): Promise<PersonSearchResponse | null> {
+		return this.matchPerson(personData, options);
+	}
+
+	/**
+	 * Get couple relationship by ID
+	 * 
+	 * @deprecated Use `getCoupleRelationship` from `@treeviz/familysearch-sdk/api/tree/relationships` instead
+	 */
+	async getCoupleRelationship(relationshipId: string) {
+		return getCoupleRelationshipAPI(this, relationshipId);
+	}
+
+	/**
+	 * Get child and parents relationship by ID
+	 * 
+	 * @deprecated Use `getChildAndParentsRelationship` from `@treeviz/familysearch-sdk/api/tree/relationships` instead
+	 */
+	async getChildAndParentsRelationship(relationshipId: string) {
+		return getChildAndParentsRelationshipAPI(this, relationshipId);
+	}
+
+	/**
+	 * Get ancestry for a person
+	 * 
+	 * @deprecated Use `getAncestry` from `@treeviz/familysearch-sdk/api/tree/pedigrees` instead
+	 */
+	async getAncestry(
+		personId: string,
+		generations: number = 4
+	): Promise<PedigreeResponse | null> {
+		return getAncestryAPI(this, personId, generations);
+	}
+
+	/**
+	 * Get descendancy for a person
+	 * 
+	 * @deprecated Use `getDescendancy` from `@treeviz/familysearch-sdk/api/tree/pedigrees` instead
+	 */
+	async getDescendancy(
+		personId: string,
+		generations: number = 2
+	): Promise<PedigreeResponse | null> {
+		return getDescendancyAPI(this, personId, generations);
+	}
+
+	/**
+	 * Search for persons
+	 * 
+	 * @deprecated Use `searchPersons` from `@treeviz/familysearch-sdk/api/tree/search` instead
+	 */
+	async searchPersons(query: string, count: number = 20): Promise<PersonSearchResponse | null> {
+		try {
+			const response = await this.get<PersonSearchResponse>(
+				`/platform/tree/search?q=${encodeURIComponent(query)}&count=${count}`
+			);
+			return response.data || null;
+		} catch (error) {
+			this.logger.error(
+				"[FamilySearch SDK] Failed to search persons:",
+				error
+			);
+			return null;
+		}
+	}
+
 	// ====================================
 	// Places API
 	// ====================================
@@ -370,6 +611,26 @@ export class FamilySearchSDK {
 		} catch (error) {
 			this.logger.error(
 				"[FamilySearch SDK] Failed to search places:",
+				error
+			);
+			return null;
+		}
+	}
+
+	/**
+	 * Get place by ID
+	 * 
+	 * @deprecated Use `getPlaceDetails` from `@treeviz/familysearch-sdk/api/standards/places` instead
+	 */
+	async getPlace(placeId: string): Promise<FamilySearchPlace | null> {
+		try {
+			const response = await this.get<{ places: FamilySearchPlace[] }>(
+				`/platform/places/${placeId}`
+			);
+			return response.data?.places?.[0] || null;
+		} catch (error) {
+			this.logger.error(
+				`[FamilySearch SDK] Failed to get place ${placeId}:`,
 				error
 			);
 			return null;
