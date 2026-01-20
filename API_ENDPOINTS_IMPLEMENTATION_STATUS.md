@@ -2,7 +2,7 @@
 
 **Last Updated:** 2026-01-20  
 **SDK Version:** 2.0.0  
-**Total Implemented Functions:** ~97
+**Total Implemented Functions:** ~99
 
 ---
 
@@ -174,10 +174,10 @@
 - ✅ `getMemoryComments()` - Read memory comments
 - ✅ `createMemoryComment()` - Create comment
 - ✅ `deleteMemoryComment()` - Delete comment
-- ❌ `updateMemoryArtifact()` - Update artifact metadata (not implemented)
-- ❌ `deleteMemoryArtifactCoverage()` - Delete coverage region (not implemented)
+- ✅ `updateMemoryArtifact()` - Update artifact metadata
+- ✅ `deleteMemoryArtifactCoverage()` - Delete coverage region
 
-**Status:** 13/15 endpoints (87%)
+**Status:** 15/15 endpoints (100%)
 
 ---
 
@@ -307,7 +307,7 @@
 
 ### Medium Priority (Enhanced functionality)
 8. ✅ **Portraits Management** - DONE (set/delete preferred portrait)
-9. 🔄 **Memory Artifacts** - Coverage regions, artifact metadata
+9. ✅ **Memory Artifacts** - DONE (artifact metadata, coverage regions)
 10. 🔄 **Places API Expansion** - Place descriptions, children, types
 
 ### Low Priority (Advanced/Optional features)
@@ -335,8 +335,11 @@
 ### Session 3: Portrait Management
 - ✅ Portraits Management API (2 functions)
 
-**Total Today:** 27 new functions  
-**Bundle Growth:** +13.28 KB (113.80 KB → 127.08 KB)
+### Session 4: Memory Artifacts
+- ✅ Memory Artifacts API (2 functions)
+
+**Total Today:** 29 new functions  
+**Bundle Growth:** +14.26 KB (113.80 KB → 128.06 KB)
 
 ---
 
