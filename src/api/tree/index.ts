@@ -70,6 +70,16 @@ export {
 	createPersonNote,
 	updatePersonNote,
 	deletePersonNote,
+	getCoupleRelationshipNotes,
+	getCoupleRelationshipNote,
+	createCoupleRelationshipNote,
+	updateCoupleRelationshipNote,
+	deleteCoupleRelationshipNote,
+	getChildAndParentsRelationshipNotes,
+	getChildAndParentsRelationshipNote,
+	createChildAndParentsRelationshipNote,
+	updateChildAndParentsRelationshipNote,
+	deleteChildAndParentsRelationshipNote,
 } from "./notes";
 
 // Source Attachments API
