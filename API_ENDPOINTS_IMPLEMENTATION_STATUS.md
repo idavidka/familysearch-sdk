@@ -2,7 +2,7 @@
 
 **Last Updated:** 2026-01-20  
 **SDK Version:** 2.0.0  
-**Total Implemented Functions:** ~123
+**Total Implemented Functions:** ~124
 
 ---
 
@@ -255,9 +255,18 @@
 
 ---
 
+## 🟡 PARTIALLY IMPLEMENTED MODULES
+
+### 18. **Agent API** ✅
+- ✅ `getAgent()` - Read agent (contributor/organization) information
+
+**Status:** 1/1 endpoints (100%)
+
+---
+
 ## ❌ NOT IMPLEMENTED MODULES
 
-### 18. **Groups / Community Trees (CET)** ❌
+### 19. **Groups / Community Trees (CET)** ❌
 - ❌ `readGroup()`, `updateGroup()`, `deleteGroup()`
 - ❌ `getGroups()`, `createGroup()`
 - **Estimated endpoints:** 5
@@ -360,8 +369,11 @@
 ### Session 8: Standards Names API
 - ✅ Standards Names Completion (1 function)
 
-**Total Today:** 53 new functions  
-**Bundle Growth:** +21.07 KB (113.80 KB → 134.87 KB)
+### Session 9: Agent API
+- ✅ Agent API Implementation (1 function)
+
+**Total Today:** 54 new functions  
+**Bundle Growth:** +21.43 KB (113.80 KB → 135.23 KB)
 
 ---
 
