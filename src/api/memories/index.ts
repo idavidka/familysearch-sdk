@@ -20,6 +20,8 @@ import type {
 	MemoryPersonasResponse,
 	CreateMemoryCommentInput,
 	CreateMemoryCommentResponse,
+	UpdateMemoryArtifactInput,
+	UpdateMemoryArtifactResponse,
 } from "../../types";
 
 /**
@@ -500,6 +502,95 @@ export async function deleteMemoryComment(
 	} catch (error) {
 		sdk["logger"].error(
 			`[FamilySearch SDK] Failed to delete comment ${commentId} from memory ${memoryId}:`,
+			error
+		);
+		throw error;
+	}
+}
+
+/**
+ * Update memory artifact metadata
+ * 
+ * Updates the metadata associated with a memory artifact, such as title,
+ * description, coverage (location/time), and other descriptive information.
+ * This modifies the source description for the memory.
+ * 
+ * @param sdk - SDK instance
+ * @param memoryId - Memory artifact ID
+ * @param input - Artifact metadata to update
+ * @returns Updated artifact response
+ * @throws Error if update fails
+ * 
+ * @example
+ * ```typescript
+ * const updated = await updateMemoryArtifact(sdk, "MMMM-MMM", {
+ *   sourceDescriptions: [{
+ *     id: "MMMM-MMM",
+ *     titles: [{ value: "Updated Title" }],
+ *     descriptions: [{ value: "New description" }],
+ *     coverage: [{
+ *       spatial: { original: "London, England" },
+ *       temporal: { original: "1920" }
+ *     }]
+ *   }]
+ * });
+ * ```
+ */
+export async function updateMemoryArtifact(
+	sdk: FamilySearchSDK,
+	memoryId: string,
+	input: UpdateMemoryArtifactInput
+): Promise<UpdateMemoryArtifactResponse> {
+	try {
+		const response = await sdk.post<UpdateMemoryArtifactResponse>(
+			`/platform/memories/memories/${memoryId}/artifact`,
+			input
+		);
+		return response.data || { sourceDescriptions: [] };
+	} catch (error) {
+		sdk["logger"].error(
+			`[FamilySearch SDK] Failed to update artifact for memory ${memoryId}:`,
+			error
+		);
+		throw error;
+	}
+}
+
+/**
+ * Delete memory artifact coverage
+ * 
+ * Removes a coverage region (spatial/temporal) from a memory artifact.
+ * Coverage regions can be used to tag specific areas of a photo or
+ * time periods associated with a memory.
+ * 
+ * @param sdk - SDK instance
+ * @param memoryId - Memory artifact ID
+ * @param coverageId - Coverage ID to delete
+ * @returns Delete confirmation
+ * @throws Error if deletion fails
+ * 
+ * @example
+ * ```typescript
+ * await deleteMemoryArtifactCoverage(sdk, "MMMM-MMM", "CCCC-CCC");
+ * console.log("Coverage region removed");
+ * ```
+ */
+export async function deleteMemoryArtifactCoverage(
+	sdk: FamilySearchSDK,
+	memoryId: string,
+	coverageId: string
+): Promise<DeleteMemoryResponse> {
+	try {
+		const response = await sdk.delete<void>(
+			`/platform/memories/memories/${memoryId}/artifact/coverage/${coverageId}`
+		);
+		return {
+			statusCode: response.statusCode,
+			statusText: response.statusText,
+		};
+	} catch (error) {
+		sdk["logger"].error(
+			`[FamilySearch SDK] Failed to delete coverage ${coverageId} from memory ${memoryId}:`,
 			error
 		);
 		throw error;

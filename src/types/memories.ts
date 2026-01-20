@@ -204,3 +204,51 @@ export interface CreateMemoryCommentResponse {
 		comments?: MemoryComment[];
 	}>;
 }
+
+/**
+ * Input for updating memory artifact metadata
+ */
+export interface UpdateMemoryArtifactInput {
+	sourceDescriptions?: Array<{
+		id?: string;
+		titles?: Array<{
+			value?: string;
+		}>;
+		descriptions?: Array<{
+			value?: string;
+		}>;
+		coverage?: Array<{
+			spatial?: {
+				original?: string;
+			};
+			temporal?: {
+				original?: string;
+			};
+		}>;
+	}>;
+}
+
+/**
+ * Response from updating memory artifact
+ */
+export interface UpdateMemoryArtifactResponse {
+	sourceDescriptions?: Array<{
+		id?: string;
+		resourceType?: string;
+		titles?: Array<{
+			value?: string;
+		}>;
+		descriptions?: Array<{
+			value?: string;
+		}>;
+		coverage?: Array<{
+			id?: string;
+			spatial?: {
+				original?: string;
+			};
+			temporal?: {
+				original?: string;
+			};
+		}>;
+	}>;
+}
