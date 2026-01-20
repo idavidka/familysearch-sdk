@@ -39,38 +39,138 @@ const endpointsData = JSON.parse(fs.readFileSync(endpointsFile, 'utf-8'));
 const endpointToFunction = (endpoint) => {
   const name = endpoint.toLowerCase();
   
-  // Common mappings
+  // Comprehensive manual mappings from SETUP_FOR_TOMORROW.md
   const mappings = {
+    // Genealogies API
+    'readgenealogiesperson': 'getGenealogyPerson',
+    'readgenealogiespersons': 'getGenealogyPersons',
+    'creategenealogiesperson': 'createGenealogyPerson',
+    'updategenealogiesperson': 'updateGenealogyPerson',
+    'deletegenealogiesperson': 'deleteGenealogyPerson',
+    'restoregenealogiesperson': 'restoreGenealogyPerson',
+    'readgenealogiesrelationship': 'getGenealogyRelationship',
+    'updategenealogiesrelationship': 'updateGenealogyRelationship',
+    'deletegenealogiesrelationship': 'deleteGenealogyRelationship',
+    'readgenealogysourcedescription': 'getGenealogySourceDescription',
+    'creategenealogysourcedescription': 'createGenealogySourceDescription',
+    'updategenealogysourcedescription': 'updateGenealogySourceDescription',
+    'deletegenealogysourcedescription': 'deleteGenealogySourceDescription',
+    'readgenealogytree': 'getGenealogyTree',
+    'readgenealogytrees': 'getGenealogyTrees',
+    'creategenealogytree': 'createGenealogyTree',
+    'updategenealogytree': 'updateGenealogyTree',
+    'deletegenealogytree': 'deleteGenealogyTree',
+    
+    // Current User / Tree
     'readcurrenttreeperson': 'getCurrentUser',
     'readcurrentuser': 'getCurrentUser',
     'readagent': 'getAgent',
+    
+    // Person APIs
     'readperson': 'getPerson',
     'readpersons': 'getPersons',
     'createperson': 'createPerson',
     'updateperson': 'updatePerson',
     'deleteperson': 'deletePerson',
+    'restoreperson': 'restorePerson',
+    'readpersonchildren': 'getPersonChildren',
+    'readpersonfamilies': 'getPersonFamilies',
+    'readpersonparents': 'getPersonParents',
+    'readpersonspouses': 'getPersonSpouses',
+    'readpersonchangehistory': 'getPersonChangeHistory',
+    'readpersonmerge': 'getPersonMerge',
+    'readpersonnotamatches': 'getPersonNotAMatches',
+    'deletepersonnotamatch': 'deletePersonNotAMatch',
+    'readpersonnote': 'getPersonNote',
+    'readpersonnotes': 'getPersonNotes',
+    'readpersonsources': 'getPersonSources',
+    'readpersonportrait': 'getPersonPortrait',
+    'readpersonportraits': 'getPersonPortraits',
+    
+    // Relationships
+    'readrelationship': 'getRelationship',
+    'readrelationships': 'getRelationships',
+    'createrelationship': 'createRelationship',
+    'updaterelationship': 'updateRelationship',
+    'deleterelationship': 'deleteRelationship',
+    'restorerelationship': 'restoreRelationship',
+    'readchildandparentsrelationship': 'getChildAndParentsRelationship',
+    'createchildandparentsrelationship': 'createChildAndParentsRelationship',
+    'updatechildandparentsrelationship': 'updateChildAndParentsRelationship',
+    'deletechildandparentsrelationship': 'deleteChildAndParentsRelationship',
+    'restorechildandparentsrelationship': 'restoreChildAndParentsRelationship',
+    'readcouplerelationship': 'getCoupleRelationship',
+    'createcouplerelationship': 'createCoupleRelationship',
+    'updatecouplerelationship': 'updateCoupleRelationship',
+    'deletecouplerelationship': 'deleteCoupleRelationship',
+    'restorecouplerelationship': 'restoreCoupleRelationship',
+    
+    // Sources
+    'readsourcedescription': 'getSourceDescription',
+    'createsourcedescription': 'createSourceDescription',
+    'updatesourcedescription': 'updateSourceDescription',
+    'deletesourcedescription': 'deleteSourceDescription',
+    'readsourcedescriptionchanges': 'getSourceDescriptionChanges',
+    'attachsource': 'attachSource',
+    'detachsource': 'detachSource',
+    'updatesourceattachment': 'updateSourceAttachment',
+    
+    // Places
     'standardizedate': 'normalizeDate',
     'readplaces': 'searchPlaces',
     'readplace': 'getPlaceDetails',
+    'searchforparentplaces': 'searchParentPlaces',
+    
+    // Memories
+    'readmemory': 'getMemory',
+    'readmemories': 'getMemories',
+    'creatememory': 'createMemory',
+    'updatememory': 'updateMemory',
+    'deletememory': 'deleteMemory',
+    
+    // Discussions
+    'readdiscussion': 'getDiscussion',
+    'creatediscussion': 'createDiscussion',
+    'updatediscussion': 'updateDiscussion',
+    'deletediscussion': 'deleteDiscussion',
+    
+    // Vocabularies & Standards
+    'readvocabulary': 'getVocabulary',
+    'readvocabularies': 'getVocabularies',
+    'readname': 'getNameType',
+    'readnames': 'getNameTypes',
   };
   
   if (mappings[name]) return mappings[name];
   
-  // Generic patterns
+  // Generic patterns - improved camelCase conversion
   if (name.startsWith('read')) {
-    return 'get' + name.substring(4).charAt(0).toUpperCase() + name.substring(5);
-  }
-  if (name.startsWith('get')) {
-    return name.charAt(0).toLowerCase() + name.substring(1);
+    const remainder = name.substring(4);
+    return 'get' + remainder.charAt(0).toUpperCase() + remainder.substring(1);
   }
   if (name.startsWith('create')) {
-    return name.charAt(0).toLowerCase() + name.substring(1);
+    const remainder = name.substring(6);
+    return 'create' + remainder.charAt(0).toUpperCase() + remainder.substring(1);
   }
   if (name.startsWith('update')) {
-    return name.charAt(0).toLowerCase() + name.substring(1);
+    const remainder = name.substring(6);
+    return 'update' + remainder.charAt(0).toUpperCase() + remainder.substring(1);
   }
   if (name.startsWith('delete')) {
-    return name.charAt(0).toLowerCase() + name.substring(1);
+    const remainder = name.substring(6);
+    return 'delete' + remainder.charAt(0).toUpperCase() + remainder.substring(1);
+  }
+  if (name.startsWith('restore')) {
+    const remainder = name.substring(7);
+    return 'restore' + remainder.charAt(0).toUpperCase() + remainder.substring(1);
+  }
+  if (name.startsWith('attach')) {
+    const remainder = name.substring(6);
+    return 'attach' + remainder.charAt(0).toUpperCase() + remainder.substring(1);
+  }
+  if (name.startsWith('detach')) {
+    const remainder = name.substring(6);
+    return 'detach' + remainder.charAt(0).toUpperCase() + remainder.substring(1);
   }
   
   return endpoint;

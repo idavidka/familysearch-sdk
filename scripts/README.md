@@ -58,7 +58,7 @@ This downloads fully-rendered HTML pages using Playwright headless browser.
 - ✅ Creates offline searchable documentation cache
 
 **Cons:**
-- ❌ Slow (5-10 minutes for 200+ pages)
+- ❌ Slow (~3-4 hours for all 204 pages with rate limiting)
 - ❌ Requires Playwright and Chromium (~200 MB download)
 - ❌ Network-dependent
 
@@ -66,6 +66,12 @@ This downloads fully-rendered HTML pages using Playwright headless browser.
 - Need full API documentation details
 - Want offline access to FamilySearch docs
 - Analyzing parameter schemas, response formats
+
+**Rate Limiting:**
+- Random 60-90 second delay between requests
+- 5-minute break after every 20 successful requests
+- Skips already cached files (resume support)
+- Estimated: ~3-4 hours for 204 endpoints from scratch
 
 ## Why?
 
@@ -88,23 +94,33 @@ npx playwright install chromium
 ### Using npm script
 
 ```bash
+# Fetch all 204 endpoints (takes ~3-4 hours with rate limiting)
 npm run fetch-docs
+
+# Fetch specific endpoint or pattern
+npm run fetch-doc readperson     # Matches all person-related endpoints
+npm run fetch-doc createperson   # Matches createperson only
 ```
 
 ### Direct execution
 
 ```bash
-node scripts/fetch-api-docs.cjs
+node scripts/fetch-api-docs.cjs              # All endpoints
+node scripts/fetch-api-docs.cjs readperson  # Specific pattern
 ```
 
 ## How It Works
 
 1. **Reads URLs** from `API_ENDPOINTS_DOCS.md`
-2. **Launches headless Chromium** using Playwright
-3. **Navigates** to each URL and waits for JavaScript to render content
-4. **Extracts** fully-rendered HTML
-5. **Saves** to `api-docs-cache/{endpoint}.html`
-6. **Creates index** at `api-docs-cache/index.md` with links to all cached pages
+2. **Filters** for specific endpoint if requested (optional)
+3. **Skips** already cached files (resume support)
+4. **Launches headless Chromium** using Playwright
+5. **Navigates** to each URL and waits for JavaScript to render content
+6. **Extracts** fully-rendered HTML
+7. **Saves** to `api-docs-cache/{endpoint}.html`
+8. **Waits** 60-90 seconds (random) before next request
+9. **Takes 5-minute break** after every 20 successful requests
+10. **Creates index** at `api-docs-cache/index.md` with links to all cached pages
 
 ## Output Structure
 

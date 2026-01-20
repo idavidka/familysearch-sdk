@@ -34,8 +34,14 @@ const logToFile = (message) => {
 };
 
 async function main() {
+	// Check if specific endpoint requested
+	const specificEndpoint = process.argv[2];
+
 	log("FamilySearch API Documentation Fetcher", "green");
 	log("========================================");
+	if (specificEndpoint) {
+		log(`Fetching specific endpoint: ${specificEndpoint}`, "yellow");
+	}
 	console.log("");
 
 	// Create docs directory
@@ -44,7 +50,10 @@ async function main() {
 	}
 
 	// Initialize log file
-	fs.writeFileSync(LOG_FILE, `${new Date().toISOString()}: Starting fetch\n`);
+	fs.appendFileSync(
+		LOG_FILE,
+		`${new Date().toISOString()}: Starting fetch${specificEndpoint ? ` (${specificEndpoint})` : ""}\n`,
+	);
 
 	// Read and extract URLs
 	if (!fs.existsSync(URLS_FILE)) {
@@ -63,7 +72,28 @@ async function main() {
 	}
 
 	const urls = [...new Set(urlMatches)]; // Remove duplicates
-	log(`Found ${urls.length} unique URLs to fetch`, "yellow");
+	
+	// Filter for specific endpoint if requested
+	let filteredUrls = urls;
+	if (specificEndpoint) {
+		filteredUrls = urls.filter((url) => {
+			const endpoint = url
+				.replace(/.*\/reference\//, "")
+				.replace(/.*\/docs\//, "")
+				.replace(/[\/\?#].*$/, "");
+			return endpoint.toLowerCase().includes(specificEndpoint.toLowerCase());
+		});
+		
+		if (filteredUrls.length === 0) {
+			log(`ERROR: No URLs found matching "${specificEndpoint}"`, "red");
+			log(`Available endpoints can be found in ${URLS_FILE}`, "yellow");
+			process.exit(1);
+		}
+		
+		log(`Found ${filteredUrls.length} matching URL(s)`, "yellow");
+	} else {
+		log(`Found ${urls.length} unique URLs to fetch`, "yellow");
+	}
 	console.log("");
 
 	// Launch browser
@@ -83,9 +113,10 @@ async function main() {
 	let current = 0;
 	let success = 0;
 	let failed = 0;
+	let skipped = 0;
 
 	// Fetch each URL
-	for (const url of urls) {
+	for (const url of filteredUrls) {
 		current++;
 
 		// Extract endpoint name from URL
@@ -96,7 +127,15 @@ async function main() {
 
 		const filename = path.join(DOCS_DIR, `${endpoint}.html`);
 
-		log(`[${current}/${urls.length}] Fetching: ${endpoint}`);
+		// Check if file already exists
+		if (fs.existsSync(filename)) {
+			skipped++;
+			log(`[${current}/${filteredUrls.length}] Skipping: ${endpoint} (already cached)`, "yellow");
+			logToFile(`SKIPPED - ${url} - file exists`);
+			continue;
+		}
+
+		log(`[${current}/${filteredUrls.length}] Fetching: ${endpoint}`);
 
 		try {
 			// Navigate to page
@@ -121,8 +160,16 @@ async function main() {
 			log(`  ✓ Saved to ${filename}`, "green");
 			logToFile(`SUCCESS - ${url}`);
 
-			// Be nice to the server
-			await page.waitForTimeout(500);
+			// Be nice to the server - random delay between 1-1.5 minutes
+			const delayMs = Math.floor(Math.random() * 30000) + 60000; // 60-90 seconds
+			log(`  ⏱️  Waiting ${Math.round(delayMs / 1000)}s before next request...`, "yellow");
+			await page.waitForTimeout(delayMs);
+
+			// Every 20 successful fetches, take a longer break
+			if (success % 20 === 0 && success > 0) {
+				log(`  💤 20 requests completed - taking 5 minute break...`, "yellow");
+				await page.waitForTimeout(300000); // 5 minutes
+			}
 		} catch (error) {
 			failed++;
 			log(`  ✗ Failed to fetch ${url}`, "red");
@@ -136,9 +183,10 @@ async function main() {
 	console.log("");
 	log("========================================", "green");
 	log("Fetch Complete!", "green");
-	console.log(`  Total URLs:     ${urls.length}`);
+	console.log(`  Total URLs:     ${filteredUrls.length}`);
 	console.log(`  Successful:     ${success}`);
 	console.log(`  Failed:         ${failed}`);
+	console.log(`  Skipped:        ${skipped}`);
 	console.log(`  Cache location: ${DOCS_DIR}/`);
 	console.log(`  Log file:       ${LOG_FILE}`);
 	console.log("");

@@ -87,9 +87,17 @@ grep -i "readperson" api-docs-cache/endpoints.json
 
 1. **First time:** `npm run analyze-endpoints` to see what exists
 2. **Check coverage:** `npm run check-coverage` to find gaps
-3. **Optional:** `npm run fetch-docs` for full documentation (takes 5-10 min, runs in background)
+3. **Fetch specific endpoint docs:** `npm run fetch-doc readPersonById` when implementing
+4. **Optional:** `npm run fetch-docs` for all 204 endpoints (takes several hours)
 
-**Note:** Fetch-docs timeout increased to 2 minutes per page due to slow FamilySearch server responses.
+**Note:** 
+- `fetch-doc <endpoint>` - Fetch single endpoint or pattern (skips cached files)
+- `fetch-docs` - Fetch all endpoints with smart rate limiting:
+  - Random 60-90 second delay between requests
+  - 5-minute break after every 20 successful requests
+  - Skips already cached files
+  - Estimated time: ~3-4 hours for 204 endpoints
+- Timeout: 2 minutes per page for slow FamilySearch servers
 
 For detailed documentation, see `scripts/README.md`
 
