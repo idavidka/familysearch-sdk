@@ -2,7 +2,7 @@
 
 **Last Updated:** 2026-01-20  
 **SDK Version:** 2.0.0  
-**Total Implemented Functions:** ~92
+**Total Implemented Functions:** ~95
 
 ---
 
@@ -111,12 +111,12 @@
 ### 7. **Source Descriptions API** ✅
 - ✅ `getSourceDescriptions()` - Read source descriptions
 - ✅ `getSourceDescription()` - Read single source description
-- ❌ `createSourceDescription()` - Create source (not implemented)
-- ❌ `updateSourceDescription()` - Update source (not implemented)
-- ❌ `deleteSourceDescription()` - Delete source (not implemented)
+- ✅ `createSourceDescription()` - Create source
+- ✅ `updateSourceDescription()` - Update source
+- ✅ `deleteSourceDescription()` - Delete source
 - ❌ `getSourceDescriptionChanges()` - Source change history (not implemented)
 
-**Status:** 2/6 endpoints (33%)
+**Status:** 5/6 endpoints (83%)
 
 ---
 
@@ -282,13 +282,13 @@
 
 | Category | Implemented | Total Estimated | Coverage |
 |----------|-------------|-----------------|----------|
-| **Core Tree Operations** | 62 | 70 | 89% |
+| **Core Tree Operations** | 65 | 70 | 93% |
 | **Memories & Discussions** | 19 | 22 | 86% |
 | **Search & Matches** | 8 | 9 | 89% |
 | **Places & Standards** | 3 | 20 | 15% |
 | **User & Account** | 1 | 7 | 14% |
 | **Advanced (Source Box, Groups, etc.)** | 0 | 30+ | 0% |
-| **TOTAL** | **~92** | **~160** | **~58%** |
+| **TOTAL** | **~95** | **~160** | **~59%** |
 
 ---
 
@@ -301,9 +301,9 @@
 4. ✅ **Conclusion Management** - DONE (delete facts/names/gender)
 5. ✅ **Advanced Person Endpoints** - DONE (families/parents/spouses)
 6. ✅ **Matches API** - DONE (resolution + not-a-match)
+7. ✅ **Source Descriptions Write** - DONE (create/update/delete)
 
 ### Medium Priority (Enhanced functionality)
-7. 🔄 **Source Descriptions Write** - Create/Update/Delete source descriptions
 8. 🔄 **Portraits Management** - Set preferred portrait, delete portraits
 9. 🔄 **Memory Artifacts** - Coverage regions, artifact metadata
 10. 🔄 **Places API Expansion** - Place descriptions, children, types
@@ -327,8 +327,11 @@
 - ✅ Advanced Person Endpoints (3 functions)
 - ✅ Matches API Completion (5 functions)
 
-**Total Today:** 22 new functions  
-**Bundle Growth:** +10.64 KB (113.80 KB → 124.44 KB)
+### Session 2: Source Management
+- ✅ Source Descriptions Write Operations (3 functions)
+
+**Total Today:** 25 new functions  
+**Bundle Growth:** +12.14 KB (113.80 KB → 125.94 KB)
 
 ---
 
