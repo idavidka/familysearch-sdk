@@ -1341,3 +1341,85 @@ export interface Agent {
 export interface AgentResponse {
 	agents?: Agent[];
 }
+
+// ====================================
+// Pending Modifications Types
+// ====================================
+
+/**
+ * Pending modifications response
+ */
+export interface PendingModificationsResponse {
+	entries?: Array<{
+		id?: string;
+		title?: string;
+		updated?: number;
+		content?: {
+			gedcomx?: {
+				persons?: Array<{
+					id?: string;
+					names?: Array<{
+						nameForms?: Array<{
+							fullText?: string;
+						}>;
+					}>;
+				}>;
+			};
+		};
+	}>;
+}
+
+// ====================================
+// Groups (Community Trees) Types
+// ====================================
+
+/**
+ * Group (community tree) name
+ */
+export interface GroupName {
+	value?: string;
+	lang?: string;
+}
+
+/**
+ * Group (community tree) entity
+ */
+export interface Group {
+	id?: string;
+	names?: GroupName[];
+	description?: string;
+	members?: Array<{
+		resourceId?: string;
+		resource?: string;
+	}>;
+	links?: {
+		self?: {
+			href?: string;
+		};
+	};
+}
+
+/**
+ * Single group response
+ */
+export interface GroupResponse {
+	groups?: Group[];
+}
+
+/**
+ * Multiple groups response
+ */
+export interface GroupsResponse {
+	groups?: Group[];
+}
+
+/**
+ * Create/update group input
+ */
+export interface CreateGroupInput {
+	names?: GroupName[];
+	description?: string;
+	members?: Array<{
+		resourceId?: string;
+	}>;
+}

@@ -153,3 +153,17 @@ export {
 export {
 	getAgent,
 } from "./agent";
+
+// Pending Modifications API
+export {
+	getPendingModifications,
+} from "./pending-modifications";
+
+// Groups (Community Trees) API
+export {
+	getGroup,
+	getGroups,
+	createGroup,
+	updateGroup,
+	deleteGroup,
+} from "./groups";
