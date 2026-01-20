@@ -18,6 +18,9 @@ import type {
 	PersonNotesResponse,
 	PersonPortraitsResponse,
 	PersonSourcesResponse,
+	PersonFamiliesResponse,
+	PersonParentsResponse,
+	PersonSpousesResponse,
 	PersonWithRelationships,
 	UpdatePersonResponse,
 } from "../../types";
@@ -379,6 +382,126 @@ export async function getPersonChangeHistory(
 	} catch (error) {
 		sdk["logger"].error(
 			`[FamilySearch SDK] Failed to get change history for ${personId}:`,
+			error
+		);
+		return null;
+	}
+}
+
+/**
+ * Get person families (all relationships person belongs to)
+ * 
+ * Returns all family relationships for a person, including:
+ * - Child-and-parents relationships (families where person is a child)
+ * - Couple relationships (families where person is a spouse/partner)
+ * - Related persons (parents, spouses, children)
+ * 
+ * This is a convenience endpoint that aggregates relationship data.
+ * 
+ * @param sdk - SDK instance
+ * @param personId - Person ID
+ * @returns Person families with relationships and related persons, or null
+ * 
+ * @example
+ * ```typescript
+ * const families = await getPersonFamilies(sdk, "PPPP-PPP");
+ * if (families) {
+ *   console.log("Child-parent families:", families.childAndParentsRelationships?.length);
+ *   console.log("Couple families:", families.relationships?.length);
+ *   console.log("Related persons:", families.persons?.length);
+ * }
+ * ```
+ */
+export async function getPersonFamilies(
+	sdk: FamilySearchSDK,
+	personId: string
+): Promise<PersonFamiliesResponse | null> {
+	try {
+		const response = await sdk.get<PersonFamiliesResponse>(
+			`/platform/tree/persons/${personId}/families`
+		);
+		return response.data || null;
+	} catch (error) {
+		sdk["logger"].error(
+			`[FamilySearch SDK] Failed to get families for ${personId}:`,
+			error
+		);
+		return null;
+	}
+}
+
+/**
+ * Get person parents
+ * 
+ * Returns the parents of a person through child-and-parents relationships.
+ * This is a convenience endpoint that provides direct access to parent data
+ * without manually traversing relationships.
+ * 
+ * @param sdk - SDK instance
+ * @param personId - Person ID
+ * @returns Parents and their relationships, or null
+ * 
+ * @example
+ * ```typescript
+ * const parents = await getPersonParents(sdk, "PPPP-PPP");
+ * if (parents?.persons) {
+ *   parents.persons.forEach(parent => {
+ *     console.log("Parent:", parent.display?.name);
+ *   });
+ * }
+ * ```
+ */
+export async function getPersonParents(
+	sdk: FamilySearchSDK,
+	personId: string
+): Promise<PersonParentsResponse | null> {
+	try {
+		const response = await sdk.get<PersonParentsResponse>(
+			`/platform/tree/persons/${personId}/parents`
+		);
+		return response.data || null;
+	} catch (error) {
+		sdk["logger"].error(
+			`[FamilySearch SDK] Failed to get parents for ${personId}:`,
+			error
+		);
+		return null;
+	}
+}
+
+/**
+ * Get person spouses
+ * 
+ * Returns all spouses/partners of a person through couple relationships.
+ * This is a convenience endpoint that provides direct access to spouse data
+ * without manually traversing relationships.
+ * 
+ * @param sdk - SDK instance
+ * @param personId - Person ID
+ * @returns Spouses and their relationships, or null
+ * 
+ * @example
+ * ```typescript
+ * const spouses = await getPersonSpouses(sdk, "PPPP-PPP");
+ * if (spouses?.persons) {
+ *   spouses.persons.forEach(spouse => {
+ *     console.log("Spouse:", spouse.display?.name);
+ *   });
+ * }
+ * ```
+ */
+export async function getPersonSpouses(
+	sdk: FamilySearchSDK,
+	personId: string
+): Promise<PersonSpousesResponse | null> {
+	try {
+		const response = await sdk.get<PersonSpousesResponse>(
+			`/platform/tree/persons/${personId}/spouses`
+		);
+		return response.data || null;
+	} catch (error) {
+		sdk["logger"].error(
+			`[FamilySearch SDK] Failed to get spouses for ${personId}:`,
 			error
 		);
 		return null;

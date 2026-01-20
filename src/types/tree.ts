@@ -1041,3 +1041,28 @@ export interface SetSpouseOrderResponse {
 		};
 	}>;
 }
+
+/**
+ * Person families response (all relationships person belongs to)
+ */
+export interface PersonFamiliesResponse {
+	persons?: PersonData[];
+	childAndParentsRelationships?: RelationshipDetails[];
+	relationships?: Relationship[];
+}
+
+/**
+ * Person parents response (direct parents)
+ */
+export interface PersonParentsResponse {
+	persons?: PersonData[];
+	childAndParentsRelationships?: RelationshipDetails[];
+}
+
+/**
+ * Person spouses response (all spouses)
+ */
+export interface PersonSpousesResponse {
+	persons?: PersonData[];
+	relationships?: Relationship[];
+}

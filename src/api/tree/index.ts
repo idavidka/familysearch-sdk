@@ -29,6 +29,9 @@ export {
 	getPersonDiscussions,
 	getPersonPortraits,
 	getPersonChangeHistory,
+	getPersonFamilies,
+	getPersonParents,
+	getPersonSpouses,
 } from "./persons";
 
 // Relationships API
