@@ -33,3 +33,91 @@ export interface FamilySearchUser {
 	/** Tree user ID */
 	treeUserId?: string;
 }
+
+/**
+ * Partner account input
+ */
+export interface PartnerAccountInput {
+	users?: Array<{
+		contactName?: string;
+		email?: string;
+		givenName?: string;
+		familyName?: string;
+		birthDate?: string;
+		gender?: string;
+	}>;
+}
+
+/**
+ * Partner account response
+ */
+export interface PartnerAccountResponse {
+	users?: Array<{
+		id?: string;
+		contactName?: string;
+		email?: string;
+		personId?: string;
+		treeUserId?: string;
+	}>;
+}
+
+/**
+ * Partner eligibility response
+ */
+export interface PartnerEligibilityResponse {
+	eligible?: boolean;
+	reasons?: string[];
+}
+
+/**
+ * User history response
+ */
+export interface UserHistoryResponse {
+	entries?: Array<{
+		id?: string;
+		title?: string;
+		content?: {
+			gedcomx?: {
+				agents?: Array<{
+					id?: string;
+					names?: Array<{
+						value?: string;
+					}>;
+				}>;
+				persons?: Array<{
+					id?: string;
+					names?: Array<{
+						nameForms?: Array<{
+							fullText?: string;
+						}>;
+					}>;
+				}>;
+			};
+		};
+		updated?: number;
+	}>;
+}
+
+/**
+ * User history entry input
+ */
+export interface UserHistoryEntryInput {
+	entries?: Array<{
+		title?: string;
+		content?: {
+			gedcomx?: {
+				persons?: Array<{
+					id?: string;
+				}>;
+			};
+		};
+	}>;
+}
+
+/**
+ * Delete user response
+ */
+export interface DeleteUserResponse {
+	statusCode: number;
+	statusText: string;
+}
