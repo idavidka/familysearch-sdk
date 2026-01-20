@@ -15,4 +15,5 @@ export * from "./memories";
 export * from "./places";
 export * from "./standards";
 export * from "./genealogies";
+export * from "./vocab";
 

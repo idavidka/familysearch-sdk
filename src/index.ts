@@ -175,3 +175,4 @@ export * as MemoriesAPI from "./api/memories";
 export * as StandardsAPI from "./api/standards";
 export * as UserAPI from "./api/user";
 export * as GenealogiesAPI from "./api/genealogies";
+export * as VocabAPI from "./api/vocab";
