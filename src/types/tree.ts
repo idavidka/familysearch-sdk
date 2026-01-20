@@ -955,3 +955,35 @@ export interface RestoreChangeInput {
 export interface RestoreChangeResponse {
 	entries?: ChangeEntry[];
 }
+
+/**
+ * Preferred relationship response (for parent or spouse)
+ */
+export interface PreferredRelationshipResponse {
+	/** Child-and-parents relationships (for preferred parent) */
+	childAndParentsRelationships?: Array<{
+		resourceId?: string;
+		resource?: string;
+	}>;
+	/** Couple relationships (for preferred spouse) */
+	relationships?: Array<{
+		resourceId?: string;
+		resource?: string;
+	}>;
+}
+
+/**
+ * Input for setting preferred relationship
+ */
+export interface SetPreferredRelationshipInput {
+	/** Child-and-parents relationships (for preferred parent) */
+	childAndParentsRelationships?: Array<{
+		resourceId: string;
+		resource: string;
+	}>;
+	/** Couple relationships (for preferred spouse) */
+	relationships?: Array<{
+		resourceId: string;
+		resource: string;
+	}>;
+}

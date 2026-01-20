@@ -101,3 +101,13 @@ export {
 	canMergePersons,
 	mergePerson,
 } from "./merges";
+
+// Preferred Relationships API
+export {
+	getPreferredParentRelationship,
+	setPreferredParentRelationship,
+	deletePreferredParentRelationship,
+	getPreferredSpouseRelationship,
+	setPreferredSpouseRelationship,
+	deletePreferredSpouseRelationship,
+} from "./preferences";
