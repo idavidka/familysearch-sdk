@@ -167,3 +167,8 @@ export {
 	updateGroup,
 	deleteGroup,
 } from "./groups";
+
+// Tree Changes API
+export {
+	getTreeChanges,
+} from "./tree-changes";

@@ -1423,3 +1423,56 @@ export interface CreateGroupInput {
 		resourceId?: string;
 	}>;
 }
+
+// ====================================
+// Tree Changes Types
+// ====================================
+
+/**
+ * Tree change entry
+ */
+export interface TreeChangeEntry {
+	id?: string;
+	title?: string;
+	updated?: number;
+	changeType?: string;
+	operation?: string;
+	objectType?: string;
+	objectModifier?: string;
+	reason?: string;
+	content?: {
+		gedcomx?: {
+			persons?: Array<{
+				id?: string;
+				display?: {
+					name?: string;
+				};
+			}>;
+			relationships?: Array<{
+				id?: string;
+				type?: string;
+			}>;
+		};
+	};
+	contributor?: {
+		resourceId?: string;
+		name?: string;
+	};
+	links?: {
+		person?: {
+			href?: string;
+		};
+	};
+}
+
+/**
+ * Tree changes response
+ */
+export interface TreeChangesResponse {
+	entries?: TreeChangeEntry[];
+	links?: {
+		next?: {
+			href?: string;
+		};
+	};
+}
