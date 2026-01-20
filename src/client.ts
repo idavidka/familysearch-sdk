@@ -382,9 +382,9 @@ export class FamilySearchSDK {
 	}
 
 	/**
-	 * Get person memories
+	 * Get person memories (photos, stories, documents)
 	 * 
-	 * @deprecated Use modular memories API instead
+	 * @deprecated Use `getPersonMemories` from `@treeviz/familysearch-sdk/api/tree/persons` instead
 	 */
 	async getPersonMemories(personId: string): Promise<PersonMemoriesResponse | null> {
 		try {
@@ -402,9 +402,9 @@ export class FamilySearchSDK {
 	}
 
 	/**
-	 * Get person sources
+	 * Get person source attachments
 	 * 
-	 * @deprecated Use modular sources API instead
+	 * @deprecated Use `getPersonSources` from `@treeviz/familysearch-sdk/api/tree/persons` instead
 	 */
 	async getPersonSources(personId: string): Promise<PersonSourcesResponse | null> {
 		try {
@@ -422,9 +422,9 @@ export class FamilySearchSDK {
 	}
 
 	/**
-	 * Get tree person matches
+	 * Get tree person matches (record hints and possible duplicates)
 	 * 
-	 * @deprecated Use modular matches API instead
+	 * This is a convenience wrapper for the matches API with filtering options.
 	 */
 	async getTreePersonMatches(
 		personId: string,
@@ -454,9 +454,10 @@ export class FamilySearchSDK {
 	}
 
 	/**
-	 * Match person by data
+	 * Match person by structured data
 	 * 
-	 * @deprecated Use modular search/match API instead
+	 * This is a convenience wrapper that builds a query from structured person data
+	 * (name, dates, places, parents, spouse) for searching the FamilySearch tree.
 	 */
 	async matchPerson(
 		personData: PersonMatchInput,
@@ -496,9 +497,9 @@ export class FamilySearchSDK {
 	}
 
 	/**
-	 * Search person by data (alias for matchPerson)
+	 * Search person by structured data (alias for matchPerson)
 	 * 
-	 * @deprecated Use modular search API instead
+	 * This is a convenience wrapper that provides an alternative name for matchPerson.
 	 */
 	async searchPersonByData(
 		personData: PersonMatchInput,
@@ -550,9 +551,12 @@ export class FamilySearchSDK {
 	}
 
 	/**
-	 * Search for persons
+	 * Search for persons using a simple string query
 	 * 
-	 * @deprecated Use `searchPersons` from `@treeviz/familysearch-sdk/api/tree/search` instead
+	 * This is a convenience wrapper for the FamilySearch person search API that accepts
+	 * a simple string query instead of structured search parameters.
+	 * 
+	 * @deprecated Use `searchPersons` from `@treeviz/familysearch-sdk/api/tree/search` for structured queries
 	 */
 	async searchPersons(query: string, count: number = 20): Promise<PersonSearchResponse | null> {
 		try {
@@ -574,10 +578,10 @@ export class FamilySearchSDK {
 	// ====================================
 
 	/**
-	 * Search for places
+	 * Search for places with advanced filtering options
 	 * 
-	 * @deprecated Use `searchPlaces` from `@treeviz/familysearch-sdk/api/standards/places` instead
-	 * @see {@link searchPlacesAPI}
+	 * This is a convenience wrapper that provides additional filtering capabilities
+	 * beyond the basic place search API (parent, type, date filters).
 	 */
 	async searchPlaces(
 		name: string,
@@ -618,9 +622,12 @@ export class FamilySearchSDK {
 	}
 
 	/**
-	 * Get place by ID
+	 * Get place by ID and extract the first place from response
 	 * 
-	 * @deprecated Use `getPlaceDetails` from `@treeviz/familysearch-sdk/api/standards/places` instead
+	 * This is a convenience wrapper that simplifies the place details API
+	 * by returning just the place object instead of the full response structure.
+	 * 
+	 * @deprecated Use `getPlaceDetails` from `@treeviz/familysearch-sdk/api/standards/places` for full response
 	 */
 	async getPlace(placeId: string): Promise<FamilySearchPlace | null> {
 		try {
