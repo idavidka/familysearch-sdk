@@ -39,6 +39,9 @@ export {
 	createChildAndParentsRelationship,
 	updateChildAndParentsRelationship,
 	deleteChildAndParentsRelationship,
+	getCoupleRelationshipChangeHistory,
+	getChildAndParentsRelationshipChangeHistory,
+	restoreChange,
 } from "./relationships";
 
 // Pedigrees API

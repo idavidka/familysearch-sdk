@@ -14,6 +14,9 @@ import type {
 	CreateRelationshipResponse,
 	UpdateRelationshipResponse,
 	DeletePersonResponse,
+	CoupleRelationshipChangeHistoryResponse,
+	ChildAndParentsRelationshipChangeHistoryResponse,
+	RestoreChangeResponse,
 } from "../../types";
 
 /**
@@ -310,6 +313,130 @@ export async function deleteChildAndParentsRelationship(
 	} catch (error) {
 		sdk["logger"].error(
 			`[FamilySearch SDK] Failed to delete child-and-parents relationship ${relationshipId}:`,
+			error
+		);
+		throw error;
+	}
+}
+
+/**
+ * Get couple relationship change history
+ * 
+ * Returns the change history entries for a couple relationship,
+ * showing who made changes, when, and what operations were performed.
+ * 
+ * @param sdk - SDK instance
+ * @param relationshipId - Couple relationship ID
+ * @returns Change history entries or null
+ * 
+ * @example
+ * ```typescript
+ * const history = await getCoupleRelationshipChangeHistory(sdk, "PPPP-PPP");
+ * if (history?.entries) {
+ *   history.entries.forEach(entry => {
+ *     console.log(`${entry.title}: ${entry.updated}`);
+ *   });
+ * }
+ * ```
+ */
+export async function getCoupleRelationshipChangeHistory(
+	sdk: FamilySearchSDK,
+	relationshipId: string
+): Promise<CoupleRelationshipChangeHistoryResponse | null> {
+	try {
+		const response = await sdk.get<CoupleRelationshipChangeHistoryResponse>(
+			`/platform/tree/couple-relationships/${relationshipId}/changes`
+		);
+		return response.data || null;
+	} catch (error) {
+		sdk["logger"].error(
+			`[FamilySearch SDK] Failed to get couple relationship change history for ${relationshipId}:`,
+			error
+		);
+		return null;
+	}
+}
+
+/**
+ * Get child-and-parents relationship change history
+ * 
+ * Returns the change history entries for a child-and-parents relationship,
+ * showing who made changes, when, and what operations were performed.
+ * 
+ * @param sdk - SDK instance
+ * @param relationshipId - Child-and-parents relationship ID
+ * @returns Change history entries or null
+ * 
+ * @example
+ * ```typescript
+ * const history = await getChildAndParentsRelationshipChangeHistory(sdk, "PPPP-PPP");
+ * if (history?.entries) {
+ *   history.entries.forEach(entry => {
+ *     console.log(`${entry.title}: ${entry.updated}`);
+ *   });
+ * }
+ * ```
+ */
+export async function getChildAndParentsRelationshipChangeHistory(
+	sdk: FamilySearchSDK,
+	relationshipId: string
+): Promise<ChildAndParentsRelationshipChangeHistoryResponse | null> {
+	try {
+		const response = await sdk.get<ChildAndParentsRelationshipChangeHistoryResponse>(
+			`/platform/tree/child-and-parents-relationships/${relationshipId}/changes`
+		);
+		return response.data || null;
+	} catch (error) {
+		sdk["logger"].error(
+			`[FamilySearch SDK] Failed to get child-and-parents relationship change history for ${relationshipId}:`,
+			error
+		);
+		return null;
+	}
+}
+
+/**
+ * Restore a change from history
+ * 
+ * Restores a person, relationship, or conclusion from a change history entry.
+ * This operation recreates the state of the entity as it was in the specified change.
+ * 
+ * **Note:** This endpoint works for any entity type (persons, relationships, etc.)
+ * by using the change ID from the change history.
+ * 
+ * @param sdk - SDK instance
+ * @param changeId - Change ID from change history (e.g., from entries[].id)
+ * @returns Restored change details
+ * @throws Error if restore fails
+ * 
+ * @example
+ * ```typescript
+ * // Get change history first
+ * const history = await getPersonChangeHistory(sdk, "PPPP-PPP");
+ * const changeId = history?.entries?.[0]?.id;
+ * 
+ * // Restore the change
+ * if (changeId) {
+ *   const result = await restoreChange(sdk, changeId);
+ *   console.log("Change restored:", result);
+ * }
+ * ```
+ */
+export async function restoreChange(
+	sdk: FamilySearchSDK,
+	changeId: string
+): Promise<RestoreChangeResponse> {
+	try {
+		const response = await sdk.post<RestoreChangeResponse>(
+			`/platform/tree/restore`,
+			{
+				changeIds: [changeId],
+			}
+		);
+		return response.data || { entries: [] };
+	} catch (error) {
+		sdk["logger"].error(
+			`[FamilySearch SDK] Failed to restore change ${changeId}:`,
 			error
 		);
 		throw error;

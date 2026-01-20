@@ -927,3 +927,31 @@ export interface ChangeEntry {
 export interface PersonChangeHistoryResponse {
 	entries?: ChangeEntry[];
 }
+
+/**
+ * Couple relationship change history response
+ */
+export interface CoupleRelationshipChangeHistoryResponse {
+	entries?: ChangeEntry[];
+}
+
+/**
+ * Child-and-parents relationship change history response
+ */
+export interface ChildAndParentsRelationshipChangeHistoryResponse {
+	entries?: ChangeEntry[];
+}
+
+/**
+ * Restore change input (for any change type)
+ */
+export interface RestoreChangeInput {
+	changeId: string;
+}
+
+/**
+ * Restore change response
+ */
+export interface RestoreChangeResponse {
+	entries?: ChangeEntry[];
+}
