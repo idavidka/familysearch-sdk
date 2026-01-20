@@ -2,7 +2,7 @@
 
 **Last Updated:** 2026-01-20  
 **SDK Version:** 2.0.0  
-**Total Implemented Functions:** ~95
+**Total Implemented Functions:** ~97
 
 ---
 
@@ -24,10 +24,12 @@
 - ✅ `getPersonSources()` - Person sources
 - ✅ `getPersonDiscussions()` - Person discussions
 - ✅ `getPersonPortraits()` - Person portraits
+- ✅ `updatePersonPortraits()` - Set preferred portrait
+- ✅ `deletePersonPortrait()` - Remove portrait
 - ❌ `headPerson()` - HEAD request (not implemented)
 - ❌ `readPersonChildren()` - Children endpoint (not verified)
 
-**Status:** 15/17 endpoints (88%)
+**Status:** 17/19 endpoints (89%)
 
 ---
 
@@ -304,7 +306,7 @@
 7. ✅ **Source Descriptions Write** - DONE (create/update/delete)
 
 ### Medium Priority (Enhanced functionality)
-8. 🔄 **Portraits Management** - Set preferred portrait, delete portraits
+8. ✅ **Portraits Management** - DONE (set/delete preferred portrait)
 9. 🔄 **Memory Artifacts** - Coverage regions, artifact metadata
 10. 🔄 **Places API Expansion** - Place descriptions, children, types
 
@@ -330,8 +332,11 @@
 ### Session 2: Source Management
 - ✅ Source Descriptions Write Operations (3 functions)
 
-**Total Today:** 25 new functions  
-**Bundle Growth:** +12.14 KB (113.80 KB → 125.94 KB)
+### Session 3: Portrait Management
+- ✅ Portraits Management API (2 functions)
+
+**Total Today:** 27 new functions  
+**Bundle Growth:** +13.28 KB (113.80 KB → 127.08 KB)
 
 ---
 
