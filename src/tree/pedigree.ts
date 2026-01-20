@@ -5,6 +5,10 @@
  * including pedigree, ancestry, and relationship information.
  */
 
+import { getAncestry } from "../api/tree/pedigrees";
+import { getPersonNotes } from "../api/tree/notes";
+import { getPersonWithDetails as getPersonWithDetailsAPI } from "../api/tree/persons";
+import { getCoupleRelationship } from "../api/tree/relationships";
 import type { FamilySearchSDK } from "../client";
 import type {
 	EnhancedPedigreeData,
@@ -81,8 +85,12 @@ export async function fetchPedigree(
 		percent: 10,
 	});
 
-	const ancestryResponse = await sdk.getAncestry(targetPersonId, generations);
-	const ancestry = ancestryResponse.data as PedigreeData;
+	const ancestryResponse = await getAncestry(sdk, targetPersonId, generations);
+	if (!ancestryResponse) {
+		throw new Error("Failed to fetch ancestry data");
+	}
+	
+	const ancestry = ancestryResponse as PedigreeData;
 
 	if (!ancestry.persons || ancestry.persons.length === 0) {
 		throw new Error("No persons found in ancestry");
@@ -112,7 +120,8 @@ export async function fetchPedigree(
 
 			// Fetch full person details with optional sources
 			if (includeDetails) {
-				enhanced.fullDetails = (await sdk.getPersonWithDetails(
+				enhanced.fullDetails = (await getPersonWithDetailsAPI(
+					sdk,
 					person.id,
 					{ sourceDescriptions: includeSourceDescriptions }
 				)) as EnhancedPerson["fullDetails"];
@@ -120,7 +129,8 @@ export async function fetchPedigree(
 
 			// Fetch notes
 			if (includeNotes) {
-				enhanced.notes = (await sdk.getPersonNotes(
+				enhanced.notes = (await getPersonNotes(
+					sdk,
 					person.id
 				)) as EnhancedPerson["notes"];
 			}
@@ -157,7 +167,7 @@ export async function fetchPedigree(
 			try {
 				// Only fetch details for couple relationships
 				if (rel.type?.includes?.("Couple")) {
-					const relDetails = await sdk.getCoupleRelationship(rel.id);
+					const relDetails = await getCoupleRelationship(sdk, rel.id);
 					relationshipsWithDetails.push({
 						...rel,
 						details: relDetails as Relationship["details"],
@@ -254,8 +264,8 @@ export async function getPersonWithDetails(
 ): Promise<EnhancedPerson | null> {
 	try {
 		const [details, notes] = await Promise.all([
-			sdk.getPersonWithDetails(personId, options),
-			sdk.getPersonNotes(personId),
+			getPersonWithDetailsAPI(sdk, personId, options),
+			getPersonNotes(sdk, personId),
 		]);
 
 		if (!details) {
