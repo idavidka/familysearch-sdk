@@ -103,3 +103,104 @@ export interface PlaceSearchResponse {
 export interface PlaceDetailsResponse {
 	places?: PlaceDescription[];
 }
+
+/**
+ * Place children response
+ */
+export interface PlaceChildrenResponse {
+	places?: PlaceDescription[];
+}
+
+/**
+ * Place descriptions response
+ */
+export interface PlaceDescriptionsResponse {
+	sourceDescriptions?: Array<{
+		id?: string;
+		resourceType?: string;
+		titles?: Array<{
+			value?: string;
+		}>;
+		descriptions?: Array<{
+			value?: string;
+		}>;
+		about?: string;
+	}>;
+}
+
+/**
+ * Single place description response
+ */
+export interface PlaceDescriptionResponse {
+	sourceDescriptions?: Array<{
+		id?: string;
+		resourceType?: string;
+		titles?: Array<{
+			value?: string;
+		}>;
+		descriptions?: Array<{
+			value?: string;
+		}>;
+		about?: string;
+		places?: PlaceDescription[];
+	}>;
+}
+
+/**
+ * Place types response (vocabulary)
+ */
+export interface PlaceTypesResponse {
+	elements?: Array<{
+		id?: string;
+		value?: string;
+		title?: string;
+		labels?: Array<{
+			lang?: string;
+			value?: string;
+		}>;
+	}>;
+}
+
+/**
+ * Single place type response
+ */
+export interface PlaceTypeResponse {
+	elements?: Array<{
+		id?: string;
+		value?: string;
+		title?: string;
+		labels?: Array<{
+			lang?: string;
+			value?: string;
+		}>;
+	}>;
+}
+
+/**
+ * Place type groups response
+ */
+export interface PlaceTypeGroupsResponse {
+	elements?: Array<{
+		id?: string;
+		value?: string;
+		title?: string;
+		labels?: Array<{
+			lang?: string;
+			value?: string;
+		}>;
+	}>;
+}
+
+/**
+ * Parent places search response
+ */
+export interface ParentPlacesResponse {
+	places?: PlaceDescription[];
+}
+
+/**
+ * Check place is child response
+ */
+export interface CheckPlaceIsChildResponse {
+	isChild?: boolean;
+}
