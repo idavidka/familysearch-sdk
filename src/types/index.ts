@@ -1067,3 +1067,316 @@ export interface MemoryPersonasResponse {
 export interface MemoryPersonaResponse {
 	persons?: MemoryPersona[];
 }
+
+// ====================================
+// Person CRUD Types (Write Operations)
+// ====================================
+
+/**
+ * Input for creating or updating a person
+ */
+export interface PersonInput {
+	/** Person names */
+	names?: Array<{
+		type?: string;
+		preferred?: boolean;
+		nameForms?: Array<{
+			lang?: string;
+			fullText?: string;
+			parts?: Array<{
+				type?: string; // 'http://gedcomx.org/Given', 'http://gedcomx.org/Surname'
+				value?: string;
+			}>;
+		}>;
+	}>;
+	/** Gender */
+	gender?: {
+		type?: string; // 'http://gedcomx.org/Male', 'http://gedcomx.org/Female', 'http://gedcomx.org/Unknown'
+	};
+	/** Facts (birth, death, etc.) */
+	facts?: Array<{
+		type?: string; // 'http://gedcomx.org/Birth', 'http://gedcomx.org/Death', etc.
+		date?: {
+			original?: string;
+			formal?: string;
+		};
+		place?: {
+			original?: string;
+		};
+		value?: string;
+	}>;
+}
+
+/**
+ * Response from creating a person
+ */
+export interface CreatePersonResponse {
+	persons?: FamilySearchPerson[];
+	links?: {
+		person?: { href?: string };
+	};
+}
+
+/**
+ * Response from updating a person
+ */
+export interface UpdatePersonResponse {
+	persons?: FamilySearchPerson[];
+}
+
+/**
+ * Response from deleting a person
+ */
+export interface DeletePersonResponse {
+	statusCode: number;
+	statusText: string;
+}
+
+// ====================================
+// Relationship CRUD Types (Write Operations)
+// ====================================
+
+/**
+ * Input for creating a couple relationship
+ */
+export interface CreateCoupleRelationshipInput {
+	/** Person 1 ID */
+	person1: string;
+	/** Person 2 ID */
+	person2: string;
+	/** Facts (marriage, divorce, etc.) */
+	facts?: Array<{
+		type?: string; // 'http://gedcomx.org/Marriage', 'http://gedcomx.org/Divorce', etc.
+		date?: {
+			original?: string;
+			formal?: string;
+		};
+		place?: {
+			original?: string;
+		};
+	}>;
+}
+
+/**
+ * Input for creating a child-and-parents relationship
+ */
+export interface CreateChildAndParentsRelationshipInput {
+	/** Child person ID */
+	child: string;
+	/** Father person ID (optional) */
+	father?: string;
+	/** Mother person ID (optional) */
+	mother?: string;
+	/** Father facts (optional) */
+	fatherFacts?: Array<{
+		type?: string; // 'http://gedcomx.org/AdoptiveParent', 'http://gedcomx.org/BiologicalParent', etc.
+	}>;
+	/** Mother facts (optional) */
+	motherFacts?: Array<{
+		type?: string;
+	}>;
+}
+
+/**
+ * Response from creating a relationship
+ */
+export interface CreateRelationshipResponse {
+	relationships?: Relationship[];
+	childAndParentsRelationships?: ChildAndParentsRelationship[];
+	links?: {
+		relationship?: { href?: string };
+	};
+}
+
+/**
+ * Response from updating a relationship
+ */
+export interface UpdateRelationshipResponse {
+	relationships?: Relationship[];
+	childAndParentsRelationships?: ChildAndParentsRelationship[];
+}
+
+// ====================================
+// Person Merge Types
+// ====================================
+
+/**
+ * Person merge analysis result
+ */
+export interface PersonMergeAnalysis {
+	/** Survivor person (person to keep) */
+	survivor?: {
+		id?: string;
+		resource?: string;
+	};
+	/** Duplicate person (person to merge into survivor) */
+	duplicate?: {
+		id?: string;
+		resource?: string;
+	};
+	/** Conflicts between the two persons */
+	conflicts?: Array<{
+		type?: string;
+		survivorValue?: unknown;
+		duplicateValue?: unknown;
+	}>;
+	/** Can merge? */
+	canMerge?: boolean;
+	/** Warnings */
+	warnings?: string[];
+}
+
+/**
+ * Input for person merge operation
+ */
+export interface PersonMergeInput {
+	/** Person to keep (survivor) */
+	survivorId: string;
+	/** Person to merge (will be deleted) */
+	duplicateId: string;
+	/** Optional: Specific resolution for conflicts */
+	resolutions?: Array<{
+		type?: string;
+		useValue?: "survivor" | "duplicate";
+	}>;
+}
+
+/**
+ * Response from person merge
+ */
+export interface PersonMergeResponse {
+	persons?: FamilySearchPerson[];
+	links?: {
+		person?: { href?: string };
+	};
+}
+
+// ====================================
+// Notes CRUD Types
+// ====================================
+
+/**
+ * Input for creating or updating a note
+ */
+export interface NoteInput {
+	/** Subject/title of the note */
+	subject?: string;
+	/** Note text */
+	text: string;
+	/** Attribution (optional) */
+	attribution?: {
+		contributor?: {
+			resourceId?: string;
+		};
+		modified?: number; // timestamp
+	};
+}
+
+/**
+ * Note object
+ */
+export interface Note {
+	id?: string;
+	subject?: string;
+	text?: string;
+	attribution?: {
+		contributor?: {
+			resourceId?: string;
+			resource?: string;
+		};
+		modified?: number;
+	};
+	links?: {
+		note?: { href?: string };
+	};
+}
+
+/**
+ * Response from creating/updating a note
+ */
+export interface NoteResponse {
+	notes?: Note[];
+	links?: {
+		note?: { href?: string };
+	};
+}
+
+// ====================================
+// Source Attachment Types
+// ====================================
+
+/**
+ * Input for attaching a source to a person/relationship
+ */
+export interface AttachSourceInput {
+	/** Source description ID */
+	descriptionId: string;
+	/** Tags (optional) */
+	tags?: Array<{
+		resource?: string; // Tag URI like 'http://gedcomx.org/Name', 'http://gedcomx.org/Birth'
+	}>;
+}
+
+/**
+ * Response from attaching a source
+ */
+export interface AttachSourceResponse {
+	sourceDescriptions?: SourceDescription[];
+	links?: {
+		sourceReference?: { href?: string };
+	};
+}
+
+// ====================================
+// Pedigree Types
+// ====================================
+
+/**
+ * Response from ancestry/descendancy queries
+ */
+export interface PedigreeResponse {
+	persons?: PersonData[];
+	relationships?: RelationshipDetails[];
+	childAndParentsRelationships?: RelationshipDetails[];
+}
+
+// ====================================
+// Search Result Types
+// ====================================
+
+/**
+ * Person search result from search queries
+ */
+export interface PersonSearchResult {
+	entries?: Array<{
+		id?: string;
+		score?: number;
+		content?: {
+			gedcomx?: {
+				persons?: PersonData[];
+			};
+		};
+	}>;
+	results?: number;
+}
+
+// ====================================
+// Matches Response Types
+// ====================================
+
+/**
+ * Response from matches/non-matches queries
+ */
+export interface MatchesResponse {
+	persons?: PersonData[];
+	sourceDescriptions?: SourceDescription[];
+	entries?: Array<{
+		id?: string;
+		content?: {
+			gedcomx?: {
+				persons?: PersonData[];
+				sourceDescriptions?: SourceDescription[];
+			};
+		};
+	}>;
+}

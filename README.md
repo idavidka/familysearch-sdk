@@ -492,6 +492,31 @@ const sdk = createFamilySearchSDK({
 
 - `convertToGedcom(pedigreeData, options)` - Convert to GEDCOM
 
+## API Coverage
+
+This SDK currently implements approximately **15% (~30 endpoints)** of the FamilySearch API. For a comprehensive analysis:
+
+- 📊 **[API Coverage Analysis](./API_COVERAGE_ANALYSIS.md)** - Detailed English analysis with implementation roadmap
+- 🇭🇺 **[API Coverage Analysis (Hungarian)](./API_COVERAGE_ANALYSIS_HU.md)** - Hungarian summary and recommendations
+- 📋 **[Complete API Endpoints List](./API_ENDPOINTS_COMPLETE.md)** - Full endpoint inventory with implementation status
+
+### Key Limitations
+
+⚠️ **The SDK is currently READ-ONLY.** You can:
+- ✅ Read persons, relationships, sources, memories
+- ✅ Search and match persons
+- ✅ Fetch pedigrees and ancestry data
+
+You cannot:
+- ❌ Create, update, or delete persons
+- ❌ Create or modify relationships
+- ❌ Attach/detach sources
+- ❌ Upload memories or photos
+- ❌ Create notes or participate in discussions
+- ❌ Merge persons
+
+See the [API Coverage Analysis](./API_COVERAGE_ANALYSIS.md) for detailed information about missing endpoints and implementation priorities.
+
 ## License
 
 MIT License - see [LICENSE](./LICENSE) file for details.
@@ -499,3 +524,4 @@ MIT License - see [LICENSE](./LICENSE) file for details.
 ## Contributing
 
 Contributions are welcome! Please read our contributing guidelines before submitting a pull request.
+

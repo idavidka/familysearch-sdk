@@ -206,7 +206,7 @@ This document lists **ALL** available FamilySearch API endpoints from the offici
 #### Person Matches (Partially Implemented)
 - ✅ **Read Person Matches by ID** - `GET /platform/tree/persons/{pid}/matches` (implemented as `getTreePersonMatches`)
 - ❌ **Read Person Matches by ID Headers** - `HEAD /platform/tree/persons/{pid}/matches`
-- ❌ **Read Person Matches by Example** - `POST /platform/tree/persons/{pid}/matches` - Match by person data
+- ✅ **Read Person Matches by Example** - `POST /platform/tree/persons/{pid}/matches` - Match by person data (implemented as `matchPerson`)
 - ❌ **Update Match Resolution** - `POST /platform/tree/persons/{pid}/matches/{mid}` - Accept/reject/dismiss
 
 #### Not-a-Match Declarations (NOT Implemented)
@@ -215,7 +215,7 @@ This document lists **ALL** available FamilySearch API endpoints from the offici
 - ❌ **Delete Not-a-Match Declarations** - `DELETE /platform/tree/persons/{pid}/not-a-matches` - Bulk delete
 - ❌ **Delete Not-a-Match Declaration** - `DELETE /platform/tree/persons/{pid}/not-a-matches/{mid}` - Single delete
 
-**SDK Status:** ⚠️ Only basic read implemented (1/8)
+**SDK Status:** ⚠️ Basic read and match implemented (2/8)
 
 ---
 
@@ -332,14 +332,14 @@ This document lists **ALL** available FamilySearch API endpoints from the offici
 
 ---
 
-### Personas (5 endpoints) - NOT Implemented
+### Personas (5 endpoints)
 - ❌ **Create Memory Persona** - `POST /platform/memories/{mid}/personas`
-- ❌ **Read Memory Persona** - `GET /platform/memories/{mid}/personas/{personaid}`
-- ❌ **Read Memory Personas** - `GET /platform/memories/{mid}/personas`
+- ✅ **Read Memory Persona** - `GET /platform/memories/{mid}/personas/{personaid}` (implemented as `getMemoryPersona`)
+- ✅ **Read Memory Personas** - `GET /platform/memories/{mid}/personas` (implemented as `getMemoryPersonas`)
 - ❌ **Update Memory Persona** - `POST /platform/memories/{mid}/personas/{personaid}`
 - ❌ **Delete Memory Persona** - `DELETE /platform/memories/{mid}/personas/{personaid}`
 
-**SDK Status:** ❌ None implemented (0/5)
+**SDK Status:** ⚠️ Only read operations (2/5)
 
 ---
 
@@ -354,10 +354,10 @@ This document lists **ALL** available FamilySearch API endpoints from the offici
 
 ## 🏛️ Standards Endpoints
 
-### Dates (1 endpoint) - NOT Implemented
-- ❌ **Standardize Date** - `GET /platform/dates` - Parse and standardize dates
+### Dates (1 endpoint)
+- ✅ **Standardize Date** - `GET /platform/dates` (implemented as `standardizeDate`)
 
-**SDK Status:** ❌ None implemented (0/1)
+**SDK Status:** ✅ Fully implemented (1/1)
 
 ---
 
@@ -387,24 +387,24 @@ This document lists **ALL** available FamilySearch API endpoints from the offici
 
 ---
 
-### Names (3 endpoints) - NOT Implemented
-- ❌ **Get Name Script** - `GET /platform/names` - Detect writing system
-- ❌ **Segment a Name** - `GET /platform/names/segments` - Parse name into parts
+### Names (3 endpoints)
+- ✅ **Get Name Script** - `GET /platform/names` (implemented as `getNameScript`) - Detect writing system
+- ✅ **Segment a Name** - `GET /platform/names/segments` (implemented as `segmentName`) - Parse name into parts
 - ❌ **Compose Full Name** - `POST /platform/names/segments` - Create full name from parts
 
-**SDK Status:** ❌ None implemented (0/3)
+**SDK Status:** ⚠️ Read operations implemented (2/3)
 
 ---
 
-### Vocabularies (6 endpoints) - NOT Implemented
-- ❌ **Search Controlled Vocabulary Terms** - `GET /platform/vocabularies/{vid}/concepts`
-- ❌ **Read Controlled Vocabulary Term** - `GET /platform/vocabularies/{vid}/concepts/{cid}`
+### Vocabularies (6 endpoints)
+- ✅ **Search Controlled Vocabulary Terms** - `GET /platform/vocabularies/{vid}/concepts` (implemented as `getVocabularyTerms`)
+- ✅ **Read Controlled Vocabulary Term** - `GET /platform/vocabularies/{vid}/concepts/{cid}` (implemented as `getVocabularyConcept`)
 - ❌ **Read Controlled Vocabulary Term Translation** - `GET /platform/vocabularies/{vid}/concepts/{cid}/translations/{lang}`
 - ❌ **Read Vocabulary Concept V2** - `GET /platform/vocabularies/concepts/{cid}`
 - ❌ **Read Vocabulary Concept Definition** - `GET /platform/vocabularies/concepts/{cid}/definition`
-- ❌ **Read Controlled Vocabulary List** - `GET /platform/vocabularies`
+- ✅ **Read Controlled Vocabulary List** - `GET /platform/vocabularies` (implemented as `getVocabularies`)
 
-**SDK Status:** ❌ None implemented (0/6)
+**SDK Status:** ⚠️ Basic operations implemented (3/6)
 
 ---
 
@@ -513,7 +513,7 @@ This document lists **ALL** available FamilySearch API endpoints from the offici
 | **Relationships (General)** | 2 | 0 | 0 | 2 | 0% |
 | **Notes** | 15 | 1 | 0 | 14 | ~7% |
 | **Sources** | 17 | 2 | 0 | 15 | ~12% |
-| **Matches** | 8 | 1 | 0 | 7 | ~13% |
+| **Matches** | 8 | 2 | 0 | 6 | ~25% |
 | **Portraits** | 4 | 1 | 0 | 3 | ~25% |
 | **Search** | 1 | 1 | 0 | 0 | 100% |
 | **Discussions** | 7 | 1 | 0 | 6 | ~14% |
@@ -521,14 +521,14 @@ This document lists **ALL** available FamilySearch API endpoints from the offici
 | **Groups (CET)** | 5 | 0 | 0 | 5 | 0% |
 | **Trees (CET)** | 8 | 0 | 0 | 8 | 0% |
 | **CET Change History** | 1 | 0 | 0 | 1 | 0% |
-| **Memories** | 6 | 2 | 0 | 4 | ~33% |
+| **Memories** | 6 | 3 | 0 | 3 | 50% |
 | **Artifacts** | 2 | 0 | 0 | 2 | 0% |
-| **Personas** | 5 | 0 | 0 | 5 | 0% |
+| **Personas** | 5 | 2 | 0 | 3 | 40% |
 | **Memory Comments** | 3 | 1 | 0 | 2 | ~33% |
-| **Dates** | 1 | 0 | 0 | 1 | 0% |
+| **Dates** | 1 | 1 | 0 | 0 | 100% |
 | **Places** | 14 | 2 | 0 | 12 | ~14% |
-| **Names** | 3 | 0 | 0 | 3 | 0% |
-| **Vocabularies** | 6 | 0 | 0 | 6 | 0% |
+| **Names** | 3 | 2 | 0 | 1 | ~67% |
+| **Vocabularies** | 6 | 3 | 0 | 3 | 50% |
 | **Agent** | 1 | 0 | 0 | 1 | 0% |
 | **Users** | 7 | 1 | 0 | 6 | ~14% |
 | **Utilities** | 1 | 0 | 0 | 1 | 0% |
@@ -538,13 +538,13 @@ This document lists **ALL** available FamilySearch API endpoints from the offici
 | **Genealogies: Matches** | 2 | 0 | 0 | 2 | 0% |
 | **Genealogies: Notes** | 1 | 0 | 0 | 1 | 0% |
 | **Genealogies: Trees** | 5 | 0 | 0 | 5 | 0% |
-| **TOTAL** | **~200+** | **~27** | **0** | **~173** | **~13.5%** |
+| **TOTAL** | **~200+** | **~30** | **0** | **~170** | **~15%** |
 
 ---
 
 ## 🎯 Key Findings
 
-### What's Implemented (27 endpoints ~13.5%)
+### What's Implemented (30 endpoints ~15%)
 1. ✅ **OAuth Authentication** (2/2)
 2. ✅ **Basic Person Read** (8 endpoints)
 3. ✅ **Pedigrees** (2/2)
@@ -553,9 +553,14 @@ This document lists **ALL** available FamilySearch API endpoints from the offici
 6. ✅ **Basic Places** (2 endpoints)
 7. ✅ **Basic Sources Read** (2 endpoints)
 8. ✅ **Basic Memories Read** (3 endpoints)
-9. ✅ **Miscellaneous** (5 endpoints: notes, discussions refs, matches, portraits, change history)
+9. ✅ **Memory Personas** (2 endpoints)
+10. ✅ **Date Standardization** (1 endpoint)
+11. ✅ **Name Processing** (2 endpoints)
+12. ✅ **Vocabularies** (3 endpoints)
+13. ✅ **Person Matches** (2 endpoints)
+14. ✅ **Miscellaneous** (notes, discussions refs, portraits, change history)
 
-### Major Gaps (173+ endpoints missing ~86.5%)
+### Major Gaps (170+ endpoints missing ~85%)
 
 #### Priority 1: Core CRUD Operations (~50 endpoints)
 - ❌ **Person Write** (Create, Update, Delete, Restore)
@@ -643,6 +648,14 @@ This document lists **ALL** available FamilySearch API endpoints from the offici
 ---
 
 **Document Version:** 1.0.0  
-**Last Updated:** 2026-01-18  
+**Last Updated:** 2026-01-20  
 **Total Endpoints Tracked:** ~200  
-**Current SDK Coverage:** ~13.5% (27/200)
+**Current SDK Coverage:** ~15% (30/200)
+
+---
+
+## 📚 Additional Resources
+
+For detailed analysis and implementation recommendations, see:
+- **[API Coverage Analysis](./API_COVERAGE_ANALYSIS.md)** - Full English analysis with implementation roadmap
+- **[API Coverage Analysis (Hungarian)](./API_COVERAGE_ANALYSIS_HU.md)** - Hungarian summary and recommendations

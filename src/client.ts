@@ -47,6 +47,26 @@ import type {
 	RelationshipDetails,
 	RateLimiterConfig,
 	SDKLogger,
+	// Person CRUD types
+	PersonInput,
+	CreatePersonResponse,
+	UpdatePersonResponse,
+	DeletePersonResponse,
+	// Relationship CRUD types
+	CreateCoupleRelationshipInput,
+	CreateChildAndParentsRelationshipInput,
+	CreateRelationshipResponse,
+	UpdateRelationshipResponse,
+	// Person Merge types
+	PersonMergeAnalysis,
+	PersonMergeInput,
+	PersonMergeResponse,
+	// Notes CRUD types
+	NoteInput,
+	NoteResponse,
+	// Source Attachment types
+	AttachSourceInput,
+	AttachSourceResponse,
 } from "./types";
 
 // Environment configuration
@@ -365,6 +385,150 @@ export class FamilySearchSDK {
 				error
 			);
 			return null;
+		}
+	}
+
+	/**
+	 * Create a new person in the tree
+	 * 
+	 * @param person - Person data to create
+	 * @returns Created person data with ID
+	 * 
+	 * @example
+	 * ```typescript
+	 * const newPerson = await sdk.createPerson({
+	 *   names: [{
+	 *     nameForms: [{
+	 *       fullText: 'John Smith',
+	 *       parts: [
+	 *         { type: 'http://gedcomx.org/Given', value: 'John' },
+	 *         { type: 'http://gedcomx.org/Surname', value: 'Smith' }
+	 *       ]
+	 *     }]
+	 *   }],
+	 *   gender: { type: 'http://gedcomx.org/Male' },
+	 *   facts: [{
+	 *     type: 'http://gedcomx.org/Birth',
+	 *     date: { original: '1850' },
+	 *     place: { original: 'London, England' }
+	 *   }]
+	 * });
+	 * ```
+	 */
+	async createPerson(person: PersonInput): Promise<CreatePersonResponse | null> {
+		try {
+			const response = await this.post<CreatePersonResponse>(
+				"/platform/tree/persons",
+				{ persons: [person] }
+			);
+			return response.data || null;
+		} catch (error) {
+			this.logger.error(
+				"[FamilySearch SDK] Failed to create person:",
+				error
+			);
+			throw error;
+		}
+	}
+
+	/**
+	 * Update an existing person in the tree
+	 * 
+	 * @param personId - ID of the person to update
+	 * @param person - Updated person data
+	 * @returns Updated person data
+	 * 
+	 * @example
+	 * ```typescript
+	 * const updated = await sdk.updatePerson('KWQS-BBQ', {
+	 *   facts: [{
+	 *     type: 'http://gedcomx.org/Death',
+	 *     date: { original: '1920' },
+	 *     place: { original: 'New York, USA' }
+	 *   }]
+	 * });
+	 * ```
+	 */
+	async updatePerson(
+		personId: string,
+		person: PersonInput
+	): Promise<UpdatePersonResponse | null> {
+		try {
+			const response = await this.post<UpdatePersonResponse>(
+				`/platform/tree/persons/${personId}`,
+				{ persons: [{ ...person, id: personId }] }
+			);
+			return response.data || null;
+		} catch (error) {
+			this.logger.error(
+				`[FamilySearch SDK] Failed to update person ${personId}:`,
+				error
+			);
+			throw error;
+		}
+	}
+
+	/**
+	 * Delete a person from the tree
+	 * 
+	 * **Warning:** This is a destructive operation. The person will be marked as deleted.
+	 * 
+	 * @param personId - ID of the person to delete
+	 * @param reason - Optional reason for deletion
+	 * @returns Delete confirmation
+	 * 
+	 * @example
+	 * ```typescript
+	 * await sdk.deletePerson('KWQS-BBQ', 'Duplicate entry');
+	 * ```
+	 */
+	async deletePerson(
+		personId: string,
+		reason?: string
+	): Promise<DeletePersonResponse | null> {
+		try {
+			const url = reason
+				? `/platform/tree/persons/${personId}?reason=${encodeURIComponent(reason)}`
+				: `/platform/tree/persons/${personId}`;
+
+			const response = await this.delete<DeletePersonResponse>(url);
+			return {
+				statusCode: response.statusCode,
+				statusText: response.statusText,
+			};
+		} catch (error) {
+			this.logger.error(
+				`[FamilySearch SDK] Failed to delete person ${personId}:`,
+				error
+			);
+			throw error;
+		}
+	}
+
+	/**
+	 * Restore a deleted person
+	 * 
+	 * @param personId - ID of the person to restore
+	 * @returns Restored person data
+	 * 
+	 * @example
+	 * ```typescript
+	 * const restored = await sdk.restorePerson('KWQS-BBQ');
+	 * ```
+	 */
+	async restorePerson(personId: string): Promise<UpdatePersonResponse | null> {
+		try {
+			const response = await this.post<UpdatePersonResponse>(
+				`/platform/tree/persons/${personId}/restore`,
+				{}
+			);
+			return response.data || null;
+		} catch (error) {
+			this.logger.error(
+				`[FamilySearch SDK] Failed to restore person ${personId}:`,
+				error
+			);
+			throw error;
 		}
 	}
 
@@ -955,6 +1119,277 @@ export class FamilySearchSDK {
 				error
 			);
 			return null;
+		}
+	}
+
+	/**
+	 * Create a couple relationship between two persons
+	 * 
+	 * @param relationship - Relationship data
+	 * @returns Created relationship data
+	 * 
+	 * @example
+	 * ```typescript
+	 * const marriage = await sdk.createCoupleRelationship({
+	 *   person1: 'KWQS-BBQ',
+	 *   person2: 'KWQS-BBC',
+	 *   facts: [{
+	 *     type: 'http://gedcomx.org/Marriage',
+	 *     date: { original: '1875' },
+	 *     place: { original: 'London, England' }
+	 *   }]
+	 * });
+	 * ```
+	 */
+	async createCoupleRelationship(
+		relationship: CreateCoupleRelationshipInput
+	): Promise<CreateRelationshipResponse | null> {
+		try {
+			const body = {
+				relationships: [{
+					type: "http://gedcomx.org/Couple",
+					person1: { resourceId: relationship.person1 },
+					person2: { resourceId: relationship.person2 },
+					facts: relationship.facts || [],
+				}],
+			};
+
+			const response = await this.post<CreateRelationshipResponse>(
+				"/platform/tree/couple-relationships",
+				body
+			);
+			return response.data || null;
+		} catch (error) {
+			this.logger.error(
+				"[FamilySearch SDK] Failed to create couple relationship:",
+				error
+			);
+			throw error;
+		}
+	}
+
+	/**
+	 * Update a couple relationship
+	 * 
+	 * @param relationshipId - ID of the relationship to update
+	 * @param relationship - Updated relationship data
+	 * @returns Updated relationship data
+	 * 
+	 * @example
+	 * ```typescript
+	 * const updated = await sdk.updateCoupleRelationship('RRRR-RRR', {
+	 *   person1: 'KWQS-BBQ',
+	 *   person2: 'KWQS-BBC',
+	 *   facts: [{
+	 *     type: 'http://gedcomx.org/Divorce',
+	 *     date: { original: '1880' }
+	 *   }]
+	 * });
+	 * ```
+	 */
+	async updateCoupleRelationship(
+		relationshipId: string,
+		relationship: CreateCoupleRelationshipInput
+	): Promise<UpdateRelationshipResponse | null> {
+		try {
+			const body = {
+				relationships: [{
+					id: relationshipId,
+					type: "http://gedcomx.org/Couple",
+					person1: { resourceId: relationship.person1 },
+					person2: { resourceId: relationship.person2 },
+					facts: relationship.facts || [],
+				}],
+			};
+
+			const response = await this.post<UpdateRelationshipResponse>(
+				`/platform/tree/couple-relationships/${relationshipId}`,
+				body
+			);
+			return response.data || null;
+		} catch (error) {
+			this.logger.error(
+				`[FamilySearch SDK] Failed to update couple relationship ${relationshipId}:`,
+				error
+			);
+			throw error;
+		}
+	}
+
+	/**
+	 * Delete a couple relationship
+	 * 
+	 * @param relationshipId - ID of the relationship to delete
+	 * @param reason - Optional reason for deletion
+	 * @returns Delete confirmation
+	 * 
+	 * @example
+	 * ```typescript
+	 * await sdk.deleteCoupleRelationship('RRRR-RRR', 'Incorrect relationship');
+	 * ```
+	 */
+	async deleteCoupleRelationship(
+		relationshipId: string,
+		reason?: string
+	): Promise<DeletePersonResponse | null> {
+		try {
+			const url = reason
+				? `/platform/tree/couple-relationships/${relationshipId}?reason=${encodeURIComponent(reason)}`
+				: `/platform/tree/couple-relationships/${relationshipId}`;
+
+			const response = await this.delete<DeletePersonResponse>(url);
+			return {
+				statusCode: response.statusCode,
+				statusText: response.statusText,
+			};
+		} catch (error) {
+			this.logger.error(
+				`[FamilySearch SDK] Failed to delete couple relationship ${relationshipId}:`,
+				error
+			);
+			throw error;
+		}
+	}
+
+	/**
+	 * Create a child-and-parents relationship
+	 * 
+	 * @param relationship - Relationship data
+	 * @returns Created relationship data
+	 * 
+	 * @example
+	 * ```typescript
+	 * const parentChild = await sdk.createChildAndParentsRelationship({
+	 *   child: 'KWQS-BBC',
+	 *   father: 'KWQS-BBQ',
+	 *   mother: 'KWQS-BBD',
+	 *   fatherFacts: [{
+	 *     type: 'http://gedcomx.org/BiologicalParent'
+	 *   }],
+	 *   motherFacts: [{
+	 *     type: 'http://gedcomx.org/BiologicalParent'
+	 *   }]
+	 * });
+	 * ```
+	 */
+	async createChildAndParentsRelationship(
+		relationship: CreateChildAndParentsRelationshipInput
+	): Promise<CreateRelationshipResponse | null> {
+		try {
+			const body = {
+				childAndParentsRelationships: [{
+					type: "http://gedcomx.org/ParentChild",
+					child: { resourceId: relationship.child },
+					...(relationship.father && {
+						parent1: { resourceId: relationship.father },
+						parent1Facts: relationship.fatherFacts || [],
+					}),
+					...(relationship.mother && {
+						parent2: { resourceId: relationship.mother },
+						parent2Facts: relationship.motherFacts || [],
+					}),
+				}],
+			};
+
+			const response = await this.post<CreateRelationshipResponse>(
+				"/platform/tree/child-and-parents-relationships",
+				body
+			);
+			return response.data || null;
+		} catch (error) {
+			this.logger.error(
+				"[FamilySearch SDK] Failed to create child-and-parents relationship:",
+				error
+			);
+			throw error;
+		}
+	}
+
+	/**
+	 * Update a child-and-parents relationship
+	 * 
+	 * @param relationshipId - ID of the relationship to update
+	 * @param relationship - Updated relationship data
+	 * @returns Updated relationship data
+	 * 
+	 * @example
+	 * ```typescript
+	 * const updated = await sdk.updateChildAndParentsRelationship('RRRR-RRR', {
+	 *   child: 'KWQS-BBC',
+	 *   father: 'KWQS-BBQ',
+	 *   fatherFacts: [{
+	 *     type: 'http://gedcomx.org/AdoptiveParent'
+	 *   }]
+	 * });
+	 * ```
+	 */
+	async updateChildAndParentsRelationship(
+		relationshipId: string,
+		relationship: CreateChildAndParentsRelationshipInput
+	): Promise<UpdateRelationshipResponse | null> {
+		try {
+			const body = {
+				childAndParentsRelationships: [{
+					id: relationshipId,
+					type: "http://gedcomx.org/ParentChild",
+					child: { resourceId: relationship.child },
+					...(relationship.father && {
+						parent1: { resourceId: relationship.father },
+						parent1Facts: relationship.fatherFacts || [],
+					}),
+					...(relationship.mother && {
+						parent2: { resourceId: relationship.mother },
+						parent2Facts: relationship.motherFacts || [],
+					}),
+				}],
+			};
+
+			const response = await this.post<UpdateRelationshipResponse>(
+				`/platform/tree/child-and-parents-relationships/${relationshipId}`,
+				body
+			);
+			return response.data || null;
+		} catch (error) {
+			this.logger.error(
+				`[FamilySearch SDK] Failed to update child-and-parents relationship ${relationshipId}:`,
+				error
+			);
+			throw error;
+		}
+	}
+
+	/**
+	 * Delete a child-and-parents relationship
+	 * 
+	 * @param relationshipId - ID of the relationship to delete
+	 * @param reason - Optional reason for deletion
+	 * @returns Delete confirmation
+	 * 
+	 * @example
+	 * ```typescript
+	 * await sdk.deleteChildAndParentsRelationship('RRRR-RRR', 'Incorrect parentage');
+	 * ```
+	 */
+	async deleteChildAndParentsRelationship(
+		relationshipId: string,
+		reason?: string
+	): Promise<DeletePersonResponse | null> {
+		try {
+			const url = reason
+				? `/platform/tree/child-and-parents-relationships/${relationshipId}?reason=${encodeURIComponent(reason)}`
+				: `/platform/tree/child-and-parents-relationships/${relationshipId}`;
+
+			const response = await this.delete<DeletePersonResponse>(url);
+			return {
+				statusCode: response.statusCode,
+				statusText: response.statusText,
+			};
+		} catch (error) {
+			this.logger.error(
+				`[FamilySearch SDK] Failed to delete child-and-parents relationship ${relationshipId}:`,
+				error
+			);
+			throw error;
 		}
 	}
 

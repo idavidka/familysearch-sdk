@@ -125,6 +125,33 @@ export type {
 	OAuthStateValidation,
 	// Progress
 	ProgressCallback,
+	// Person CRUD
+	PersonInput,
+	CreatePersonResponse,
+	UpdatePersonResponse,
+	DeletePersonResponse,
+	// Relationship CRUD
+	CreateCoupleRelationshipInput,
+	CreateChildAndParentsRelationshipInput,
+	CreateRelationshipResponse,
+	UpdateRelationshipResponse,
+	// Person Merge
+	PersonMergeAnalysis,
+	PersonMergeInput,
+	PersonMergeResponse,
+	// Notes CRUD
+	NoteInput,
+	Note,
+	NoteResponse,
+	// Source Attachment
+	AttachSourceInput,
+	AttachSourceResponse,
+	// Pedigrees
+	PedigreeResponse,
+	// Search Results
+	PersonSearchResult,
+	// Matches
+	MatchesResponse,
 } from "./types";
 
 // Errors
@@ -141,3 +168,9 @@ export * from "./tree";
 
 // Utils module
 export * from "./utils";
+
+// API modules (modularized endpoints)
+export * as TreeAPI from "./api/tree";
+export * as MemoriesAPI from "./api/memories";
+export * as StandardsAPI from "./api/standards";
+export * as UserAPI from "./api/user";
