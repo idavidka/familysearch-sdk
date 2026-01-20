@@ -2,7 +2,7 @@
 
 **Last Updated:** 2026-01-20  
 **SDK Version:** 2.0.0  
-**Total Implemented Functions:** ~124
+**Total Implemented Functions:** ~130
 
 ---
 
@@ -264,22 +264,37 @@
 
 ---
 
+### 19. **Pending Modifications API** ✅
+- ✅ `getPendingModifications()` - Read pending tree changes/uncommitted modifications
+
+**Status:** 1/1 endpoints (100%)
+
+---
+
+### 20. **Groups / Community Trees (CET)** ✅
+- ✅ `getGroup()` - Read single community tree group
+- ✅ `getGroups()` - List all user groups
+- ✅ `createGroup()` - Create new community tree group
+- ✅ `updateGroup()` - Update existing group
+- ✅ `deleteGroup()` - Delete community tree group
+
+**Status:** 5/5 endpoints (100%)
+
+---
+
 ## ❌ NOT IMPLEMENTED MODULES
 
-### 19. **Groups / Community Trees (CET)** ❌
-- ❌ `readGroup()`, `updateGroup()`, `deleteGroup()`
-- ❌ `getGroups()`, `createGroup()`
-- **Estimated endpoints:** 5
+### 21. **Genealogies API (Research Trees)** ❌
+- ❌ Person operations: `readGenealogyPerson()`, `createGenealogyPerson()`, `updateGenealogyPerson()`, `deleteGenealogyPerson()`, `restoreGenealogyPerson()`
+- ❌ Tree operations: `readGenealogyTree()`, `createGenealogyTree()`, `updateGenealogyTree()`, `deleteGenealogyTree()`
+- ❌ Relationship operations: `updateGenealogyRelationship()`, `deleteGenealogyRelationship()`
+- ❌ Source operations: `readGenealogySourceDescription()`, `createGenealogySourceDescription()`, `updateGenealogySourceDescription()`, `deleteGenealogySourceDescription()`
+- ❌ Other: `readGenealogyPersons()`, `deleteGenealogyConclusion()`, `readGenealogyBulkMatch()`, `readGenealogyPersonMatches()`, `readGenealogyNote()`
+- **Estimated endpoints:** 27
 
 ---
 
-### 19. **Genealogies API** (Research Trees) ❌
-- ❌ All genealogies endpoints (separate from main tree)
-- **Estimated endpoints:** 15+
-
----
-
-### 20. **Vocab/Standards (Advanced)** ❌
+### 22. **Vocab/Standards (Advanced)** ❌
 - ❌ Vocabulary concept searches
 - ❌ Term translations
 - ❌ Concept definitions
@@ -287,29 +302,17 @@
 
 ---
 
-### 21. **Agent API** ❌
-- ❌ `readAgent()` - Read agent information
-- **Estimated endpoints:** 1-2
-
----
-
-### 22. **Pending Modifications** ❌
-- ❌ `readPendingModifications()` - Read pending changes
-- **Estimated endpoints:** 1-2
-
----
-
 ## 📊 OVERALL STATISTICS
 
 | Category | Implemented | Total Estimated | Coverage |
 |----------|-------------|-----------------|----------|
-| **Core Tree Operations** | 65 | 70 | 93% |
+| **Core Tree Operations** | 70 | 75 | 93% |
 | **Memories & Discussions** | 19 | 22 | 86% |
 | **Search & Matches** | 8 | 9 | 89% |
-| **Places & Standards** | 3 | 20 | 15% |
-| **User & Account** | 1 | 7 | 14% |
-| **Advanced (Source Box, Groups, etc.)** | 0 | 30+ | 0% |
-| **TOTAL** | **~95** | **~160** | **~59%** |
+| **Places & Standards** | 11 | 20 | 55% |
+| **User & Account** | 7 | 7 | 100% |
+| **Advanced (Source Box, Groups, Agent, etc.)** | 15 | 20 | 75% |
+| **TOTAL** | **~130** | **~153** | **~85%** |
 
 ---
 
@@ -372,8 +375,18 @@
 ### Session 9: Agent API
 - ✅ Agent API Implementation (1 function)
 
-**Total Today:** 54 new functions  
+**Total Session 1-9:** 54 new functions  
 **Bundle Growth:** +21.43 KB (113.80 KB → 135.23 KB)
+
+### Session 10: Pending Modifications + Groups API
+- ✅ Pending Modifications API (1 function)
+- ✅ Groups/Community Trees API (5 functions)
+
+**Total Session 10:** 6 new functions  
+**Bundle Growth:** +2.08 KB (135.23 KB → 137.31 KB)
+
+**Grand Total Today:** 60 new functions  
+**Overall Bundle Growth:** +23.51 KB (113.80 KB → 137.31 KB)
 
 ---
 
