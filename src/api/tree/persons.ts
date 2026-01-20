@@ -23,6 +23,9 @@ import type {
 	PersonSpousesResponse,
 	PersonWithRelationships,
 	UpdatePersonResponse,
+	UpdatePersonPortraitsInput,
+	UpdatePersonPortraitsResponse,
+	DeleteResponse,
 } from "../../types";
 
 /**
@@ -505,5 +508,98 @@ export async function getPersonSpouses(
 			error
 		);
 		return null;
+	}
+}
+
+/**
+ * Update person portraits (set preferred portrait)
+ * 
+ * Sets which memory/photo should be used as the person's preferred portrait.
+ * The portrait appears on the person's profile and in family tree views.
+ * 
+ * @param sdk - SDK instance
+ * @param personId - Person ID
+ * @param memoryId - Memory ID to set as preferred portrait
+ * @returns Update response
+ * @throws Error if update fails
+ * 
+ * @example
+ * ```typescript
+ * // Set a memory as the person's preferred portrait
+ * await updatePersonPortraits(sdk, "PPPP-PPP", "MMMM-MMM");
+ * console.log("Preferred portrait updated");
+ * ```
+ */
+export async function updatePersonPortraits(
+	sdk: FamilySearchSDK,
+	personId: string,
+	memoryId: string
+): Promise<UpdatePersonPortraitsResponse> {
+	try {
+		const input: UpdatePersonPortraitsInput = {
+			persons: [
+				{
+					id: personId,
+					media: [
+						{
+							id: memoryId,
+							resource: `#${memoryId}`,
+						},
+					],
+				},
+			],
+		};
+
+		const response = await sdk.put<UpdatePersonPortraitsResponse>(
+			`/platform/tree/persons/${personId}/portraits`,
+			input
+		);
+		return response.data || { persons: [] };
+	} catch (error) {
+		sdk["logger"].error(
+			`[FamilySearch SDK] Failed to update portraits for ${personId}:`,
+			error
+		);
+		throw error;
+	}
+}
+
+/**
+ * Delete person portrait
+ * 
+ * Removes a specific portrait from a person's profile.
+ * This doesn't delete the memory itself, only removes it as a portrait.
+ * 
+ * @param sdk - SDK instance
+ * @param personId - Person ID
+ * @param portraitId - Portrait/Memory ID to remove
+ * @returns Delete response with status
+ * @throws Error if deletion fails
+ * 
+ * @example
+ * ```typescript
+ * await deletePersonPortrait(sdk, "PPPP-PPP", "MMMM-MMM");
+ * console.log("Portrait removed");
+ * ```
+ */
+export async function deletePersonPortrait(
+	sdk: FamilySearchSDK,
+	personId: string,
+	portraitId: string
+): Promise<DeleteResponse> {
+	try {
+		const response = await sdk.delete<DeleteResponse>(
+			`/platform/tree/persons/${personId}/portraits/${portraitId}`
+		);
+		return {
+			statusCode: response.statusCode,
+			statusText: response.statusText,
+		};
+	} catch (error) {
+		sdk["logger"].error(
+			`[FamilySearch SDK] Failed to delete portrait ${portraitId} for ${personId}:`,
+			error
+		);
+		throw error;
 	}
 }

@@ -971,6 +971,34 @@ export interface PersonPortraitsResponse {
 	}>;
 }
 
+/**
+ * Input for updating person portraits (set preferred)
+ */
+export interface UpdatePersonPortraitsInput {
+	/** Person ID */
+	persons: Array<{
+		id: string;
+		media: Array<{
+			/** Memory ID to set as preferred portrait */
+			id: string;
+			/** Resource reference */
+			resource: string;
+		}>;
+	}>;
+}
+
+/**
+ * Update person portraits response
+ */
+export interface UpdatePersonPortraitsResponse {
+	persons?: Array<{
+		id?: string;
+		media?: Array<{
+			id?: string;
+		}>;
+	}>;
+}
+
 // ====================================
 // Change History Types
 // ====================================

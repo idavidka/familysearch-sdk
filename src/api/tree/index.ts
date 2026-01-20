@@ -32,6 +32,8 @@ export {
 	getPersonFamilies,
 	getPersonParents,
 	getPersonSpouses,
+	updatePersonPortraits,
+	deletePersonPortrait,
 } from "./persons";
 
 // Relationships API
