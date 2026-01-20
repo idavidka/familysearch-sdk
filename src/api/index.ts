@@ -19,6 +19,9 @@ export * from "./tree";
 // Memories API
 export * from "./memories";
 
+// Discussions API
+export * from "./discussions";
+
 // Standards API
 export * from "./standards";
 

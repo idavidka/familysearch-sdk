@@ -821,6 +821,52 @@ export interface PersonDiscussionsResponse {
 }
 
 // ====================================
+// Discussion Input/Response Types
+// ====================================
+
+/**
+ * Input for creating or updating a discussion
+ */
+export interface DiscussionInput {
+	/** Discussion title */
+	title: string;
+	/** Discussion details/body */
+	details: string;
+	/** About (URI reference to person/relationship) */
+	about?: string;
+}
+
+/**
+ * Discussion response from API
+ */
+export interface DiscussionResponse {
+	discussions?: Discussion[];
+}
+
+/**
+ * Input for creating a discussion comment
+ */
+export interface DiscussionCommentInput {
+	/** Comment text */
+	text: string;
+}
+
+/**
+ * Discussion comment response from API
+ */
+export interface DiscussionCommentResponse {
+	discussions?: Discussion[];
+}
+
+/**
+ * Generic delete response
+ */
+export interface DeleteResponse {
+	statusCode: number;
+	statusText: string;
+}
+
+// ====================================
 // Portrait/Photo Types
 // ====================================
 
