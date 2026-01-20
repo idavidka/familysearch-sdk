@@ -286,7 +286,7 @@ export interface PedigreeData {
  */
 export interface PedigreeResponse {
 	persons?: PersonData[];
-	relationships?: RelationshipDetails[];
+	relationships?: Relationship[]; // Changed from RelationshipDetails[] - API returns full Relationship objects
 	childAndParentsRelationships?: RelationshipDetails[];
 }
 
