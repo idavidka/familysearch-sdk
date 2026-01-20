@@ -3,7 +3,7 @@
  * 
  * Exports all tree-related API functions:
  * - Persons (CRUD operations)
- * - Relationships (couple and child-parent)
+ * - Relationships (couple and child-parent, change history, order management)
  * - Pedigrees (ancestry and descendancy)
  * - Search (person search)
  * - Matches (record matches and hints)
@@ -11,6 +11,8 @@
  * - Notes (CRUD on persons/relationships)
  * - Source Attachments (attach/detach sources)
  * - Person Merges (merge analysis and execution)
+ * - Preferred Relationships (parent/spouse preferences)
+ * - Conclusions (delete facts/names/gender)
  */
 
 // Persons API
@@ -113,3 +115,10 @@ export {
 	setPreferredSpouseRelationship,
 	deletePreferredSpouseRelationship,
 } from "./preferences";
+
+// Conclusions API
+export {
+	deletePersonConclusion,
+	deleteCoupleRelationshipConclusion,
+	deleteChildAndParentsRelationshipConclusion,
+} from "./conclusions";
