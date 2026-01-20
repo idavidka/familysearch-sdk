@@ -66,6 +66,11 @@ export {
 export {
 	getPersonMatches,
 	getPersonNonMatches,
+	updateMatchResolution,
+	getNotAMatchDeclarations,
+	createNotAMatchDeclaration,
+	deleteNotAMatchDeclaration,
+	deleteAllNotAMatchDeclarations,
 } from "./matches";
 
 // Sources API

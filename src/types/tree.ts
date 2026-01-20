@@ -716,6 +716,45 @@ export interface MatchesResponse {
 	}>;
 }
 
+/**
+ * Match resolution input (accept/reject/dismiss)
+ */
+export interface MatchResolutionInput {
+	/** Resolution status: "accepted", "rejected", or "pending" */
+	status: "accepted" | "rejected" | "pending";
+}
+
+/**
+ * Match resolution response
+ */
+export interface MatchResolutionResponse {
+	entries?: Array<{
+		id?: string;
+		status?: string;
+	}>;
+}
+
+/**
+ * Not-a-match declarations response
+ */
+export interface NotAMatchResponse {
+	persons?: PersonData[];
+	entries?: Array<{
+		id?: string;
+		person?: PersonData;
+	}>;
+}
+
+/**
+ * Not-a-match declaration input
+ */
+export interface NotAMatchInput {
+	/** Person ID to declare as not-a-match */
+	person: string;
+	/** Optional reason for the declaration */
+	reason?: string;
+}
+
 // ====================================
 // Person Merge Types
 // ====================================
