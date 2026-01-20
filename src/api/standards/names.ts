@@ -10,6 +10,8 @@ import type { FamilySearchSDK } from "../../client";
 import type {
 	NameScriptResponse,
 	NameSegmentsResponse,
+	CreateNameSegmentsInput,
+	CreateNameSegmentsResponse,
 } from "../../types";
 
 /**
@@ -60,6 +62,48 @@ export async function getNameSegments(
 	} catch (error) {
 		sdk["logger"].error(
 			`[FamilySearch SDK] Failed to get name segments for "${name}":`,
+			error
+		);
+		return null;
+	}
+}
+
+/**
+ * Create name from segments
+ * 
+ * Combines name segments (given name, surname, prefix, suffix) into
+ * a properly formatted full name according to cultural conventions.
+ * 
+ * @param sdk - SDK instance
+ * @param segments - Array of name segments with types and values
+ * @returns Formatted full name or null
+ * @throws Error if creation fails
+ * 
+ * @example
+ * ```typescript
+ * const result = await createNameSegments(sdk, {
+ *   segments: [
+ *     { type: 'Given', value: 'John' },
+ *     { type: 'Given', value: 'Michael' },
+ *     { type: 'Surname', value: 'Smith' }
+ *   ]
+ * });
+ * console.log('Full name:', result?.name); // "John Michael Smith"
+ * ```
+ */
+export async function createNameSegments(
+	sdk: FamilySearchSDK,
+	input: CreateNameSegmentsInput
+): Promise<CreateNameSegmentsResponse | null> {
+	try {
+		const response = await sdk.post<CreateNameSegmentsResponse>(
+			`/platform/names/segments`,
+			input
+		);
+		return response.data || null;
+	} catch (error) {
+		sdk["logger"].error(
+			`[FamilySearch SDK] Failed to create name from segments:`,
 			error
 		);
 		return null;

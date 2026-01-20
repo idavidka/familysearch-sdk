@@ -31,6 +31,23 @@ export interface NameSegmentsResponse {
 	segments?: NameSegment[];
 }
 
+/**
+ * Create name segments input
+ */
+export interface CreateNameSegmentsInput {
+	segments?: Array<{
+		type?: string; // 'Given', 'Surname', 'Prefix', 'Suffix', etc.
+		value?: string;
+	}>;
+}
+
+/**
+ * Create name segments response
+ */
+export interface CreateNameSegmentsResponse {
+	name?: string;
+}
+
 // ====================================
 // Dates API Types
 // ====================================
