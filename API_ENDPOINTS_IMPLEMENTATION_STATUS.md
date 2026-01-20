@@ -2,7 +2,7 @@
 
 **Last Updated:** 2026-01-20  
 **SDK Version:** 2.0.0  
-**Total Implemented Functions:** ~99
+**Total Implemented Functions:** ~107
 
 ---
 
@@ -196,15 +196,22 @@
 
 ## 🟡 PARTIALLY IMPLEMENTED MODULES
 
-### 14. **Places API** (Read-only) 🟡
+### 14. **Places API** ✅
 - ✅ `searchPlaces()` - Search places
-- ✅ `getPlace()` - Read place
-- ❌ `getPlaceChildren()` - Read child places (not implemented)
-- ❌ `getPlaceDescriptions()` - Read place descriptions (not implemented)
-- ❌ `getPlaceDescription()` - Read single place description (not implemented)
-- ❌ Many other place endpoints (not implemented)
+- ✅ `getPlaceDetails()` - Read place details
+- ✅ `getPlaceChildren()` - Read child places
+- ✅ `getPlaceDescriptions()` - Read place descriptions
+- ✅ `getPlaceDescription()` - Read single place description
+- ✅ `getPlaceTypes()` - Get place type vocabulary
+- ✅ `getPlaceType()` - Get single place type
+- ✅ `getPlaceTypeGroups()` - Get place type groups
+- ✅ `searchParentPlaces()` - Search for parent places
+- ✅ `checkPlaceIsChild()` - Verify parent-child relationship
+- ❌ `getPlaceAttributes()` - Read place attributes (not verified)
+- ❌ `getPlaceDescriptionWithRelated()` - Read with related (not verified)
+- ❌ `getPlaceDescriptionsGroup()` - Read descriptions group (not verified)
 
-**Status:** 2/15+ endpoints (~13%)
+**Status:** 10/13 endpoints (77%)
 
 ---
 
@@ -308,7 +315,7 @@
 ### Medium Priority (Enhanced functionality)
 8. ✅ **Portraits Management** - DONE (set/delete preferred portrait)
 9. ✅ **Memory Artifacts** - DONE (artifact metadata, coverage regions)
-10. 🔄 **Places API Expansion** - Place descriptions, children, types
+10. ✅ **Places API Expansion** - DONE (children, descriptions, types, parent search)
 
 ### Low Priority (Advanced/Optional features)
 11. ⏭️ **Source Box API** - User collections and folders
@@ -338,7 +345,10 @@
 ### Session 4: Memory Artifacts
 - ✅ Memory Artifacts API (2 functions)
 
-**Total Today:** 29 new functions  
+### Session 5: Places API Expansion
+- ✅ Places API Enhancement (8 functions)
+
+**Total Today:** 37 new functions  
 **Bundle Growth:** +14.26 KB (113.80 KB → 128.06 KB)
 
 ---
