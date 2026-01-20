@@ -1168,3 +1168,136 @@ export interface PersonSpousesResponse {
 	persons?: PersonData[];
 	relationships?: Relationship[];
 }
+
+// ====================================
+// Source Box / Collections Types
+// ====================================
+
+/**
+ * Source folder in user's source box
+ */
+export interface SourceFolder {
+	id?: string;
+	title?: string;
+	description?: string;
+	resourceType?: string;
+	count?: number;
+}
+
+/**
+ * User source folders response
+ */
+export interface UserSourceFoldersResponse {
+	collections?: Array<{
+		id?: string;
+		title?: string;
+		description?: string;
+		resourceType?: string;
+		count?: number;
+	}>;
+}
+
+/**
+ * Source folders list response
+ */
+export interface SourceFoldersResponse {
+	collections?: SourceFolder[];
+}
+
+/**
+ * Create source folder input
+ */
+export interface CreateSourceFolderInput {
+	collections?: Array<{
+		title?: string;
+		description?: string;
+	}>;
+}
+
+/**
+ * Create source folder response
+ */
+export interface CreateSourceFolderResponse {
+	collections?: Array<{
+		id?: string;
+		title?: string;
+		description?: string;
+	}>;
+}
+
+/**
+ * User-defined collection response
+ */
+export interface UserDefinedCollectionResponse {
+	collections?: Array<{
+		id?: string;
+		title?: string;
+		description?: string;
+		resourceType?: string;
+		count?: number;
+		sourceDescriptions?: Array<{
+			id?: string;
+			resourceType?: string;
+			citations?: Array<{
+				value?: string;
+			}>;
+		}>;
+	}>;
+}
+
+/**
+ * Update user-defined collection input
+ */
+export interface UpdateUserDefinedCollectionInput {
+	collections?: Array<{
+		id?: string;
+		title?: string;
+		description?: string;
+	}>;
+}
+
+/**
+ * Update user-defined collection response
+ */
+export interface UpdateUserDefinedCollectionResponse {
+	collections?: Array<{
+		id?: string;
+		title?: string;
+		description?: string;
+	}>;
+}
+
+/**
+ * Collection source descriptions response
+ */
+export interface CollectionSourceDescriptionsResponse {
+	sourceDescriptions?: Array<{
+		id?: string;
+		resourceType?: string;
+		citations?: Array<{
+			value?: string;
+		}>;
+		titles?: Array<{
+			value?: string;
+		}>;
+	}>;
+}
+
+/**
+ * Update sources to collection input
+ */
+export interface UpdateSourcesToCollectionInput {
+	sourceDescriptions?: Array<{
+		id?: string;
+	}>;
+}
+
+/**
+ * Update sources to collection response
+ */
+export interface UpdateSourcesToCollectionResponse {
+	collections?: Array<{
+		id?: string;
+		count?: number;
+	}>;
+}

@@ -135,3 +135,16 @@ export {
 	deleteCoupleRelationshipConclusion,
 	deleteChildAndParentsRelationshipConclusion,
 } from "./conclusions";
+
+// Source Box API (Collections and Folders)
+export {
+	getUserSourceFolders,
+	getSourceFolders,
+	createSourceFolder,
+	getUserDefinedCollection,
+	updateUserDefinedCollection,
+	deleteUserDefinedCollection,
+	getCollectionSourceDescriptions,
+	addSourcesToCollection,
+	removeSourcesFromCollection,
+} from "./source-box";
