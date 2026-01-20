@@ -434,13 +434,11 @@ export class FamilySearchSDK {
 			const params = new URLSearchParams();
 			if (options.status) params.append("status", options.status);
 			if (options.collection) params.append("collection", options.collection);
-			if (options.count) params.append("count", options.count.toString());
-			if (options.start) params.append("start", options.start.toString());
+			if (options.count !== undefined) params.append("count", options.count.toString());
+			if (options.start !== undefined) params.append("start", options.start.toString());
 
 			const queryString = params.toString();
-			const url = queryString
-				? `/platform/tree/persons/${personId}/matches?${queryString}`
-				: `/platform/tree/persons/${personId}/matches`;
+			const url = `/platform/tree/persons/${personId}/matches${queryString ? `?${queryString}` : ""}`;
 
 			const response = await this.get<TreePersonMatchesResponse>(url);
 			return response.data || null;
@@ -454,37 +452,185 @@ export class FamilySearchSDK {
 	}
 
 	/**
-	 * Match person by structured data
+	 * Match person using external GEDCOM data
 	 * 
-	 * This is a convenience wrapper that builds a query from structured person data
-	 * (name, dates, places, parents, spouse) for searching the FamilySearch tree.
+	 * Submits person data in GedcomX format to find matching persons in FamilySearch.
+	 * This method constructs a proper GedcomX person object and posts it to the matches endpoint.
+	 * 
+	 * @param person - Person data with name, gender, birth/death/marriage facts
+	 * @param options - Match options (collection filter, result count)
+	 * @returns Tree person matches response with potential matches
+	 * 
+	 * @example
+	 * ```typescript
+	 * const matches = await sdk.matchPerson({
+	 *   givenName: 'John',
+	 *   familyName: 'Smith',
+	 *   birthDate: '1850',
+	 *   birthPlace: 'London, England'
+	 * }, { count: 20 });
+	 * ```
 	 */
 	async matchPerson(
-		personData: PersonMatchInput,
+		person: PersonMatchInput,
 		options: PersonMatchOptions = {}
-	): Promise<PersonSearchResponse | null> {
+	): Promise<TreePersonMatchesResponse | null> {
 		try {
-			const params = new URLSearchParams();
-			
-			if (personData.givenName) params.append("q.givenName", personData.givenName);
-			if (personData.familyName) params.append("q.surname", personData.familyName);
-			if (personData.gender) params.append("q.gender", personData.gender);
-			if (personData.birthDate) params.append("q.birthLikeDate", personData.birthDate);
-			if (personData.birthPlace) params.append("q.birthLikePlace", personData.birthPlace);
-			if (personData.deathDate) params.append("q.deathLikeDate", personData.deathDate);
-			if (personData.deathPlace) params.append("q.deathLikePlace", personData.deathPlace);
-			
-			if (personData.fatherGivenName) params.append("q.fatherGivenName", personData.fatherGivenName);
-			if (personData.fatherFamilyName) params.append("q.fatherSurname", personData.fatherFamilyName);
-			if (personData.motherGivenName) params.append("q.motherGivenName", personData.motherGivenName);
-			if (personData.motherFamilyName) params.append("q.motherSurname", personData.motherFamilyName);
-			if (personData.spouseGivenName) params.append("q.spouseGivenName", personData.spouseGivenName);
-			if (personData.spouseFamilyName) params.append("q.spouseSurname", personData.spouseFamilyName);
-			
-			if (options.count) params.append("count", options.count.toString());
+			// Build the GedcomX person object for the API
+			const gedcomxPerson: {
+				names?: Array<{
+					nameForms?: Array<{
+						fullText?: string;
+						parts?: Array<{ type?: string; value?: string }>;
+					}>;
+				}>;
+				gender?: { type?: string };
+				facts?: Array<{
+					type?: string;
+					date?: { original?: string };
+					place?: { original?: string };
+				}>;
+			} = {};
 
-			const response = await this.get<PersonSearchResponse>(
-				`/platform/tree/search?${params.toString()}`
+			// Add name information
+			if (person.fullName || person.givenName || person.familyName) {
+				const nameParts: Array<{ type?: string; value?: string }> = [];
+				if (person.givenName) {
+					nameParts.push({
+						type: "http://gedcomx.org/Given",
+						value: person.givenName,
+					});
+				}
+				if (person.familyName) {
+					nameParts.push({
+						type: "http://gedcomx.org/Surname",
+						value: person.familyName,
+					});
+				}
+
+				// Build full name, avoiding extra spaces
+				const fullText =
+					person.fullName ||
+					[person.givenName, person.familyName]
+						.filter(Boolean)
+						.join(" ");
+
+				gedcomxPerson.names = [
+					{
+						nameForms: [
+							{
+								fullText,
+								parts:
+									nameParts.length > 0
+										? nameParts
+										: undefined,
+							},
+						],
+					},
+				];
+			}
+
+			// Add gender (validate against known GedcomX types)
+			if (person.gender) {
+				// Normalize gender to proper case and validate
+				const normalizedGender =
+					person.gender.charAt(0).toUpperCase() +
+					person.gender.slice(1).toLowerCase();
+				// Only add if it's a valid GedcomX gender type
+				if (["Male", "Female", "Unknown"].includes(normalizedGender)) {
+					gedcomxPerson.gender = {
+						type: `http://gedcomx.org/${normalizedGender}`,
+					};
+				}
+			}
+
+			// Add facts (birth, death, marriage)
+			const facts: Array<{
+				type?: string;
+				date?: { original?: string };
+				place?: { original?: string };
+			}> = [];
+
+			if (person.birthDate || person.birthPlace) {
+				facts.push({
+					type: "http://gedcomx.org/Birth",
+					date: person.birthDate
+						? { original: person.birthDate }
+						: undefined,
+					place: person.birthPlace
+						? { original: person.birthPlace }
+						: undefined,
+				});
+			}
+
+			if (person.deathDate || person.deathPlace) {
+				facts.push({
+					type: "http://gedcomx.org/Death",
+					date: person.deathDate
+						? { original: person.deathDate }
+						: undefined,
+					place: person.deathPlace
+						? { original: person.deathPlace }
+						: undefined,
+				});
+			}
+
+			if (person.marriageDate || person.marriagePlace) {
+				facts.push({
+					type: "http://gedcomx.org/Marriage",
+					date: person.marriageDate
+						? { original: person.marriageDate }
+						: undefined,
+					place: person.marriagePlace
+						? { original: person.marriagePlace }
+						: undefined,
+				});
+			}
+
+			if (facts.length > 0) {
+				gedcomxPerson.facts = facts;
+			}
+
+			// Build query parameters
+			const params = new URLSearchParams();
+			if (options.collection) {
+				params.append("collection", options.collection);
+			}
+			if (options.count !== undefined) {
+				params.append("count", options.count.toString());
+			}
+
+			const queryString = params.toString();
+			const url = `/platform/tree/matches${queryString ? `?${queryString}` : ""}`;
+
+			// Create a source description for the external GEDCOM person
+			const sourceDescription = {
+				id: "sd1",
+				about: "#primaryPerson",
+				resourceType: "http://gedcomx.org/DigitalArtifact",
+				titles: [
+					{
+						value: "External GEDCOM File",
+					},
+				],
+			};
+
+			// Submit the person data to the matches endpoint
+			// The description field links to the source description via fragment identifier
+			const requestBody = {
+				description: "#sd1",
+				persons: [
+					{
+						id: "primaryPerson",
+						...gedcomxPerson,
+					},
+				],
+				sourceDescriptions: [sourceDescription],
+			};
+
+			const response = await this.post<TreePersonMatchesResponse>(
+				url,
+				requestBody
 			);
 			return response.data || null;
 		} catch (error) {
@@ -497,15 +643,140 @@ export class FamilySearchSDK {
 	}
 
 	/**
-	 * Search person by structured data (alias for matchPerson)
+	 * Search for persons using external GEDCOM data
 	 * 
-	 * This is a convenience wrapper that provides an alternative name for matchPerson.
+	 * Converts person data to search query parameters and searches FamilySearch.
+	 * Works with both Tree and Records collections.
+	 *
+	 * @param person - Person data to search for (name, dates, places, etc.)
+	 * @param options - Search options (collection, pagination)
+	 * @returns FamilySearch API response with search results
+	 *
+	 * @example
+	 * ```typescript
+	 * const results = await sdk.searchPersonByData({
+	 *   givenName: 'John',
+	 *   familyName: 'Smith',
+	 *   birthDate: '1850',
+	 *   birthPlace: 'London, England'
+	 * }, { collection: 'tree', count: 20 });
+	 * ```
 	 */
 	async searchPersonByData(
-		personData: PersonMatchInput,
-		options: PersonMatchOptions = {}
-	): Promise<PersonSearchResponse | null> {
-		return this.matchPerson(personData, options);
+		person: PersonMatchInput,
+		options: {
+			start?: number;
+			count?: number;
+			collection?: "tree" | "records";
+		} = {}
+	): Promise<FamilySearchApiResponse<PersonSearchResponse>> {
+		// Build query parameters from person data
+		const query: Record<string, string> = {};
+
+		// Add name
+		if (person.givenName) {
+			query["q.givenName"] = person.givenName;
+		}
+		if (person.familyName) {
+			query["q.surname"] = person.familyName;
+		}
+
+		// Add birth info
+		if (person.birthDate) {
+			// Extract year from date (FamilySearch expects +YYYY format)
+			const year = person.birthDate.match(/\d{4}/)?.[0];
+			if (year) {
+				query["q.birthLikeDate"] = `+${year}`;
+			}
+		}
+		if (person.birthPlace) {
+			query["q.birthLikePlace"] = person.birthPlace;
+		}
+
+		// Add death info
+		if (person.deathDate) {
+			const year = person.deathDate.match(/\d{4}/)?.[0];
+			if (year) {
+				query["q.deathLikeDate"] = `+${year}`;
+			}
+		}
+		if (person.deathPlace) {
+			query["q.deathLikePlace"] = person.deathPlace;
+		}
+
+		// Add marriage info
+		if (person.marriageDate) {
+			const year = person.marriageDate.match(/\d{4}/)?.[0];
+			if (year) {
+				query["q.marriageLikeDate"] = `+${year}`;
+			}
+		}
+		if (person.marriagePlace) {
+			query["q.marriageLikePlace"] = person.marriagePlace;
+		}
+
+		// Add father info
+		if (person.fatherGivenName) {
+			query["q.fatherGivenName"] = person.fatherGivenName;
+		}
+		if (person.fatherFamilyName) {
+			query["q.fatherSurname"] = person.fatherFamilyName;
+		}
+
+		// Add mother info
+		if (person.motherGivenName) {
+			query["q.motherGivenName"] = person.motherGivenName;
+		}
+		if (person.motherFamilyName) {
+			query["q.motherSurname"] = person.motherFamilyName;
+		}
+
+		// Add spouse info
+		if (person.spouseGivenName) {
+			query["q.spouseGivenName"] = person.spouseGivenName;
+		}
+		if (person.spouseFamilyName) {
+			query["q.spouseSurname"] = person.spouseFamilyName;
+		}
+
+		return this.searchPersons(query, options);
+	}
+
+	/**
+	 * Search for persons in FamilySearch
+	 * 
+	 * Low-level search method that accepts query parameters as a Record.
+	 * Use `searchPersonByData` for a higher-level interface.
+	 *
+	 * @param query - Query parameters as key-value pairs
+	 * @param options - Search options (collection, pagination)
+	 * @returns FamilySearch API response with search results
+	 */
+	async searchPersons(
+		query: Record<string, string>,
+		options: {
+			start?: number;
+			count?: number;
+			collection?: "tree" | "records";
+		} = {}
+	): Promise<FamilySearchApiResponse<PersonSearchResponse>> {
+		const params = new URLSearchParams({
+			...query,
+			...(options.start !== undefined && {
+				start: options.start.toString(),
+			}),
+			...(options.count !== undefined && {
+				count: options.count.toString(),
+			}),
+		});
+
+		// Note: Collection filtering is not supported in the current FamilySearch Search API
+		// The search will return results from all available collections
+		// We'll need to filter results client-side if needed
+
+		return this.get<PersonSearchResponse>(
+			`/platform/tree/search?${params.toString()}`
+		);
 	}
 
 	/**
@@ -548,29 +819,6 @@ export class FamilySearchSDK {
 		generations: number = 2
 	): Promise<PedigreeResponse | null> {
 		return getDescendancyAPI(this, personId, generations);
-	}
-
-	/**
-	 * Search for persons using a simple string query
-	 * 
-	 * This is a convenience wrapper for the FamilySearch person search API that accepts
-	 * a simple string query instead of structured search parameters.
-	 * 
-	 * @deprecated Use `searchPersons` from `@treeviz/familysearch-sdk/api/tree/search` for structured queries
-	 */
-	async searchPersons(query: string, count: number = 20): Promise<PersonSearchResponse | null> {
-		try {
-			const response = await this.get<PersonSearchResponse>(
-				`/platform/tree/search?q=${encodeURIComponent(query)}&count=${count}`
-			);
-			return response.data || null;
-		} catch (error) {
-			this.logger.error(
-				"[FamilySearch SDK] Failed to search persons:",
-				error
-			);
-			return null;
-		}
 	}
 
 	// ====================================
