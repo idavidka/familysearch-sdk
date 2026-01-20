@@ -18,7 +18,6 @@ import {
 	FamilySearchError,
 } from "./errors";
 import { RateLimiter } from "./rate-limiter";
-import type { RelationshipDeRateLimiter } from "./rate-limiter";
 import type {
 	EnvironmentConfig,
 	FamilySearchApiError,
