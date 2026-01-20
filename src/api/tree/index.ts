@@ -77,6 +77,9 @@ export {
 export {
 	getSourceDescriptions,
 	getSourceDescription,
+	createSourceDescription,
+	updateSourceDescription,
+	deleteSourceDescription,
 } from "./sources";
 
 // Notes API

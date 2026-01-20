@@ -471,6 +471,41 @@ export interface SourceDescriptionResponse {
 }
 
 /**
+ * Input for creating/updating a source description
+ */
+export interface SourceDescriptionInput {
+	/** Source about (URL or identifier) */
+	about?: string;
+	/** Source titles */
+	titles?: Array<{ value: string; lang?: string }>;
+	/** Source citations */
+	citations?: Array<{ value: string; lang?: string }>;
+	/** Resource type (e.g., "http://gedcomx.org/Collection") */
+	resourceType?: string;
+	/** Notes about the source */
+	notes?: Array<{ text: string }>;
+	/** Attribution (who created/modified) */
+	attribution?: {
+		contributor?: { resource: string };
+		modified?: number;
+	};
+}
+
+/**
+ * Create source description response
+ */
+export interface CreateSourceDescriptionResponse {
+	sourceDescriptions?: SourceDescriptionDetail[];
+}
+
+/**
+ * Update source description response
+ */
+export interface UpdateSourceDescriptionResponse {
+	sourceDescriptions?: SourceDescriptionDetail[];
+}
+
+/**
  * Input for attaching a source to a person/relationship
  */
 export interface AttachSourceInput {
