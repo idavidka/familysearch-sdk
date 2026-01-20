@@ -1301,3 +1301,43 @@ export interface UpdateSourcesToCollectionResponse {
 		count?: number;
 	}>;
 }
+
+// ====================================
+// Agent Types
+// ====================================
+
+/**
+ * Agent (contributor/organization) information
+ */
+export interface Agent {
+	id?: string;
+	names?: Array<{
+		value?: string;
+	}>;
+	accounts?: Array<{
+		accountName?: string;
+		serviceHomepage?: {
+			resource?: string;
+		};
+	}>;
+	emails?: Array<{
+		resource?: string;
+	}>;
+	homepage?: {
+		resource?: string;
+	};
+	openid?: {
+		resource?: string;
+	};
+	person?: {
+		resource?: string;
+		resourceId?: string;
+	};
+}
+
+/**
+ * Agent response
+ */
+export interface AgentResponse {
+	agents?: Agent[];
+}

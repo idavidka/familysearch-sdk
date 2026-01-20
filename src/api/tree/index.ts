@@ -148,3 +148,8 @@ export {
 	addSourcesToCollection,
 	removeSourcesFromCollection,
 } from "./source-box";
+
+// Agent API
+export {
+	getAgent,
+} from "./agent";
