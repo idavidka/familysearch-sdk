@@ -2,7 +2,7 @@
 
 **Last Updated:** 2026-01-20  
 **SDK Version:** 2.0.0  
-**Total Implemented Functions:** ~130
+**Total Implemented Functions:** ~151
 
 ---
 
@@ -282,17 +282,34 @@
 
 ---
 
-## ❌ NOT IMPLEMENTED MODULES
+### 21. **Genealogies API (Research Trees)** ✅
+- ✅ `getGenealogyTree()` - Read single research tree
+- ✅ `getGenealogyTrees()` - List all trees
+- ✅ `createGenealogyTree()` - Create new tree
+- ✅ `updateGenealogyTree()` - Update tree
+- ✅ `deleteGenealogyTree()` - Delete tree
+- ✅ `getGenealogyPerson()` - Read person in tree
+- ✅ `getGenealogyPersons()` - List persons in tree
+- ✅ `createGenealogyPerson()` - Add person
+- ✅ `updateGenealogyPerson()` - Update person
+- ✅ `deleteGenealogyPerson()` - Delete person
+- ✅ `restoreGenealogyPerson()` - Restore deleted person
+- ✅ `updateGenealogyRelationship()` - Update relationship
+- ✅ `deleteGenealogyRelationship()` - Delete relationship
+- ✅ `getGenealogySourceDescription()` - Read source
+- ✅ `createGenealogySourceDescription()` - Add source
+- ✅ `updateGenealogySourceDescription()` - Update source
+- ✅ `deleteGenealogySourceDescription()` - Delete source
+- ✅ `deleteGenealogyConclusion()` - Delete conclusion
+- ✅ `getGenealogyBulkMatch()` - Bulk match results
+- ✅ `getGenealogyPersonMatches()` - Person matches
+- ✅ `getGenealogyNote()` - Read note
 
-### 21. **Genealogies API (Research Trees)** ❌
-- ❌ Person operations: `readGenealogyPerson()`, `createGenealogyPerson()`, `updateGenealogyPerson()`, `deleteGenealogyPerson()`, `restoreGenealogyPerson()`
-- ❌ Tree operations: `readGenealogyTree()`, `createGenealogyTree()`, `updateGenealogyTree()`, `deleteGenealogyTree()`
-- ❌ Relationship operations: `updateGenealogyRelationship()`, `deleteGenealogyRelationship()`
-- ❌ Source operations: `readGenealogySourceDescription()`, `createGenealogySourceDescription()`, `updateGenealogySourceDescription()`, `deleteGenealogySourceDescription()`
-- ❌ Other: `readGenealogyPersons()`, `deleteGenealogyConclusion()`, `readGenealogyBulkMatch()`, `readGenealogyPersonMatches()`, `readGenealogyNote()`
-- **Estimated endpoints:** 27
+**Status:** 21/21 endpoints (100%)
 
 ---
+
+## ❌ NOT IMPLEMENTED MODULES
 
 ### 22. **Vocab/Standards (Advanced)** ❌
 - ❌ Vocabulary concept searches
@@ -311,8 +328,9 @@
 | **Search & Matches** | 8 | 9 | 89% |
 | **Places & Standards** | 11 | 20 | 55% |
 | **User & Account** | 7 | 7 | 100% |
+| **Genealogies (Research Trees)** | 21 | 21 | 100% |
 | **Advanced (Source Box, Groups, Agent, etc.)** | 15 | 20 | 75% |
-| **TOTAL** | **~130** | **~153** | **~85%** |
+| **TOTAL** | **~151** | **~174** | **~87%** |
 
 ---
 
@@ -385,8 +403,19 @@
 **Total Session 10:** 6 new functions  
 **Bundle Growth:** +2.08 KB (135.23 KB → 137.31 KB)
 
-**Grand Total Today:** 60 new functions  
-**Overall Bundle Growth:** +23.51 KB (113.80 KB → 137.31 KB)
+### Session 11: Genealogies API (Research Trees)
+- ✅ Genealogies Trees module (5 functions)
+- ✅ Genealogies Persons module (6 functions)
+- ✅ Genealogies Relationships module (2 functions)
+- ✅ Genealogies Sources module (4 functions)
+- ✅ Genealogies Other operations (4 functions)
+
+**Total Session 11:** 21 new functions  
+**Bundle Growth:** +9.21 KB (137.31 KB → 146.52 KB)
+
+**Grand Total Today:** 81 new functions  
+**Overall Bundle Growth:** +32.72 KB (113.80 KB → 146.52 KB)
+**Final Coverage:** 87% (151/174 endpoints)
 
 ---
 
