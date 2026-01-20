@@ -91,6 +91,23 @@ export type {
 	MemoryComment,
 	MemoryWithCommentsResponse,
 	UserMemoriesResponse,
+	// Memory Personas
+	MemoryPersona,
+	MemoryPersonasResponse,
+	MemoryPersonaResponse,
+	// Vocabularies
+	VocabularyMetadata,
+	VocabulariesResponse,
+	VocabularyConceptDetail,
+	VocabularyConceptsResponse,
+	VocabularyConceptResponse,
+	// Names (Standards)
+	NameScriptResponse,
+	NameSegment,
+	NameSegmentsResponse,
+	// Dates (Standards)
+	StandardizedDate,
+	DateStandardizationResponse,
 	// Places
 	FamilySearchPlace,
 	PlaceDescription,

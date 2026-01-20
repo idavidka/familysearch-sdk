@@ -1292,6 +1292,313 @@ export class FamilySearchSDK {
 	}
 
 	// ====================================
+	// Vocabularies API
+	// ====================================
+
+	/**
+	 * Get list of all controlled vocabularies
+	 * Retrieves metadata about available vocabularies (e.g., place types, name types, etc.)
+	 *
+	 * @returns List of vocabulary metadata, or null if error
+	 *
+	 * @example
+	 * ```typescript
+	 * const vocabularies = await sdk.getVocabularies();
+	 * if (vocabularies?.vocabularies) {
+	 *   vocabularies.vocabularies.forEach(vocab => {
+	 *     console.log('Vocabulary:', vocab.id, vocab.name);
+	 *   });
+	 * }
+	 * ```
+	 */
+	async getVocabularies(): Promise<import("./types").VocabulariesResponse | null> {
+		try {
+			const response = await this.get<import("./types").VocabulariesResponse>(
+				"/platform/vocabularies"
+			);
+			return response.data || null;
+		} catch (error) {
+			this.logger.error(
+				"[FamilySearch SDK] Failed to get vocabularies:",
+				error
+			);
+			return null;
+		}
+	}
+
+	/**
+	 * Search controlled vocabulary terms
+	 * Retrieves terms from a specific vocabulary (e.g., place types, relationship types)
+	 *
+	 * @param vocabularyId - Vocabulary ID (e.g., 'place-type', 'relationship-type')
+	 * @param query - Optional search query
+	 * @param options - Pagination options
+	 * @returns Vocabulary concepts/terms, or null if error
+	 *
+	 * @example
+	 * ```typescript
+	 * const terms = await sdk.getVocabularyTerms('place-type', 'city');
+	 * if (terms?.concepts) {
+	 *   terms.concepts.forEach(concept => {
+	 *     console.log('Term:', concept.label);
+	 *   });
+	 * }
+	 * ```
+	 */
+	async getVocabularyTerms(
+		vocabularyId: string,
+		query?: string,
+		options: { start?: number; count?: number } = {}
+	): Promise<import("./types").VocabularyConceptsResponse | null> {
+		try {
+			const params = new URLSearchParams({
+				...(query && { q: query }),
+				...(options.start !== undefined && {
+					start: options.start.toString(),
+				}),
+				...(options.count !== undefined && {
+					count: options.count.toString(),
+				}),
+			});
+
+			const queryString = params.toString();
+			const url = queryString
+				? `/platform/vocabularies/${vocabularyId}/concepts?${queryString}`
+				: `/platform/vocabularies/${vocabularyId}/concepts`;
+
+			const response = await this.get<import("./types").VocabularyConceptsResponse>(url);
+			return response.data || null;
+		} catch (error) {
+			this.logger.error(
+				`[FamilySearch SDK] Failed to get vocabulary terms for ${vocabularyId}:`,
+				error
+			);
+			return null;
+		}
+	}
+
+	/**
+	 * Get a specific vocabulary concept/term
+	 * Retrieves details about a specific term in a vocabulary
+	 *
+	 * @param vocabularyId - Vocabulary ID
+	 * @param conceptId - Concept/term ID
+	 * @returns Vocabulary concept details, or null if error
+	 *
+	 * @example
+	 * ```typescript
+	 * const concept = await sdk.getVocabularyConcept('place-type', 'City');
+	 * if (concept) {
+	 *   console.log('Label:', concept.label);
+	 *   console.log('Description:', concept.description);
+	 * }
+	 * ```
+	 */
+	async getVocabularyConcept(
+		vocabularyId: string,
+		conceptId: string
+	): Promise<import("./types").VocabularyConceptDetail | null> {
+		try {
+			const response = await this.get<import("./types").VocabularyConceptResponse>(
+				`/platform/vocabularies/${vocabularyId}/concepts/${conceptId}`
+			);
+			return response.data?.concepts?.[0] || null;
+		} catch (error) {
+			this.logger.error(
+				`[FamilySearch SDK] Failed to get vocabulary concept ${vocabularyId}/${conceptId}:`,
+				error
+			);
+			return null;
+		}
+	}
+
+	// ====================================
+	// Names API (Standards)
+	// ====================================
+
+	/**
+	 * Detect name script/writing system
+	 * Analyzes a name to determine the writing system (Latin, Cyrillic, Chinese, etc.)
+	 *
+	 * @param name - Name to analyze
+	 * @returns Name with detected script, or null if error
+	 *
+	 * @example
+	 * ```typescript
+	 * const result = await sdk.getNameScript('王明');
+	 * if (result) {
+	 *   console.log('Detected script:', result.script); // e.g., 'Hani' for Chinese
+	 * }
+	 * ```
+	 */
+	async getNameScript(
+		name: string
+	): Promise<import("./types").NameScriptResponse | null> {
+		try {
+			const params = new URLSearchParams({ name });
+			const response = await this.get<import("./types").NameScriptResponse>(
+				`/platform/names?${params.toString()}`
+			);
+			return response.data || null;
+		} catch (error) {
+			this.logger.error(
+				"[FamilySearch SDK] Failed to get name script:",
+				error
+			);
+			return null;
+		}
+	}
+
+	/**
+	 * Segment/parse a name into parts
+	 * Breaks down a full name into given name, surname, prefix, suffix, etc.
+	 *
+	 * @param name - Full name to parse
+	 * @param lang - Language code (e.g., 'en', 'zh', 'ru')
+	 * @returns Name segments (parts), or null if error
+	 *
+	 * @example
+	 * ```typescript
+	 * const segments = await sdk.segmentName('John William Smith Jr.', 'en');
+	 * if (segments?.segments) {
+	 *   // segments.segments would contain given name, surname, suffix, etc.
+	 *   console.log('Parts:', segments.segments);
+	 * }
+	 * ```
+	 */
+	async segmentName(
+		name: string,
+		lang?: string
+	): Promise<import("./types").NameSegmentsResponse | null> {
+		try {
+			const params = new URLSearchParams({
+				name,
+				...(lang && { lang }),
+			});
+			const response = await this.get<import("./types").NameSegmentsResponse>(
+				`/platform/names/segments?${params.toString()}`
+			);
+			return response.data || null;
+		} catch (error) {
+			this.logger.error(
+				"[FamilySearch SDK] Failed to segment name:",
+				error
+			);
+			return null;
+		}
+	}
+
+	// ====================================
+	// Dates API (Standards)
+	// ====================================
+
+	/**
+	 * Standardize a date string
+	 * Parses and normalizes a date into a standard format
+	 *
+	 * @param date - Date string to standardize (e.g., "March 15, 1850", "15 Mar 1850")
+	 * @returns Standardized date information, or null if error
+	 *
+	 * @example
+	 * ```typescript
+	 * const standardized = await sdk.standardizeDate('March 15, 1850');
+	 * if (standardized?.dates?.[0]) {
+	 *   console.log('Formal date:', standardized.dates[0].formal); // +1850-03-15
+	 *   console.log('Original:', standardized.dates[0].original);
+	 * }
+	 * ```
+	 */
+	async standardizeDate(
+		date: string
+	): Promise<import("./types").DateStandardizationResponse | null> {
+		try {
+			const params = new URLSearchParams({ date });
+			const response = await this.get<import("./types").DateStandardizationResponse>(
+				`/platform/dates?${params.toString()}`
+			);
+			return response.data || null;
+		} catch (error) {
+			this.logger.error(
+				"[FamilySearch SDK] Failed to standardize date:",
+				error
+			);
+			return null;
+		}
+	}
+
+	// ====================================
+	// Memory Personas API
+	// ====================================
+
+	/**
+	 * Get memory personas
+	 * Retrieves all personas (identified individuals) in a memory
+	 *
+	 * @param memoryId - Memory artifact ID
+	 * @returns Memory personas response, or null if error
+	 *
+	 * @example
+	 * ```typescript
+	 * const personas = await sdk.getMemoryPersonas('MEM-123');
+	 * if (personas?.persons) {
+	 *   personas.persons.forEach(persona => {
+	 *     console.log('Person in photo:', persona.display?.name);
+	 *   });
+	 * }
+	 * ```
+	 */
+	async getMemoryPersonas(
+		memoryId: string
+	): Promise<import("./types").MemoryPersonasResponse | null> {
+		try {
+			const response = await this.get<import("./types").MemoryPersonasResponse>(
+				`/platform/memories/${memoryId}/personas`
+			);
+			return response.data || null;
+		} catch (error) {
+			this.logger.error(
+				`[FamilySearch SDK] Failed to get memory personas for ${memoryId}:`,
+				error
+			);
+			return null;
+		}
+	}
+
+	/**
+	 * Get a specific memory persona
+	 * Retrieves details about a specific persona in a memory
+	 *
+	 * @param memoryId - Memory artifact ID
+	 * @param personaId - Persona ID
+	 * @returns Memory persona details, or null if error
+	 *
+	 * @example
+	 * ```typescript
+	 * const persona = await sdk.getMemoryPersona('MEM-123', 'PERSONA-456');
+	 * if (persona?.persons?.[0]) {
+	 *   console.log('Person:', persona.persons[0].display?.name);
+	 * }
+	 * ```
+	 */
+	async getMemoryPersona(
+		memoryId: string,
+		personaId: string
+	): Promise<import("./types").MemoryPersonaResponse | null> {
+		try {
+			const response = await this.get<import("./types").MemoryPersonaResponse>(
+				`/platform/memories/${memoryId}/personas/${personaId}`
+			);
+			return response.data || null;
+		} catch (error) {
+			this.logger.error(
+				`[FamilySearch SDK] Failed to get memory persona ${personaId} for ${memoryId}:`,
+				error
+			);
+			return null;
+		}
+	}
+
+	// ====================================
 	// Import/Export API
 	// ====================================
 
