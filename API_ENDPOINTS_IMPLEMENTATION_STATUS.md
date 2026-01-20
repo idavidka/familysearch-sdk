@@ -2,7 +2,7 @@
 
 **Last Updated:** 2026-01-20  
 **SDK Version:** 2.0.0  
-**Total Implemented Functions:** ~107
+**Total Implemented Functions:** ~116
 
 ---
 
@@ -238,13 +238,24 @@
 
 ---
 
-## ❌ NOT IMPLEMENTED MODULES
+## 🟡 PARTIALLY IMPLEMENTED MODULES
 
-### 17. **Source Box / User Defined Collections** ❌
-- ❌ All endpoints for organizing sources into folders/collections
-- **Estimated endpoints:** 8-10
+### 17. **Source Box / User Defined Collections** ✅
+- ✅ `getUserSourceFolders()` - Get user's source folders
+- ✅ `getSourceFolders()` - Get source folder list
+- ✅ `createSourceFolder()` - Create new folder
+- ✅ `getUserDefinedCollection()` - Get collection details
+- ✅ `updateUserDefinedCollection()` - Update collection
+- ✅ `deleteUserDefinedCollection()` - Delete collection
+- ✅ `getCollectionSourceDescriptions()` - Get sources in collection
+- ✅ `addSourcesToCollection()` - Add sources to collection
+- ✅ `removeSourcesFromCollection()` - Remove sources from collection
+
+**Status:** 9/10 endpoints (90%)
 
 ---
+
+## ❌ NOT IMPLEMENTED MODULES
 
 ### 18. **Groups / Community Trees (CET)** ❌
 - ❌ `readGroup()`, `updateGroup()`, `deleteGroup()`
@@ -318,7 +329,7 @@
 10. ✅ **Places API Expansion** - DONE (children, descriptions, types, parent search)
 
 ### Low Priority (Advanced/Optional features)
-11. ⏭️ **Source Box API** - User collections and folders
+11. ✅ **Source Box API** - DONE (collections and folders management)
 12. ⏭️ **Groups/CET API** - Community trees functionality
 13. ⏭️ **Genealogies API** - Research trees (separate from main)
 14. ⏭️ **User Management** - Partner accounts, history, deletion
@@ -348,8 +359,11 @@
 ### Session 5: Places API Expansion
 - ✅ Places API Enhancement (8 functions)
 
-**Total Today:** 37 new functions  
-**Bundle Growth:** +14.26 KB (113.80 KB → 128.06 KB)
+### Session 6: Source Box API
+- ✅ Source Box Collections Management (9 functions)
+
+**Total Today:** 46 new functions  
+**Bundle Growth:** +18.66 KB (113.80 KB → 132.46 KB)
 
 ---
 
