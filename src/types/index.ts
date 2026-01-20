@@ -14,4 +14,5 @@ export * from "./tree";
 export * from "./memories";
 export * from "./places";
 export * from "./standards";
+export * from "./genealogies";
 

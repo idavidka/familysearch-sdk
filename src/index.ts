@@ -174,3 +174,4 @@ export * as TreeAPI from "./api/tree";
 export * as MemoriesAPI from "./api/memories";
 export * as StandardsAPI from "./api/standards";
 export * as UserAPI from "./api/user";
+export * as GenealogiesAPI from "./api/genealogies";
