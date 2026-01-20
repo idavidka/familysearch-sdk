@@ -987,3 +987,57 @@ export interface SetPreferredRelationshipInput {
 		resource: string;
 	}>;
 }
+
+/**
+ * Input for setting parent order in a child-and-parents relationship
+ */
+export interface SetParentOrderInput {
+	persons: Array<{
+		resourceId: string;
+		resource: string;
+	}>;
+}
+
+/**
+ * Response for parent order operation
+ */
+export interface SetParentOrderResponse {
+	childAndParentsRelationships?: Array<{
+		id?: string;
+		parent1?: {
+			resourceId?: string;
+			resource?: string;
+		};
+		parent2?: {
+			resourceId?: string;
+			resource?: string;
+		};
+	}>;
+}
+
+/**
+ * Input for setting spouse order in a couple relationship
+ */
+export interface SetSpouseOrderInput {
+	persons: Array<{
+		resourceId: string;
+		resource: string;
+	}>;
+}
+
+/**
+ * Response for spouse order operation
+ */
+export interface SetSpouseOrderResponse {
+	relationships?: Array<{
+		id?: string;
+		person1?: {
+			resourceId?: string;
+			resource?: string;
+		};
+		person2?: {
+			resourceId?: string;
+			resource?: string;
+		};
+	}>;
+}

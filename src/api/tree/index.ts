@@ -42,6 +42,8 @@ export {
 	getCoupleRelationshipChangeHistory,
 	getChildAndParentsRelationshipChangeHistory,
 	restoreChange,
+	setParentOrder,
+	setSpouseOrder,
 } from "./relationships";
 
 // Pedigrees API

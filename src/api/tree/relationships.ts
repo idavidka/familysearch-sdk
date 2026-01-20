@@ -17,6 +17,10 @@ import type {
 	CoupleRelationshipChangeHistoryResponse,
 	ChildAndParentsRelationshipChangeHistoryResponse,
 	RestoreChangeResponse,
+	SetParentOrderInput,
+	SetParentOrderResponse,
+	SetSpouseOrderInput,
+	SetSpouseOrderResponse,
 } from "../../types";
 
 /**
@@ -437,6 +441,116 @@ export async function restoreChange(
 	} catch (error) {
 		sdk["logger"].error(
 			`[FamilySearch SDK] Failed to restore change ${changeId}:`,
+			error
+		);
+		throw error;
+	}
+}
+
+/**
+ * Set parent order in a child-and-parents relationship
+ * 
+ * Controls the display order of parents (who appears as parent1 vs parent2)
+ * in a child-and-parents relationship. This is useful for determining which
+ * parent is listed first in family tree views.
+ * 
+ * @param sdk - SDK instance
+ * @param relationshipId - Child-and-parents relationship ID
+ * @param parent1Id - Person ID to be set as parent1
+ * @param parent2Id - Person ID to be set as parent2
+ * @returns Updated relationship with new parent order
+ * @throws Error if order update fails
+ * 
+ * @example
+ * ```typescript
+ * // Set mother as parent1, father as parent2
+ * const result = await setParentOrder(sdk, "RRRR-RRR", "PPPP-PPP", "PPPP-PPQ");
+ * console.log("Parent order set:", result);
+ * ```
+ */
+export async function setParentOrder(
+	sdk: FamilySearchSDK,
+	relationshipId: string,
+	parent1Id: string,
+	parent2Id: string
+): Promise<SetParentOrderResponse> {
+	try {
+		const input: SetParentOrderInput = {
+			persons: [
+				{
+					resourceId: parent1Id,
+					resource: `#${parent1Id}`,
+				},
+				{
+					resourceId: parent2Id,
+					resource: `#${parent2Id}`,
+				},
+			],
+		};
+
+		const response = await sdk.post<SetParentOrderResponse>(
+			`/platform/tree/child-and-parents-relationships/${relationshipId}/parents/order`,
+			input
+		);
+		return response.data || { childAndParentsRelationships: [] };
+	} catch (error) {
+		sdk["logger"].error(
+			`[FamilySearch SDK] Failed to set parent order for ${relationshipId}:`,
+			error
+		);
+		throw error;
+	}
+}
+
+/**
+ * Set spouse order in a couple relationship
+ * 
+ * Controls the display order of spouses (who appears as person1 vs person2)
+ * in a couple relationship. This is useful for determining which spouse
+ * is listed first in family tree views.
+ * 
+ * @param sdk - SDK instance
+ * @param relationshipId - Couple relationship ID
+ * @param person1Id - Person ID to be set as person1
+ * @param person2Id - Person ID to be set as person2
+ * @returns Updated relationship with new spouse order
+ * @throws Error if order update fails
+ * 
+ * @example
+ * ```typescript
+ * // Set wife as person1, husband as person2
+ * const result = await setSpouseOrder(sdk, "RRRR-RRR", "PPPP-PPP", "PPPP-PPQ");
+ * console.log("Spouse order set:", result);
+ * ```
+ */
+export async function setSpouseOrder(
+	sdk: FamilySearchSDK,
+	relationshipId: string,
+	person1Id: string,
+	person2Id: string
+): Promise<SetSpouseOrderResponse> {
+	try {
+		const input: SetSpouseOrderInput = {
+			persons: [
+				{
+					resourceId: person1Id,
+					resource: `#${person1Id}`,
+				},
+				{
+					resourceId: person2Id,
+					resource: `#${person2Id}`,
+				},
+			],
+		};
+
+		const response = await sdk.post<SetSpouseOrderResponse>(
+			`/platform/tree/couple-relationships/${relationshipId}/spouses/order`,
+			input
+		);
+		return response.data || { relationships: [] };
+	} catch (error) {
+		sdk["logger"].error(
+			`[FamilySearch SDK] Failed to set spouse order for ${relationshipId}:`,
 			error
 		);
 		throw error;
