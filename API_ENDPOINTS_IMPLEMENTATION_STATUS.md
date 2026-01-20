@@ -270,15 +270,7 @@
 
 ---
 
-### 20. **Portraits Management** ❌
-- ❌ `updatePersonPortraits()` - Set preferred portrait
-- ❌ `deletePersonPortrait()` - Delete portrait
-- ❌ Advanced portrait operations
-- **Estimated endpoints:** 3
-
----
-
-### 21. **Vocab/Standards (Advanced)** ❌
+### 20. **Vocab/Standards (Advanced)** ❌
 - ❌ Vocabulary concept searches
 - ❌ Term translations
 - ❌ Concept definitions
@@ -286,13 +278,13 @@
 
 ---
 
-### 22. **Agent API** ❌
+### 21. **Agent API** ❌
 - ❌ `readAgent()` - Read agent information
 - **Estimated endpoints:** 1-2
 
 ---
 
-### 23. **Pending Modifications** ❌
+### 22. **Pending Modifications** ❌
 - ❌ `readPendingModifications()` - Read pending changes
 - **Estimated endpoints:** 1-2
 
