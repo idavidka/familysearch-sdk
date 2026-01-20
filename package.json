@@ -45,7 +45,10 @@
 		"test:watch": "vitest",
 		"lint": "tsc --noEmit",
 		"clean": "rm -rf dist",
-		"prepublishOnly": "npm run build"
+		"prepublishOnly": "npm run build",
+		"fetch-docs": "node scripts/fetch-api-docs.cjs",
+		"analyze-endpoints": "node scripts/analyze-endpoints.cjs",
+		"check-coverage": "node scripts/check-coverage.cjs"
 	},
 	"keywords": [
 		"familysearch",
