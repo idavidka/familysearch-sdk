@@ -106,3 +106,101 @@ export interface MemoryPersonasResponse {
 export interface MemoryPersonaResponse {
 	persons?: MemoryPersona[];
 }
+
+// ====================================
+// Memory Input Types (for creation/update)
+// ====================================
+
+/**
+ * Input for creating a new memory
+ */
+export interface CreateMemoryInput {
+	/** Memory title */
+	title: string;
+	/** Memory description */
+	description?: string;
+	/** Media type (e.g., 'image/jpeg', 'application/pdf', 'text/plain') */
+	mediaType?: string;
+	/** Artifact type hint */
+	artifactType?: 'photo' | 'story' | 'document' | 'audio' | 'video';
+	/** File data as base64 string or Buffer */
+	file?: string | Buffer;
+	/** File URL (if uploading from URL) */
+	fileUrl?: string;
+	/** About information (what this memory is about) */
+	about?: string;
+	/** Spatial coverage (place) */
+	place?: string;
+	/** Temporal coverage (date) */
+	date?: string;
+}
+
+/**
+ * Input for updating a memory
+ */
+export interface UpdateMemoryInput {
+	/** Updated title */
+	title?: string;
+	/** Updated description */
+	description?: string;
+	/** Updated about information */
+	about?: string;
+	/** Updated place */
+	place?: string;
+	/** Updated date */
+	date?: string;
+}
+
+/**
+ * Response from creating a memory
+ */
+export interface CreateMemoryResponse {
+	/** Created memory source descriptions */
+	sourceDescriptions?: MemoryArtifact[];
+	/** Links to the created resource */
+	links?: Record<string, { href: string }>;
+}
+
+/**
+ * Response from updating a memory
+ */
+export interface UpdateMemoryResponse {
+	/** Updated memory source descriptions */
+	sourceDescriptions?: MemoryArtifact[];
+}
+
+/**
+ * Response from deleting a memory
+ */
+export interface DeleteMemoryResponse {
+	statusCode: number;
+	statusText: string;
+}
+
+/**
+ * Input for creating a memory persona
+ */
+export interface CreateMemoryPersonaInput {
+	/** Person ID to tag in the memory */
+	personId: string;
+	/** Memory ID */
+	memoryId: string;
+}
+
+/**
+ * Input for creating a memory comment
+ */
+export interface CreateMemoryCommentInput {
+	/** Comment text */
+	text: string;
+}
+
+/**
+ * Response from creating a memory comment
+ */
+export interface CreateMemoryCommentResponse {
+	discussions?: Array<{
+		id?: string;
+		comments?: MemoryComment[];
+	}>;
+}
