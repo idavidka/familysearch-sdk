@@ -142,6 +142,86 @@ export async function createMemory(
 }
 
 /**
+ * Create multiple memories in batch
+ * 
+ * Creates multiple memory resources (photos, stories, documents, audio) in a single request.
+ * 
+ * @param sdk - SDK instance
+ * @param memories - Array of memory creation inputs
+ * @returns Batch creation response
+ * 
+ * @example
+ * ```typescript
+ * const result = await createMemories(sdk, [
+ *   { title: 'Photo 1', artifactType: 'photo' },
+ *   { title: 'Photo 2', artifactType: 'photo' }
+ * ]);
+ * console.log('Created', result?.sourceDescriptions?.length, 'memories');
+ * ```
+ */
+export async function createMemories(
+	sdk: FamilySearchSDK,
+	memories: CreateMemoryInput[]
+): Promise<CreateMemoryResponse | null> {
+	try {
+		const response = await sdk.post<CreateMemoryResponse>(
+			`/platform/memories`,
+			{
+				sourceDescriptions: memories.map((memory) => ({
+					titles: memory.title ? [{ value: memory.title }] : undefined,
+					descriptions: memory.description
+						? [{ value: memory.description }]
+						: undefined,
+					about: memory.about,
+					...memory,
+				})),
+			}
+		);
+		return response.data || null;
+	} catch (error) {
+		sdk["logger"].error(
+			`[FamilySearch SDK] Failed to create memories in batch:`,
+			error
+		);
+		return null;
+	}
+}
+
+/**
+ * Get multiple memories by IDs
+ * 
+ * Retrieves multiple memory resources in a single request.
+ * 
+ * @param sdk - SDK instance
+ * @param memoryIds - Array of memory IDs
+ * @returns Batch memory response
+ * 
+ * @example
+ * ```typescript
+ * const memories = await getMemories(sdk, ['MEM-1', 'MEM-2', 'MEM-3']);
+ * console.log('Retrieved', memories?.sourceDescriptions?.length, 'memories');
+ * ```
+ */
+export async function getMemories(
+	sdk: FamilySearchSDK,
+	memoryIds: string[]
+): Promise<UserMemoriesResponse | null> {
+	try {
+		const ids = memoryIds.join(",");
+		const response = await sdk.get<UserMemoriesResponse>(
+			`/platform/memories?memories=${ids}`
+		);
+		return response.data || null;
+	} catch (error) {
+		sdk["logger"].error(
+			`[FamilySearch SDK] Failed to get memories:`,
+			error
+		);
+		return null;
+	}
+}
+
+/**
  * Update an existing memory
  * 
  * @param sdk - SDK instance
