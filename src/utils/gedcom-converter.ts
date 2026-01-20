@@ -269,7 +269,8 @@ function convertFactToGedcom(fact: PersonFact): string[] {
 	// Add FamilySearch link for this specific fact/event (conclusion link)
 	if (fact.links?.conclusion?.href) {
 		const webUrl = transformFamilySearchUrl(fact.links.conclusion.href);
-		lines.push(`2 _FS_LINK ${webUrl}`);
+		lines.push(`2 WWW ${webUrl}`);
+		lines.push(`3 _IS_FS Y`);
 	}
 
 	// Add date
@@ -411,7 +412,7 @@ export function convertToGedcom(
 	});
 
 	// ==============================================
-	// CREATE _FS_SOUR RECORDS (FamilySearch Sources)
+	// CREATE SOUR RECORDS (FamilySearch Sources with _IS_FS Y marker)
 	// ==============================================
 	const fsSourMap = new Map<
 		string,
@@ -446,10 +447,10 @@ export function convertToGedcom(
 				const sourceDesc = sourceDescMap.get(sourceId);
 				if (!sourceDesc) return;
 
-				// Get or create _FS_SOUR entry
+				// Get or create SOUR entry (marked with _IS_FS Y)
 				let fsSourEntry = fsSourMap.get(sourceId);
 				if (!fsSourEntry) {
-					const gedcomId = `@FS${fsSourCounter++}@`;
+					const gedcomId = `@S${fsSourCounter++}@`;
 					fsSourEntry = {
 						id: sourceId,
 						gedcomId,
@@ -487,9 +488,10 @@ export function convertToGedcom(
 		}
 	});
 
-	// Create _FS_SOUR records
+	// Create SOUR records (standard GEDCOM with _IS_FS Y marker)
 	fsSourMap.forEach(({ gedcomId, id, source, notes }) => {
-		lines.push(`0 ${gedcomId} _FS_SOUR`);
+		lines.push(`0 ${gedcomId} SOUR`);
+		lines.push(`1 _IS_FS Y`);
 		lines.push(`1 _FS_ID ${id}`);
 
 		// Add title
@@ -520,7 +522,7 @@ export function convertToGedcom(
 	});
 
 	// ==============================================
-	// CREATE _FS_MATCH RECORDS (FamilySearch Matches)
+	// CREATE MATCH RECORDS (FamilySearch Matches with _IS_FS Y marker)
 	// ==============================================
 	const fsMatchMap = new Map<
 		string,
@@ -534,15 +536,16 @@ export function convertToGedcom(
 				const matchId = entry.id;
 				if (!matchId || fsMatchMap.has(matchId)) return;
 
-				const gedcomId = `@FM${fsMatchCounter++}@`;
+				const gedcomId = `@M${fsMatchCounter++}@`;
 				fsMatchMap.set(matchId, { id: matchId, gedcomId, entry });
 			});
 		}
 	});
 
-	// Create _FS_MATCH records
+	// Create MATCH records (standard GEDCOM with _IS_FS Y marker)
 	fsMatchMap.forEach(({ gedcomId, id, entry }) => {
-		lines.push(`0 ${gedcomId} _FS_MATCH`);
+		lines.push(`0 ${gedcomId} MATCH`);
+		lines.push(`1 _IS_FS Y`);
 		lines.push(`1 _FS_ID ${id}`);
 
 		// Add title if available
@@ -1010,7 +1013,8 @@ export function convertToGedcom(
 
 			if (personLink) {
 				const webUrl = transformFamilySearchUrl(personLink);
-				lines.push(`1 _FS_LINK ${webUrl}`);
+				lines.push(`1 WWW ${webUrl}`);
+				lines.push(`2 _IS_FS Y`);
 			} else if (person.id) {
 				// Fallback: construct web URL from person ID if no link provided
 				let baseUrl = "https://www.familysearch.org";
@@ -1020,7 +1024,8 @@ export function convertToGedcom(
 					baseUrl = "https://integration.familysearch.org";
 				}
 				const webUrl = `${baseUrl}/tree/person/${person.id}`;
-				lines.push(`1 _FS_LINK ${webUrl}`);
+				lines.push(`1 WWW ${webUrl}`);
+				lines.push(`2 _IS_FS Y`);
 			}
 		}
 
@@ -1122,7 +1127,7 @@ export function convertToGedcom(
 		}
 
 		// ==============================================
-		// ADD PERSON SOURCES (_FS_SOUR references)
+		// ADD PERSON SOURCES (SOUR references with _IS_FS Y marker)
 		// These are sources from person.sources (PersonSourcesResponse)
 		// ==============================================
 		if (person.sources?.persons?.[0]?.sources) {
@@ -1133,13 +1138,13 @@ export function convertToGedcom(
 				const fsSour = fsSourMap.get(sourceId);
 				if (!fsSour) return;
 
-				// Add reference to _FS_SOUR record (no notes here, they're in the record itself)
-				lines.push(`1 _FS_SOUR ${fsSour.gedcomId}`);
+				// Add reference to SOUR record (no notes here, they're in the record itself)
+				lines.push(`1 SOUR ${fsSour.gedcomId}`);
 			});
 		}
 
 		// ==============================================
-		// ADD PERSON MATCHES (_FS_MATCH references)
+		// ADD PERSON MATCHES (MATCH references with _IS_FS Y marker)
 		// These are matches from person.matches (TreePersonMatchesResponse)
 		// ==============================================
 		if (person.matches?.entries) {
@@ -1150,8 +1155,8 @@ export function convertToGedcom(
 				const fsMatch = fsMatchMap.get(matchId);
 				if (!fsMatch) return;
 
-				// Add reference to _FS_MATCH record
-				lines.push(`1 _FS_MATCH ${fsMatch.gedcomId}`);
+				// Add reference to MATCH record
+				lines.push(`1 MATCH ${fsMatch.gedcomId}`);
 			});
 		}
 	});

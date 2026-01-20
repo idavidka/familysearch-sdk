@@ -2,7 +2,7 @@
 
 **Last Updated:** 2026-01-20  
 **SDK Version:** 2.0.0  
-**Total Implemented Functions:** ~159
+**Total Implemented Functions:** ~160
 
 ---
 
@@ -283,7 +283,14 @@
 
 ---
 
-### 21. **Genealogies API (Research Trees)** ✅
+### 21. **Tree Changes API** ✅
+- ✅ `getTreeChanges()` - Read recent changes to entire FamilySearch Family Tree
+
+**Status:** 1/1 endpoints (100%)
+
+---
+
+### 22. **Genealogies API (Research Trees)** ✅
 - ✅ `getGenealogyTree()` - Read single research tree
 - ✅ `getGenealogyTrees()` - List all trees
 - ✅ `createGenealogyTree()` - Create new tree
@@ -310,7 +317,7 @@
 
 ---
 
-### 22. **Vocabulary API** ✅
+### 23. **Vocabulary API** ✅
 - ✅ `searchVocabConcepts()` - Search vocabulary concepts
 - ✅ `getVocabTerm()` - Read vocabulary term
 - ✅ `getVocabTermTranslation()` - Read term translation
