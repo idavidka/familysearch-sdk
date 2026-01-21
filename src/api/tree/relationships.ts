@@ -982,3 +982,105 @@ export async function deleteChildAndParentsRelationshipParent(
 		throw error;
 	}
 }
+
+/**
+ * Restore child and parents relationship
+ *
+ * Restores a deleted child-and-parents relationship.
+ * The relationship must have been previously deleted to be eligible for restore.
+ *
+ * @param sdk - SDK instance
+ * @param relationshipId - Child-and-parents relationship ID
+ * @param reason - Optional reason for restoring the relationship
+ * @returns Restore response with status
+ * @throws Error if restore fails
+ *
+ * @example
+ * ```typescript
+ * await restoreChildAndParentsRelationship(
+ *   sdk,
+ *   "RRRR-RRR",
+ *   "Accidentally deleted"
+ * );
+ * console.log("Relationship restored");
+ * ```
+ */
+export async function restoreChildAndParentsRelationship(
+	sdk: FamilySearchSDK,
+	relationshipId: string,
+	reason?: string
+): Promise<DeletePersonResponse> {
+	try {
+		const headers: Record<string, string> = {};
+		if (reason) {
+			headers["X-Reason"] = reason;
+		}
+
+		const response = await sdk.post<DeletePersonResponse>(
+			`/platform/tree/child-and-parents-relationships/${relationshipId}/restore`,
+			{},
+			{ headers }
+		);
+		return {
+			statusCode: response.statusCode,
+			statusText: response.statusText,
+		};
+	} catch (error) {
+		sdk.logger.error(
+			`[FamilySearch SDK] Failed to restore child-and-parents relationship ${relationshipId}:`,
+			error
+		);
+		throw error;
+	}
+}
+
+/**
+ * Restore couple relationship
+ *
+ * Restores a deleted couple relationship.
+ * The relationship must have been previously deleted to be eligible for restore.
+ *
+ * @param sdk - SDK instance
+ * @param relationshipId - Couple relationship ID
+ * @param reason - Optional reason for restoring the relationship
+ * @returns Restore response with status
+ * @throws Error if restore fails
+ *
+ * @example
+ * ```typescript
+ * await restoreCoupleRelationship(
+ *   sdk,
+ *   "RRRR-RRR",
+ *   "Accidentally deleted"
+ * );
+ * console.log("Relationship restored");
+ * ```
+ */
+export async function restoreCoupleRelationship(
+	sdk: FamilySearchSDK,
+	relationshipId: string,
+	reason?: string
+): Promise<DeletePersonResponse> {
+	try {
+		const headers: Record<string, string> = {};
+		if (reason) {
+			headers["X-Reason"] = reason;
+		}
+
+		const response = await sdk.post<DeletePersonResponse>(
+			`/platform/tree/couple-relationships/${relationshipId}/restore`,
+			{},
+			{ headers }
+		);
+		return {
+			statusCode: response.statusCode,
+			statusText: response.statusText,
+		};
+	} catch (error) {
+		sdk.logger.error(
+			`[FamilySearch SDK] Failed to restore couple relationship ${relationshipId}:`,
+			error
+		);
+		throw error;
+	}
+}

@@ -50,6 +50,8 @@ export {
 	getCoupleRelationshipChangeHistory,
 	getChildAndParentsRelationshipChangeHistory,
 	restoreChange,
+	restoreChildAndParentsRelationship,
+	restoreCoupleRelationship,
 	setParentOrder,
 	setSpouseOrder,
 	getCoupleRelationshipSourceReferences,

@@ -110,6 +110,8 @@ const endpointToFunction = (endpoint) => {
 		deleterelationship: "deleteRelationship",
 		restorerelationship: "restoreRelationship",
 		readchildandparentsrelationship: "getChildAndParentsRelationship",
+		readchildandparentrelationship:
+			"getChildAndParentsRelationshipChangeHistory",
 		createchildandparentsrelationship: "createChildAndParentsRelationship",
 		updatechildandparentsrelationship: "updateChildAndParentsRelationship",
 		deletechildandparentsrelationship: "deleteChildAndParentsRelationship",
