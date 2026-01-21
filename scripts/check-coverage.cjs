@@ -64,6 +64,17 @@ const endpointToFunction = (endpoint) => {
 		deletegenealogytree: "deleteGenealogyTree",
 		readgenealogiesnote: "getGenealogyNote",
 		updategenealogiestree: "updateGenealogyTree",
+		deletegenealogiesconclusion: "deleteGenealogyConclusion",
+		readgenealogiesbulkmatch: "getGenealogyBulkMatch",
+		readgenealogiespersonmatches: "getGenealogyPersonMatches",
+		readgenealogiestree: "getGenealogyTree",
+		deletegenealogiestree: "deleteGenealogyTree",
+		readgenealogiestrees: "getGenealogyTrees",
+		creategenealogiestree: "createGenealogyTree",
+		readgenealogiessourcedescription: "getGenealogySourceDescription",
+		updategenealogiessourcedescription: "updateGenealogySourceDescription",
+		deletegenealogiessourcedescription: "deleteGenealogySourceDescription",
+		creategenealogiessourcedescription: "createGenealogySourceDescription",
 
 		// Current User / Tree
 		readcurrenttreeperson: "getCurrentUser",
