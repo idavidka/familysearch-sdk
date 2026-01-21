@@ -127,7 +127,6 @@ const endpointToFunction = (endpoint) => {
 		createsourcedescription: "createSourceDescription",
 		updatesourcedescription: "updateSourceDescription",
 		deletesourcedescription: "deleteSourceDescription",
-		readsourcedescriptionchanges: "getSourceDescriptionChanges",
 		readuserdefinedcollectionsourcedescriptions:
 			"getCollectionSourceDescriptions",
 		deletesourcedescriptionsfromcollections:
