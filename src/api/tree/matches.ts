@@ -275,3 +275,64 @@ export async function deleteAllNotAMatchDeclarations(
 		throw error;
 	}
 }
+
+/**
+ * Read Tree Matches
+ *
+ * Returns the matches for a Community Contributed Tree (CET).
+ * Allows filtering on the request to focus on the "best" historical
+ * record hints, person hints to other CETs or to the Shared Family Tree.
+ *
+ * @param sdk - SDK instance
+ * @param treeId - Tree ID
+ * @param options - Optional query parameters for filtering matches
+ * @returns Matches response or null
+ *
+ * @example
+ * ```typescript
+ * // Get all matches for a tree
+ * const matches = await getTreeMatches(sdk, "TREE-ID");
+ *
+ * // Get matches with filtering
+ * const filtered = await getTreeMatches(sdk, "TREE-ID", {
+ *   status: "pending",
+ *   collection: "census"
+ * });
+ * ```
+ */
+export async function getTreeMatches(
+	sdk: FamilySearchSDK,
+	treeId: string,
+	options?: {
+		status?: string;
+		collection?: string;
+		count?: number;
+		start?: number;
+	}
+): Promise<MatchesResponse | null> {
+	try {
+		let url = `/platform/trees/${treeId}/matches`;
+
+		if (options) {
+			const params = new URLSearchParams();
+			if (options.status) params.set("status", options.status);
+			if (options.collection) params.set("collection", options.collection);
+			if (options.count !== undefined) params.set("count", options.count.toString());
+			if (options.start !== undefined) params.set("start", options.start.toString());
+
+			const queryString = params.toString();
+			if (queryString) {
+				url += `?${queryString}`;
+			}
+		}
+
+		const response = await sdk.get<MatchesResponse>(url);
+		return response.data || null;
+	} catch (error) {
+		sdk.logger.error(
+			`[FamilySearch SDK] Failed to get tree matches for ${treeId}:`,
+			error
+		);
+		return null;
+	}
+}

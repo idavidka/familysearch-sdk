@@ -139,6 +139,16 @@ const endpointToFunction = (endpoint) => {
     'readvocabularies': 'getVocabularies',
     'readname': 'getNameType',
     'readnames': 'getNameTypes',
+    'readvocabconceptssearch': 'getVocabConceptsSearch',
+    'readvocabconceptv2': 'getVocabConceptV2',
+    
+    // Places - Additional endpoints
+    'readplaceattributes': 'getPlaceAttributes',
+    'readplacedescriptionwithrelated': 'getPlaceDescriptionWithRelated',
+    'readplacedescriptionsgroup': 'getPlaceDescriptionsGroup',
+    
+    // Matches
+    'readtreematches': 'getTreeMatches',
   };
   
   if (mappings[name]) return mappings[name];

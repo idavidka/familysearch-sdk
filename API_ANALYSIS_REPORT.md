@@ -1,6 +1,6 @@
 # FamilySearch SDK API Analysis Report
 
-**Generated:** 2026-01-21T13:32:46.118Z
+**Generated:** 2026-01-21T14:07:35.471Z
 
 ---
 
@@ -1115,7 +1115,7 @@ export async function allowpersonmerge(
 	try {
 		return response.data;
 	} catch (error) {
-		sdk["logger"].error("[FamilySearch SDK] Failed to allowpersonmerge:", error);
+		sdk.logger.error("[FamilySearch SDK] Failed to allowpersonmerge:", error);
 		throw error;
 	}
 }
@@ -1156,7 +1156,7 @@ export async function creatememorycomments(
 		const response = await sdk.post<any>(`/platform/memories/memories/${mid}/comments`, data);
 		return response.data;
 	} catch (error) {
-		sdk["logger"].error("[FamilySearch SDK] Failed to creatememorycomments:", error);
+		sdk.logger.error("[FamilySearch SDK] Failed to creatememorycomments:", error);
 		throw error;
 	}
 }
@@ -1197,7 +1197,7 @@ export async function creatememorypersona(
 		const response = await sdk.post<any>(`/platform/memories/memories/${mid}/personas`, data);
 		return response.data;
 	} catch (error) {
-		sdk["logger"].error("[FamilySearch SDK] Failed to creatememorypersona:", error);
+		sdk.logger.error("[FamilySearch SDK] Failed to creatememorypersona:", error);
 		throw error;
 	}
 }
@@ -1232,7 +1232,7 @@ export async function createpartneraccount(
 		const response = await sdk.get<any>(`/platform/users/current/partner-account-created`);
 		return response.data;
 	} catch (error) {
-		sdk["logger"].error("[FamilySearch SDK] Failed to createpartneraccount:", error);
+		sdk.logger.error("[FamilySearch SDK] Failed to createpartneraccount:", error);
 		throw error;
 	}
 }
@@ -1267,7 +1267,7 @@ export async function createrelationshipgedcomx(
 		const response = await sdk.post<any>(`/platform/tree/relationships`, data);
 		return response.data;
 	} catch (error) {
-		sdk["logger"].error("[FamilySearch SDK] Failed to createrelationshipgedcomx:", error);
+		sdk.logger.error("[FamilySearch SDK] Failed to createrelationshipgedcomx:", error);
 		throw error;
 	}
 }
@@ -1302,7 +1302,7 @@ export async function createtree(
 		const response = await sdk.post<any>(`/platform/trees`, data);
 		return response.data;
 	} catch (error) {
-		sdk["logger"].error("[FamilySearch SDK] Failed to createtree:", error);
+		sdk.logger.error("[FamilySearch SDK] Failed to createtree:", error);
 		throw error;
 	}
 }
@@ -1346,7 +1346,7 @@ export async function deletecomment(
 		const response = await sdk.delete<any>(`/platform/discussions/discussions/${did}/comments/${cmid}`);
 		return response.data;
 	} catch (error) {
-		sdk["logger"].error("[FamilySearch SDK] Failed to deletecomment:", error);
+		sdk.logger.error("[FamilySearch SDK] Failed to deletecomment:", error);
 		throw error;
 	}
 }
@@ -1390,7 +1390,7 @@ export async function deletememoryartifactcoverage(
 		const response = await sdk.delete<any>(`/platform/memories/memories/${mid}/artifacts/${aid}/coverage`);
 		return response.data;
 	} catch (error) {
-		sdk["logger"].error("[FamilySearch SDK] Failed to deletememoryartifactcoverage:", error);
+		sdk.logger.error("[FamilySearch SDK] Failed to deletememoryartifactcoverage:", error);
 		throw error;
 	}
 }
@@ -1434,7 +1434,7 @@ export async function deletememorycomment(
 		const response = await sdk.delete<any>(`/platform/memories/memories/${mid}/comments/${cmid}`);
 		return response.data;
 	} catch (error) {
-		sdk["logger"].error("[FamilySearch SDK] Failed to deletememorycomment:", error);
+		sdk.logger.error("[FamilySearch SDK] Failed to deletememorycomment:", error);
 		throw error;
 	}
 }
@@ -1478,7 +1478,7 @@ export async function deletememorypersona(
 		const response = await sdk.delete<any>(`/platform/memories/memories/${mid}/personas/${pid}`);
 		return response.data;
 	} catch (error) {
-		sdk["logger"].error("[FamilySearch SDK] Failed to deletememorypersona:", error);
+		sdk.logger.error("[FamilySearch SDK] Failed to deletememorypersona:", error);
 		throw error;
 	}
 }
@@ -1519,7 +1519,7 @@ export async function deletetree(
 		const response = await sdk.delete<any>(`/platform/trees/${tid}`);
 		return response.data;
 	} catch (error) {
-		sdk["logger"].error("[FamilySearch SDK] Failed to deletetree:", error);
+		sdk.logger.error("[FamilySearch SDK] Failed to deletetree:", error);
 		throw error;
 	}
 }
@@ -1563,7 +1563,7 @@ export async function deletetreepersonreference(
 		const response = await sdk.delete<any>(`/platform/tree/persons/${pid}/tree-person-reference/${tprid}`);
 		return response.data;
 	} catch (error) {
-		sdk["logger"].error("[FamilySearch SDK] Failed to deletetreepersonreference:", error);
+		sdk.logger.error("[FamilySearch SDK] Failed to deletetreepersonreference:", error);
 		throw error;
 	}
 }
@@ -1613,7 +1613,7 @@ export async function findrelationship(
 		const response = await sdk.get<any>(`/platform/tree/persons/${pid}/relationships/${opid}`);
 		return response.data;
 	} catch (error) {
-		sdk["logger"].error("[FamilySearch SDK] Failed to findrelationship:", error);
+		sdk.logger.error("[FamilySearch SDK] Failed to findrelationship:", error);
 		throw error;
 	}
 }
@@ -1657,7 +1657,7 @@ export async function mergeperson(
 		const response = await sdk.post<any>(`/platform/tree/persons/${pid}/merges/${dpid}`, data);
 		return response.data;
 	} catch (error) {
-		sdk["logger"].error("[FamilySearch SDK] Failed to mergeperson:", error);
+		sdk.logger.error("[FamilySearch SDK] Failed to mergeperson:", error);
 		throw error;
 	}
 }
@@ -1696,7 +1696,7 @@ export async function performpersonmatchesbyexample(
 		const response = await sdk.post<any>(`/platform/tree/matches`, data);
 		return response.data;
 	} catch (error) {
-		sdk["logger"].error("[FamilySearch SDK] Failed to performpersonmatchesbyexample:", error);
+		sdk.logger.error("[FamilySearch SDK] Failed to performpersonmatchesbyexample:", error);
 		throw error;
 	}
 }
@@ -1731,7 +1731,7 @@ export async function getpendingmodifications(
 		const response = await sdk.get<any>(`/platform/pending-modifications`);
 		return response.data;
 	} catch (error) {
-		sdk["logger"].error("[FamilySearch SDK] Failed to getpendingmodifications:", error);
+		sdk.logger.error("[FamilySearch SDK] Failed to getpendingmodifications:", error);
 		throw error;
 	}
 }
@@ -1772,7 +1772,7 @@ export async function getplaceattributes(
 		const response = await sdk.get<any>(`/platform/places/description/${pdid}/attributes`);
 		return response.data;
 	} catch (error) {
-		sdk["logger"].error("[FamilySearch SDK] Failed to getplaceattributes:", error);
+		sdk.logger.error("[FamilySearch SDK] Failed to getplaceattributes:", error);
 		throw error;
 	}
 }
@@ -1813,7 +1813,7 @@ export async function getplacedescriptionsgroup(
 		const response = await sdk.get<any>(`/platform/places/groups/${pgid}`);
 		return response.data;
 	} catch (error) {
-		sdk["logger"].error("[FamilySearch SDK] Failed to getplacedescriptionsgroup:", error);
+		sdk.logger.error("[FamilySearch SDK] Failed to getplacedescriptionsgroup:", error);
 		throw error;
 	}
 }
@@ -1854,7 +1854,7 @@ export async function getplacedescriptionwithrelated(
 		const response = await sdk.get<any>(`/platform/places/description/${pdid}/related`);
 		return response.data;
 	} catch (error) {
-		sdk["logger"].error("[FamilySearch SDK] Failed to getplacedescriptionwithrelated:", error);
+		sdk.logger.error("[FamilySearch SDK] Failed to getplacedescriptionwithrelated:", error);
 		throw error;
 	}
 }
@@ -1895,7 +1895,7 @@ export async function getresearchtreepersons(
 		const response = await sdk.get<any>(`/platform/trees/${tid}/persons`);
 		return response.data;
 	} catch (error) {
-		sdk["logger"].error("[FamilySearch SDK] Failed to getresearchtreepersons:", error);
+		sdk.logger.error("[FamilySearch SDK] Failed to getresearchtreepersons:", error);
 		throw error;
 	}
 }
@@ -1930,7 +1930,7 @@ export async function getsourcereferences(
 		const response = await sdk.get<any>(`/platform/tree/source-references`);
 		return response.data;
 	} catch (error) {
-		sdk["logger"].error("[FamilySearch SDK] Failed to getsourcereferences:", error);
+		sdk.logger.error("[FamilySearch SDK] Failed to getsourcereferences:", error);
 		throw error;
 	}
 }
@@ -1971,7 +1971,7 @@ export async function gettreechanges(
 		const response = await sdk.get<any>(`/platform/trees/${tid}/changes`);
 		return response.data;
 	} catch (error) {
-		sdk["logger"].error("[FamilySearch SDK] Failed to gettreechanges:", error);
+		sdk.logger.error("[FamilySearch SDK] Failed to gettreechanges:", error);
 		throw error;
 	}
 }
@@ -2012,7 +2012,7 @@ export async function gettreematches(
 		const response = await sdk.get<any>(`/platform/trees/${tid}/matches`);
 		return response.data;
 	} catch (error) {
-		sdk["logger"].error("[FamilySearch SDK] Failed to gettreematches:", error);
+		sdk.logger.error("[FamilySearch SDK] Failed to gettreematches:", error);
 		throw error;
 	}
 }
@@ -2053,7 +2053,7 @@ export async function gettreepersonmatches(
 		const response = await sdk.get<any>(`/platform/tree/persons/${pid}/matches`);
 		return response.data;
 	} catch (error) {
-		sdk["logger"].error("[FamilySearch SDK] Failed to gettreepersonmatches:", error);
+		sdk.logger.error("[FamilySearch SDK] Failed to gettreepersonmatches:", error);
 		throw error;
 	}
 }
@@ -2094,7 +2094,7 @@ export async function getuserdefinedcollectionsourcedescriptions(
 		const response = await sdk.get<any>(`/platform/sources/collections/${udcid}/descriptions`);
 		return response.data;
 	} catch (error) {
-		sdk["logger"].error("[FamilySearch SDK] Failed to getuserdefinedcollectionsourcedescriptions:", error);
+		sdk.logger.error("[FamilySearch SDK] Failed to getuserdefinedcollectionsourcedescriptions:", error);
 		throw error;
 	}
 }
@@ -2135,7 +2135,7 @@ export async function getusersourcedescriptions(
 		const response = await sdk.get<any>(`/platform/sources/${uid}/collections/descriptions`);
 		return response.data;
 	} catch (error) {
-		sdk["logger"].error("[FamilySearch SDK] Failed to getusersourcedescriptions:", error);
+		sdk.logger.error("[FamilySearch SDK] Failed to getusersourcedescriptions:", error);
 		throw error;
 	}
 }
@@ -2179,7 +2179,7 @@ export async function getvocabconceptdefinition(
 		const response = await sdk.get<any>(`/platform/vocab/concepts/${cvcid}/definition/${locale}`);
 		return response.data;
 	} catch (error) {
-		sdk["logger"].error("[FamilySearch SDK] Failed to getvocabconceptdefinition:", error);
+		sdk.logger.error("[FamilySearch SDK] Failed to getvocabconceptdefinition:", error);
 		throw error;
 	}
 }
@@ -2214,7 +2214,7 @@ export async function getvocabconceptssearch(
 		const response = await sdk.get<any>(`/platform/vocab/concepts/search`);
 		return response.data;
 	} catch (error) {
-		sdk["logger"].error("[FamilySearch SDK] Failed to getvocabconceptssearch:", error);
+		sdk.logger.error("[FamilySearch SDK] Failed to getvocabconceptssearch:", error);
 		throw error;
 	}
 }
@@ -2255,7 +2255,7 @@ export async function getvocabconceptv2(
 		const response = await sdk.get<any>(`/platform/vocab/concepts/${cvcid}`);
 		return response.data;
 	} catch (error) {
-		sdk["logger"].error("[FamilySearch SDK] Failed to getvocabconceptv2:", error);
+		sdk.logger.error("[FamilySearch SDK] Failed to getvocabconceptv2:", error);
 		throw error;
 	}
 }
@@ -2296,7 +2296,7 @@ export async function getvocablist(
 		const response = await sdk.get<any>(`/platform/vocab/lists/${cvlid}`);
 		return response.data;
 	} catch (error) {
-		sdk["logger"].error("[FamilySearch SDK] Failed to getvocablist:", error);
+		sdk.logger.error("[FamilySearch SDK] Failed to getvocablist:", error);
 		throw error;
 	}
 }
@@ -2337,7 +2337,7 @@ export async function getvocabterm(
 		const response = await sdk.get<any>(`/platform/vocab/terms/${cvtid}`);
 		return response.data;
 	} catch (error) {
-		sdk["logger"].error("[FamilySearch SDK] Failed to getvocabterm:", error);
+		sdk.logger.error("[FamilySearch SDK] Failed to getvocabterm:", error);
 		throw error;
 	}
 }
@@ -2381,7 +2381,7 @@ export async function getvocabtermtranslation(
 		const response = await sdk.get<any>(`/platform/vocab/terms/${cvtid}/translations/${locale}`);
 		return response.data;
 	} catch (error) {
-		sdk["logger"].error("[FamilySearch SDK] Failed to getvocabtermtranslation:", error);
+		sdk.logger.error("[FamilySearch SDK] Failed to getvocabtermtranslation:", error);
 		throw error;
 	}
 }
@@ -2416,7 +2416,7 @@ export async function searchtreepersons(
 		const response = await sdk.get<any>(`/platform/tree/search`);
 		return response.data;
 	} catch (error) {
-		sdk["logger"].error("[FamilySearch SDK] Failed to searchtreepersons:", error);
+		sdk.logger.error("[FamilySearch SDK] Failed to searchtreepersons:", error);
 		throw error;
 	}
 }
@@ -2451,7 +2451,7 @@ export async function setcurrenttree(
 		const response = await sdk.post<any>(`/platform/trees/current`, data);
 		return response.data;
 	} catch (error) {
-		sdk["logger"].error("[FamilySearch SDK] Failed to setcurrenttree:", error);
+		sdk.logger.error("[FamilySearch SDK] Failed to setcurrenttree:", error);
 		throw error;
 	}
 }
@@ -2492,7 +2492,7 @@ export async function updatechildandparentsrelationshipparentsorder(
 		const response = await sdk.post<any>(`/platform/tree/child-and-parents-relationships/${caprid}/parents/order`, data);
 		return response.data;
 	} catch (error) {
-		sdk["logger"].error("[FamilySearch SDK] Failed to updatechildandparentsrelationshipparentsorder:", error);
+		sdk.logger.error("[FamilySearch SDK] Failed to updatechildandparentsrelationshipparentsorder:", error);
 		throw error;
 	}
 }
@@ -2533,7 +2533,7 @@ export async function updatecomments(
 		const response = await sdk.post<any>(`/platform/discussions/discussions/${did}/comments`, data);
 		return response.data;
 	} catch (error) {
-		sdk["logger"].error("[FamilySearch SDK] Failed to updatecomments:", error);
+		sdk.logger.error("[FamilySearch SDK] Failed to updatecomments:", error);
 		throw error;
 	}
 }
@@ -2574,7 +2574,7 @@ export async function updatecouplerelationshipspousesorder(
 		const response = await sdk.post<any>(`/platform/tree/couple-relationships/${crid}/spouses/order`, data);
 		return response.data;
 	} catch (error) {
-		sdk["logger"].error("[FamilySearch SDK] Failed to updatecouplerelationshipspousesorder:", error);
+		sdk.logger.error("[FamilySearch SDK] Failed to updatecouplerelationshipspousesorder:", error);
 		throw error;
 	}
 }
@@ -2615,7 +2615,7 @@ export async function updatematchresolution(
 		const response = await sdk.post<any>(`/platform/tree/persons/${pid}/matches`, data);
 		return response.data;
 	} catch (error) {
-		sdk["logger"].error("[FamilySearch SDK] Failed to updatematchresolution:", error);
+		sdk.logger.error("[FamilySearch SDK] Failed to updatematchresolution:", error);
 		throw error;
 	}
 }
@@ -2659,7 +2659,7 @@ export async function updatememoryartifact(
 		const response = await sdk.post<any>(`/platform/memories/memories/${mid}/artifacts/${aid}`, data);
 		return response.data;
 	} catch (error) {
-		sdk["logger"].error("[FamilySearch SDK] Failed to updatememoryartifact:", error);
+		sdk.logger.error("[FamilySearch SDK] Failed to updatememoryartifact:", error);
 		throw error;
 	}
 }
@@ -2703,7 +2703,7 @@ export async function updatememorypersona(
 		const response = await sdk.post<any>(`/platform/memories/memories/${mid}/personas/${pid}`, data);
 		return response.data;
 	} catch (error) {
-		sdk["logger"].error("[FamilySearch SDK] Failed to updatememorypersona:", error);
+		sdk.logger.error("[FamilySearch SDK] Failed to updatememorypersona:", error);
 		throw error;
 	}
 }
@@ -2738,7 +2738,7 @@ export async function updatepartneraccount(
 		const response = await sdk.post<any>(`/platform/users/current/partner-account-created`, data);
 		return response.data;
 	} catch (error) {
-		sdk["logger"].error("[FamilySearch SDK] Failed to updatepartneraccount:", error);
+		sdk.logger.error("[FamilySearch SDK] Failed to updatepartneraccount:", error);
 		throw error;
 	}
 }
@@ -2779,7 +2779,7 @@ export async function updatetree(
 		const response = await sdk.post<any>(`/platform/trees/${tid}`, data);
 		return response.data;
 	} catch (error) {
-		sdk["logger"].error("[FamilySearch SDK] Failed to updatetree:", error);
+		sdk.logger.error("[FamilySearch SDK] Failed to updatetree:", error);
 		throw error;
 	}
 }

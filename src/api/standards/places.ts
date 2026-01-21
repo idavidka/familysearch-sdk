@@ -399,3 +399,105 @@ export async function checkPlaceIsChild(
 		return null;
 	}
 }
+
+/**
+ * Read Place Description Attributes
+ *
+ * Read attributes of a place description including metadata and
+ * administrative details.
+ *
+ * @param sdk - SDK instance
+ * @param pdid - Place Description ID
+ * @returns Place description attributes or null
+ *
+ * @example
+ * ```typescript
+ * const attributes = await getPlaceAttributes(sdk, '12345');
+ * console.log(attributes);
+ * ```
+ */
+export async function getPlaceAttributes(
+	sdk: FamilySearchSDK,
+	pdid: string
+): Promise<PlaceDescriptionResponse | null> {
+	try {
+		const response = await sdk.get<PlaceDescriptionResponse>(
+			`/platform/places/description/${pdid}/attributes`
+		);
+		return response.data || null;
+	} catch (error) {
+		sdk.logger.error(
+			`[FamilySearch SDK] Failed to get place attributes for ${pdid}:`,
+			error
+		);
+		return null;
+	}
+}
+
+/**
+ * Read Place Description With Related
+ *
+ * Read a place description with related place descriptions,
+ * including historical variations and related jurisdictions.
+ *
+ * @param sdk - SDK instance
+ * @param pdid - Place Description ID
+ * @returns Place description with related places or null
+ *
+ * @example
+ * ```typescript
+ * const placeWithRelated = await getPlaceDescriptionWithRelated(sdk, '12345');
+ * console.log(placeWithRelated);
+ * ```
+ */
+export async function getPlaceDescriptionWithRelated(
+	sdk: FamilySearchSDK,
+	pdid: string
+): Promise<PlaceDescriptionResponse | null> {
+	try {
+		const response = await sdk.get<PlaceDescriptionResponse>(
+			`/platform/places/description/${pdid}/with-related`
+		);
+		return response.data || null;
+	} catch (error) {
+		sdk.logger.error(
+			`[FamilySearch SDK] Failed to get place description with related for ${pdid}:`,
+			error
+		);
+		return null;
+	}
+}
+
+/**
+ * Read Place Descriptions Group
+ *
+ * Read a group of place descriptions that represent the same
+ * geographic location across different time periods or contexts.
+ *
+ * @param sdk - SDK instance
+ * @param groupId - Place Descriptions Group ID
+ * @returns Place descriptions group or null
+ *
+ * @example
+ * ```typescript
+ * const group = await getPlaceDescriptionsGroup(sdk, 'group-123');
+ * console.log(group);
+ * ```
+ */
+export async function getPlaceDescriptionsGroup(
+	sdk: FamilySearchSDK,
+	groupId: string
+): Promise<PlaceDescriptionsResponse | null> {
+	try {
+		const response = await sdk.get<PlaceDescriptionsResponse>(
+			`/platform/places/description-group/${groupId}`
+		);
+		return response.data || null;
+	} catch (error) {
+		sdk.logger.error(
+			`[FamilySearch SDK] Failed to get place descriptions group ${groupId}:`,
+			error
+		);
+		return null;
+	}
+}

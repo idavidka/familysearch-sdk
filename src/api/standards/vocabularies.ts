@@ -87,3 +87,70 @@ export async function getVocabularyConcept(
 		return null;
 	}
 }
+
+/**
+ * Search Controlled Vocabulary Terms
+ *
+ * Search for vocabulary concepts matching search criteria.
+ * Returns the set of Controlled Vocabulary terms associated with
+ * a list of Controlled Vocabulary Concepts that match the search.
+ *
+ * @param sdk - SDK instance
+ * @param query - Search query string (optional)
+ * @param vocabularyId - Vocabulary ID to search within (optional)
+ * @returns Vocabulary concepts search results or null
+ */
+export async function getVocabConceptsSearch(
+	sdk: FamilySearchSDK,
+	query?: string,
+	vocabularyId?: string
+): Promise<VocabularyConceptsResponse | null> {
+	try {
+		const params = new URLSearchParams();
+		if (query) params.set("q", query);
+		if (vocabularyId) params.set("vocabulary", vocabularyId);
+
+		const url = params.toString()
+			? `/platform/vocab/concepts/search?${params.toString()}`
+			: "/platform/vocab/concepts/search";
+
+		const response = await sdk.get<VocabularyConceptsResponse>(url);
+		return response.data || null;
+	} catch (error) {
+		sdk.logger.error(
+			"[FamilySearch SDK] Failed to search vocabulary concepts:",
+			error
+		);
+		return null;
+	}
+}
+
+/**
+ * Read Vocabulary Concept V2
+ *
+ * Read a vocabulary concept using the V2 API.
+ * Returns the set of Controlled Vocabulary terms associated with
+ * a Controlled Vocabulary Concept along with the concept's definition
+ * and attributes, specified by a concept id.
+ *
+ * @param sdk - SDK instance
+ * @param cvcid - Controlled Vocabulary Concept ID
+ * @returns Vocabulary concept or null
+ */
+export async function getVocabConceptV2(
+	sdk: FamilySearchSDK,
+	cvcid: string
+): Promise<VocabularyConceptResponse | null> {
+	try {
+		const response = await sdk.get<VocabularyConceptResponse>(
+			`/platform/vocab/concepts/${cvcid}`
+		);
+		return response.data || null;
+	} catch (error) {
+		sdk.logger.error(
+			`[FamilySearch SDK] Failed to get vocabulary concept ${cvcid}:`,
+			error
+		);
+		return null;
+	}
+}
