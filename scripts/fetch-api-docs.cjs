@@ -52,7 +52,7 @@ async function main() {
 	// Initialize log file
 	fs.appendFileSync(
 		LOG_FILE,
-		`${new Date().toISOString()}: Starting fetch${specificEndpoint ? ` (${specificEndpoint})` : ""}\n`,
+		`${new Date().toISOString()}: Starting fetch${specificEndpoint ? ` (${specificEndpoint})` : ""}\n`
 	);
 
 	// Read and extract URLs
@@ -72,27 +72,41 @@ async function main() {
 	}
 
 	const urls = [...new Set(urlMatches)]; // Remove duplicates
-	
+
+	// Shuffle URLs for random order fetching
+	const shuffleArray = (array) => {
+		const shuffled = [...array];
+		for (let i = shuffled.length - 1; i > 0; i--) {
+			const j = Math.floor(Math.random() * (i + 1));
+			[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+		}
+		return shuffled;
+	};
+
+	const shuffledUrls = shuffleArray(urls);
+
 	// Filter for specific endpoint if requested
-	let filteredUrls = urls;
+	let filteredUrls = shuffledUrls;
 	if (specificEndpoint) {
 		filteredUrls = urls.filter((url) => {
 			const endpoint = url
 				.replace(/.*\/reference\//, "")
 				.replace(/.*\/docs\//, "")
 				.replace(/[\/\?#].*$/, "");
-			return endpoint.toLowerCase().includes(specificEndpoint.toLowerCase());
+			return endpoint
+				.toLowerCase()
+				.includes(specificEndpoint.toLowerCase());
 		});
-		
+
 		if (filteredUrls.length === 0) {
 			log(`ERROR: No URLs found matching "${specificEndpoint}"`, "red");
 			log(`Available endpoints can be found in ${URLS_FILE}`, "yellow");
 			process.exit(1);
 		}
-		
+
 		log(`Found ${filteredUrls.length} matching URL(s)`, "yellow");
 	} else {
-		log(`Found ${urls.length} unique URLs to fetch`, "yellow");
+		log(`Found ${urls.length} unique URLs to fetch (random order)`, "yellow");
 	}
 	console.log("");
 
@@ -131,7 +145,10 @@ async function main() {
 		// Check if file already exists
 		if (fs.existsSync(filename)) {
 			skipped++;
-			log(`[${current}/${filteredUrls.length}] Skipping: ${endpoint} (already cached)`, "yellow");
+			log(
+				`[${current}/${filteredUrls.length}] Skipping: ${endpoint} (already cached)`,
+				"yellow"
+			);
 			logToFile(`SKIPPED - ${url} - file exists`);
 			continue;
 		}
@@ -139,20 +156,20 @@ async function main() {
 		log(`[${current}/${filteredUrls.length}] Fetching: ${endpoint}`);
 
 		try {
-			// Navigate to page
+			// Navigate to page - don't wait for networkidle, just load
 			await page.goto(url, {
-				waitUntil: "networkidle",
-				timeout: 120000, // 2 minutes - FamilySearch docs can be slow to load
+				waitUntil: "domcontentloaded",
+				timeout: 60000, // 1 minute for initial load
 			});
 
-			// Wait for content to load (adjust selector based on FamilySearch docs structure)
-			await page.waitForSelector("body", { timeout: 120000 });
+			// Wait for the main content to appear (FamilySearch docs structure)
+			await page.waitForSelector("article#content", { timeout: 60000 });
 
 			// Optional: Wait a bit more for JavaScript to fully render
 			await page.waitForTimeout(2000);
 
-			// Get the full HTML content
-			const html = await page.content();
+			// Get only the article#content HTML (not the full page)
+			const html = await page.$eval("article#content", (el) => el.outerHTML);
 
 			// Save to file
 			fs.writeFileSync(filename, html, "utf-8");
@@ -161,14 +178,20 @@ async function main() {
 			log(`  ✓ Saved to ${filename}`, "green");
 			logToFile(`SUCCESS - ${url}`);
 
-			// Be nice to the server - random delay between 1-1.5 minutes
-			const delayMs = Math.floor(Math.random() * 30000) + 60000; // 60-90 seconds
-			log(`  ⏱️  Waiting ${Math.round(delayMs / 1000)}s before next request...`, "yellow");
+			// Be nice to the server - random delay between 5-10 seconds
+			const delayMs = Math.floor(Math.random() * 5000) + 5000; // 5-10 seconds
+			log(
+				`  ⏱️  Waiting ${Math.round(delayMs / 1000)}s before next request...`,
+				"yellow"
+			);
 			await page.waitForTimeout(delayMs);
 
 			// Every 20 successful fetches, take a longer break
 			if (success % 20 === 0 && success > 0) {
-				log(`  💤 20 requests completed - taking 5 minute break...`, "yellow");
+				log(
+					`  💤 20 requests completed - taking 5 minute break...`,
+					"yellow"
+				);
 				await page.waitForTimeout(300000); // 5 minutes
 			}
 		} catch (error) {
@@ -200,14 +223,17 @@ async function main() {
 			try {
 				// Navigate to page with fresh attempt
 				await page.goto(url, {
-					waitUntil: "networkidle",
-					timeout: 120000,
+					waitUntil: "domcontentloaded",
+					timeout: 60000,
 				});
 
-				await page.waitForSelector("body", { timeout: 120000 });
+				await page.waitForSelector("article#content", {
+					timeout: 60000,
+				});
 				await page.waitForTimeout(2000);
 
-				const html = await page.content();
+				// Get only the article#content HTML (not the full page)
+				const html = await page.$eval("article#content", (el) => el.outerHTML);
 				fs.writeFileSync(filename, html, "utf-8");
 
 				retrySuccess++;
@@ -217,8 +243,11 @@ async function main() {
 				logToFile(`RETRY SUCCESS - ${url}`);
 
 				// Longer delay after retry success
-				const delayMs = Math.floor(Math.random() * 30000) + 60000;
-				log(`  ⏱️  Waiting ${Math.round(delayMs / 1000)}s before next retry...`, "yellow");
+				const delayMs = Math.floor(Math.random() * 5000) + 10000;
+				log(
+					`  ⏱️  Waiting ${Math.round(delayMs / 1000)}s before next retry...`,
+					"yellow"
+				);
 				await page.waitForTimeout(delayMs);
 			} catch (error) {
 				retryFailed++;
