@@ -265,6 +265,7 @@ function checkImplementation(endpointName) {
 	
 	// Sources
 	readsourcedescription: "getSourceDescription",
+	readsourcedescriptions: "getSourceDescriptions",
 	createsourcedescription: "createSourceDescription",
 	updatesourcedescription: "updateSourceDescription",
 	deletesourcedescription: "deleteSourceDescription",
@@ -300,6 +301,7 @@ function checkImplementation(endpointName) {
 	// Memories
 	readmemory: "getMemory",
 	readmemories: "getMemories",
+	readusermemories: "getUserMemories",
 	creatememory: "createMemory",
 	updatememory: "updateMemory",
 	deletememory: "deleteMemory",

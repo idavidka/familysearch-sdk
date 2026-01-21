@@ -1,6 +1,6 @@
 # FamilySearch SDK API Analysis Report
 
-**Generated:** 2026-01-21T10:54:09.201Z
+**Generated:** 2026-01-21T10:59:13.498Z
 
 ---
 
@@ -9,15 +9,15 @@
 | Metric | Count | Percentage |
 |--------|-------|------------|
 | **Total Endpoints** | 204 | 100% |
-| ✅ **Implemented** | 147 | 72% |
-| ❌ **Missing** | 45 | 22% |
+| ✅ **Implemented** | 149 | 73% |
+| ❌ **Missing** | 43 | 21% |
 | 🚫 **Not Applicable** | 12 | 6% |
 
-**Applicable Coverage:** 147/192 (77%)
+**Applicable Coverage:** 149/192 (78%)
 
 ---
 
-## ✅ Implemented Endpoints (147)
+## ✅ Implemented Endpoints (149)
 
 ### checkplaceischild
 
@@ -823,6 +823,13 @@ and if the reason supplied is too long, the request may fail as a bad request.
 - **Function:** `getSourceDescription()`
 - **Description:** Read a source description. The Source Description resource gets a user's source description.
 
+### readsourcedescriptions
+
+- **Title:** Read Current User Source Descriptions
+- **Method:** GET
+- **Function:** `getSourceDescriptions()`
+- **Description:** Read a list of all user-defined source descriptions.
+
 ### readsourcefolders
 
 - **Title:** Read Source Folders
@@ -850,6 +857,13 @@ and if the reason supplied is too long, the request may fail as a bad request.
 - **Method:** GET
 - **Function:** `getUserHistory()`
 - **Description:** Read a user's history.
+
+### readusermemories
+
+- **Title:** Read User Memories
+- **Method:** GET
+- **Function:** `getUserMemories()`
+- **Description:** Read a user's memories. The user memories query provides a (paged) list of artifacts of memories that belong to a specific user. This allows users to get a list of all memories that have been uploaded by the current user. To do this, make a request to the User Memories resource with the Accept header set to application/x-fs-v1+json.
 
 ### readusersourcefolders
 
@@ -1056,7 +1070,7 @@ and if the reason supplied is too long, the request may fail as a bad request.
 
 ---
 
-## ❌ Missing Endpoints (45)
+## ❌ Missing Endpoints (43)
 
 These endpoints need to be implemented. Implementation templates are provided below.
 
@@ -1924,41 +1938,6 @@ export async function getresearchtreepersons(
 
 ---
 
-### readsourcedescriptions
-
-- **Title:** Read Current User Source Descriptions
-- **Method:** GET
-- **URL:** `https://apibeta.familysearch.org/platform/sources/descriptions`
-- **Description:** Read a list of all user-defined source descriptions.
-
-**Response Codes:** 200, 204, 303
-
-**Implementation Template:**
-
-```typescript
-/**
- * Read Current User Source Descriptions
- *
- * Read a list of all user-defined source descriptions.
- *
- * @returns Promise with response data
- */
-export async function getsourcedescriptions(
-	sdk: FamilySearchSDK
-): Promise<any> {
-	try {
-		const response = await sdk.get<any>(`/platform/sources/descriptions`);
-		return response.data;
-	} catch (error) {
-		sdk["logger"].error("[FamilySearch SDK] Failed to getsourcedescriptions:", error);
-		throw error;
-	}
-}
-
-```
-
----
-
 ### readsourcereferences
 
 - **Title:** Read Source References
@@ -2150,47 +2129,6 @@ export async function getuserdefinedcollectionsourcedescriptions(
 		return response.data;
 	} catch (error) {
 		sdk["logger"].error("[FamilySearch SDK] Failed to getuserdefinedcollectionsourcedescriptions:", error);
-		throw error;
-	}
-}
-
-```
-
----
-
-### readusermemories
-
-- **Title:** Read User Memories
-- **Method:** GET
-- **URL:** `https://apibeta.familysearch.org/platform/memories/users/{uid}/memories`
-- **Description:** Read a user's memories. The user memories query provides a (paged) list of artifacts of memories that belong to a specific user. This allows users to get a list of all memories that have been uploaded by the current user. To do this, make a request to the User Memories resource with the Accept header set to application/x-fs-v1+json.
-
-**Path Parameters:**
-
-- `uid` (string) - required
-
-**Response Codes:** 200, 204, 429
-
-**Implementation Template:**
-
-```typescript
-/**
- * Read User Memories
- *
- * Read a user's memories. The user memories query provides a (paged) list of artifacts of memories that belong to a specific user. This allows users to get a list of all memories that have been uploaded by the current user. To do this, make a request to the User Memories resource with the Accept header set to application/x-fs-v1+json.
- *
- * @param uid - uid
- * @returns Promise with response data
- */
-export async function getusermemories(
-	sdk: FamilySearchSDK,
-	uid: string
-): Promise<any> {
-	try {
-		const response = await sdk.get<any>(`/platform/memories/users/${uid}/memories`);
-		return response.data;
-	} catch (error) {
-		sdk["logger"].error("[FamilySearch SDK] Failed to getusermemories:", error);
 		throw error;
 	}
 }
