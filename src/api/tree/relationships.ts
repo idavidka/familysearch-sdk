@@ -1,24 +1,9 @@
 /**
  * FamilySearch Relationships API
- * 
+ *
  * Handles couple and child-and-parents relationships in the FamilySearch Family Tree.
- * 
- * @see https:/): Promise<DeletePersonResponse> {
-	try {
-		const headers: Record<string, string> = {};
-		if (reason) {
-			headers["X-Reason"] = reason;
-		}
-
-		const response = await sdk.delete<DeletePersonResponse>(
-			`/platform/tree/couple-relationships/${relationshipId}`,
-			{ headers }
-		);
-		return {
-			statusCode: response.statusCode,
-			statusText: response.statusText,
-		};
-	} catch (error) {familysearch.org/main/reference/readcouplerelationship
+ *
+ * @see https://developers.familysearch.org/main/reference/readcouplerelationship
  */
 
 import type { FamilySearchSDK } from "../../client";
@@ -44,7 +29,7 @@ import type {
 
 /**
  * Get couple relationship details
- * 
+ *
  * @param sdk - SDK instance
  * @param relationshipId - Relationship ID
  * @returns Relationship details or null
@@ -69,11 +54,11 @@ export async function getCoupleRelationship(
 
 /**
  * Create a couple relationship between two persons
- * 
+ *
  * @param sdk - SDK instance
  * @param relationship - Relationship data
  * @returns Created relationship data
- * 
+ *
  * @example
  * ```typescript
  * const marriage = await createCoupleRelationship(sdk, {
@@ -99,12 +84,14 @@ export async function createCoupleRelationship(
 		}
 
 		const body = {
-			relationships: [{
-				type: "http://gedcomx.org/Couple",
-				person1: { resourceId: relationship.person1 },
-				person2: { resourceId: relationship.person2 },
-				facts: relationship.facts || [],
-			}],
+			relationships: [
+				{
+					type: "http://gedcomx.org/Couple",
+					person1: { resourceId: relationship.person1 },
+					person2: { resourceId: relationship.person2 },
+					facts: relationship.facts || [],
+				},
+			],
 		};
 
 		const response = await sdk.post<CreateRelationshipResponse>(
@@ -124,7 +111,7 @@ export async function createCoupleRelationship(
 
 /**
  * Update a couple relationship
- * 
+ *
  * @param sdk - SDK instance
  * @param relationshipId - ID of the relationship to update
  * @param relationship - Updated relationship data
@@ -143,13 +130,15 @@ export async function updateCoupleRelationship(
 		}
 
 		const body = {
-			relationships: [{
-				id: relationshipId,
-				type: "http://gedcomx.org/Couple",
-				person1: { resourceId: relationship.person1 },
-				person2: { resourceId: relationship.person2 },
-				facts: relationship.facts || [],
-			}],
+			relationships: [
+				{
+					id: relationshipId,
+					type: "http://gedcomx.org/Couple",
+					person1: { resourceId: relationship.person1 },
+					person2: { resourceId: relationship.person2 },
+					facts: relationship.facts || [],
+				},
+			],
 		};
 
 		const response = await sdk.post<UpdateRelationshipResponse>(
@@ -169,7 +158,7 @@ export async function updateCoupleRelationship(
 
 /**
  * Delete a couple relationship
- * 
+ *
  * @param sdk - SDK instance
  * @param relationshipId - ID of the relationship to delete
  * @param reason - Optional reason for deletion
@@ -205,7 +194,7 @@ export async function deleteCoupleRelationship(
 
 /**
  * Get child-and-parents relationship details
- * 
+ *
  * @param sdk - SDK instance
  * @param relationshipId - Relationship ID
  * @returns Relationship details or null
@@ -230,11 +219,11 @@ export async function getChildAndParentsRelationship(
 
 /**
  * Create a child-and-parents relationship
- * 
+ *
  * @param sdk - SDK instance
  * @param relationship - Relationship data
  * @returns Created relationship data
- * 
+ *
  * @example
  * ```typescript
  * const parentChild = await createChildAndParentsRelationship(sdk, {
@@ -262,18 +251,20 @@ export async function createChildAndParentsRelationship(
 		}
 
 		const body = {
-			childAndParentsRelationships: [{
-				type: "http://gedcomx.org/ParentChild",
-				child: { resourceId: relationship.child },
-				...(relationship.father && {
-					parent1: { resourceId: relationship.father },
-					parent1Facts: relationship.fatherFacts || [],
-				}),
-				...(relationship.mother && {
-					parent2: { resourceId: relationship.mother },
-					parent2Facts: relationship.motherFacts || [],
-				}),
-			}],
+			childAndParentsRelationships: [
+				{
+					type: "http://gedcomx.org/ParentChild",
+					child: { resourceId: relationship.child },
+					...(relationship.father && {
+						parent1: { resourceId: relationship.father },
+						parent1Facts: relationship.fatherFacts || [],
+					}),
+					...(relationship.mother && {
+						parent2: { resourceId: relationship.mother },
+						parent2Facts: relationship.motherFacts || [],
+					}),
+				},
+			],
 		};
 
 		const response = await sdk.post<CreateRelationshipResponse>(
@@ -293,7 +284,7 @@ export async function createChildAndParentsRelationship(
 
 /**
  * Update a child-and-parents relationship
- * 
+ *
  * @param sdk - SDK instance
  * @param relationshipId - ID of the relationship to update
  * @param relationship - Updated relationship data
@@ -312,19 +303,21 @@ export async function updateChildAndParentsRelationship(
 		}
 
 		const body = {
-			childAndParentsRelationships: [{
-				id: relationshipId,
-				type: "http://gedcomx.org/ParentChild",
-				child: { resourceId: relationship.child },
-				...(relationship.father && {
-					parent1: { resourceId: relationship.father },
-					parent1Facts: relationship.fatherFacts || [],
-				}),
-				...(relationship.mother && {
-					parent2: { resourceId: relationship.mother },
-					parent2Facts: relationship.motherFacts || [],
-				}),
-			}],
+			childAndParentsRelationships: [
+				{
+					id: relationshipId,
+					type: "http://gedcomx.org/ParentChild",
+					child: { resourceId: relationship.child },
+					...(relationship.father && {
+						parent1: { resourceId: relationship.father },
+						parent1Facts: relationship.fatherFacts || [],
+					}),
+					...(relationship.mother && {
+						parent2: { resourceId: relationship.mother },
+						parent2Facts: relationship.motherFacts || [],
+					}),
+				},
+			],
 		};
 
 		const response = await sdk.post<UpdateRelationshipResponse>(
@@ -344,7 +337,7 @@ export async function updateChildAndParentsRelationship(
 
 /**
  * Delete a child-and-parents relationship
- * 
+ *
  * @param sdk - SDK instance
  * @param relationshipId - ID of the relationship to delete
  * @param reason - Optional reason for deletion
@@ -380,14 +373,14 @@ export async function deleteChildAndParentsRelationship(
 
 /**
  * Get couple relationship change history
- * 
+ *
  * Returns the change history entries for a couple relationship,
  * showing who made changes, when, and what operations were performed.
- * 
+ *
  * @param sdk - SDK instance
  * @param relationshipId - Couple relationship ID
  * @returns Change history entries or null
- * 
+ *
  * @example
  * ```typescript
  * const history = await getCoupleRelationshipChangeHistory(sdk, "PPPP-PPP");
@@ -418,14 +411,14 @@ export async function getCoupleRelationshipChangeHistory(
 
 /**
  * Get child-and-parents relationship change history
- * 
+ *
  * Returns the change history entries for a child-and-parents relationship,
  * showing who made changes, when, and what operations were performed.
- * 
+ *
  * @param sdk - SDK instance
  * @param relationshipId - Child-and-parents relationship ID
  * @returns Change history entries or null
- * 
+ *
  * @example
  * ```typescript
  * const history = await getChildAndParentsRelationshipChangeHistory(sdk, "PPPP-PPP");
@@ -441,9 +434,10 @@ export async function getChildAndParentsRelationshipChangeHistory(
 	relationshipId: string
 ): Promise<ChildAndParentsRelationshipChangeHistoryResponse | null> {
 	try {
-		const response = await sdk.get<ChildAndParentsRelationshipChangeHistoryResponse>(
-			`/platform/tree/child-and-parents-relationships/${relationshipId}/changes`
-		);
+		const response =
+			await sdk.get<ChildAndParentsRelationshipChangeHistoryResponse>(
+				`/platform/tree/child-and-parents-relationships/${relationshipId}/changes`
+			);
 		return response.data || null;
 	} catch (error) {
 		sdk["logger"].error(
@@ -456,24 +450,24 @@ export async function getChildAndParentsRelationshipChangeHistory(
 
 /**
  * Restore a change from history
- * 
+ *
  * Restores a person, relationship, or conclusion from a change history entry.
  * This operation recreates the state of the entity as it was in the specified change.
- * 
+ *
  * **Note:** This endpoint works for any entity type (persons, relationships, etc.)
  * by using the change ID from the change history.
- * 
+ *
  * @param sdk - SDK instance
  * @param changeId - Change ID from change history (e.g., from entries[].id)
  * @returns Restored change details
  * @throws Error if restore fails
- * 
+ *
  * @example
  * ```typescript
  * // Get change history first
  * const history = await getPersonChangeHistory(sdk, "PPPP-PPP");
  * const changeId = history?.entries?.[0]?.id;
- * 
+ *
  * // Restore the change
  * if (changeId) {
  *   const result = await restoreChange(sdk, changeId);
@@ -504,18 +498,18 @@ export async function restoreChange(
 
 /**
  * Set parent order in a child-and-parents relationship
- * 
+ *
  * Controls the display order of parents (who appears as parent1 vs parent2)
  * in a child-and-parents relationship. This is useful for determining which
  * parent is listed first in family tree views.
- * 
+ *
  * @param sdk - SDK instance
  * @param relationshipId - Child-and-parents relationship ID
  * @param parent1Id - Person ID to be set as parent1
  * @param parent2Id - Person ID to be set as parent2
  * @returns Updated relationship with new parent order
  * @throws Error if order update fails
- * 
+ *
  * @example
  * ```typescript
  * // Set mother as parent1, father as parent2
@@ -559,18 +553,18 @@ export async function setParentOrder(
 
 /**
  * Set spouse order in a couple relationship
- * 
+ *
  * Controls the display order of spouses (who appears as person1 vs person2)
  * in a couple relationship. This is useful for determining which spouse
  * is listed first in family tree views.
- * 
+ *
  * @param sdk - SDK instance
  * @param relationshipId - Couple relationship ID
  * @param person1Id - Person ID to be set as person1
  * @param person2Id - Person ID to be set as person2
  * @returns Updated relationship with new spouse order
  * @throws Error if order update fails
- * 
+ *
  * @example
  * ```typescript
  * // Set wife as person1, husband as person2
@@ -614,11 +608,11 @@ export async function setSpouseOrder(
 
 /**
  * Get source references for a couple relationship
- * 
+ *
  * @param sdk - SDK instance
  * @param relationshipId - Couple relationship ID
  * @returns Source references response or null
- * 
+ *
  * @example
  * ```typescript
  * const sources = await getCoupleRelationshipSourceReferences(sdk, "XXXX-YYY");
@@ -645,13 +639,13 @@ export async function getCoupleRelationshipSourceReferences(
 
 /**
  * Get full source descriptions for a couple relationship
- * 
+ *
  * Returns complete source descriptions (not just references) associated with the relationship.
- * 
+ *
  * @param sdk - SDK instance
  * @param relationshipId - Couple relationship ID
  * @returns Source descriptions response or null
- * 
+ *
  * @example
  * ```typescript
  * const sources = await getCoupleRelationshipSources(sdk, "XXXX-YYY");
@@ -678,11 +672,11 @@ export async function getCoupleRelationshipSources(
 
 /**
  * Get source references for a child-and-parents relationship
- * 
+ *
  * @param sdk - SDK instance
  * @param relationshipId - Child-and-parents relationship ID
  * @returns Source references response or null
- * 
+ *
  * @example
  * ```typescript
  * const sources = await getChildAndParentsRelationshipSourceReferences(sdk, "XXXX-YYY");
@@ -709,13 +703,13 @@ export async function getChildAndParentsRelationshipSourceReferences(
 
 /**
  * Get full source descriptions for a child-and-parents relationship
- * 
+ *
  * Returns complete source descriptions (not just references) associated with the relationship.
- * 
+ *
  * @param sdk - SDK instance
  * @param relationshipId - Child-and-parents relationship ID
  * @returns Source descriptions response or null
- * 
+ *
  * @example
  * ```typescript
  * const sources = await getChildAndParentsRelationshipSources(sdk, "XXXX-YYY");
@@ -742,13 +736,13 @@ export async function getChildAndParentsRelationshipSources(
 
 /**
  * Create a source reference for a couple relationship
- * 
+ *
  * @param sdk - SDK instance
  * @param relationshipId - Couple relationship ID
  * @param source - Source attachment input
  * @param reason - Optional reason for audit trail
  * @returns Attach source response or null
- * 
+ *
  * @example
  * ```typescript
  * const result = await createCoupleRelationshipSourceReference(sdk, "XXXX-YYY", {
@@ -794,13 +788,13 @@ export async function createCoupleRelationshipSourceReference(
 
 /**
  * Create a source reference for a child-and-parents relationship
- * 
+ *
  * @param sdk - SDK instance
  * @param relationshipId - Child-and-parents relationship ID
  * @param source - Source attachment input
  * @param reason - Optional reason for audit trail
  * @returns Attach source response or null
- * 
+ *
  * @example
  * ```typescript
  * const result = await createChildAndParentsRelationshipSourceReference(sdk, "XXXX-YYY", {
@@ -846,18 +840,18 @@ export async function createChildAndParentsRelationshipSourceReference(
 
 /**
  * Delete a source reference from a couple relationship
- * 
+ *
  * @param sdk - SDK instance
  * @param relationshipId - Couple relationship ID
  * @param sourceId - Source reference ID to delete
  * @param reason - Optional reason for audit trail
  * @returns Deletion response with status
- * 
+ *
  * @example
  * ```typescript
  * const result = await deleteCoupleRelationshipSourceReference(
- *   sdk, 
- *   "XXXX-YYY", 
+ *   sdk,
+ *   "XXXX-YYY",
  *   "SOURCE-REF-ID",
  *   "Removing incorrect source"
  * );
@@ -894,18 +888,18 @@ export async function deleteCoupleRelationshipSourceReference(
 
 /**
  * Delete a source reference from a child-and-parents relationship
- * 
+ *
  * @param sdk - SDK instance
  * @param relationshipId - Child-and-parents relationship ID
  * @param sourceId - Source reference ID to delete
  * @param reason - Optional reason for audit trail
  * @returns Deletion response with status
- * 
+ *
  * @example
  * ```typescript
  * const result = await deleteChildAndParentsRelationshipSourceReference(
- *   sdk, 
- *   "XXXX-YYY", 
+ *   sdk,
+ *   "XXXX-YYY",
  *   "SOURCE-REF-ID",
  *   "Removing incorrect source"
  * );
