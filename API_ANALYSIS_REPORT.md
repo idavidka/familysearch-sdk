@@ -1,6 +1,6 @@
 # FamilySearch SDK API Analysis Report
 
-**Generated:** 2026-01-21T10:36:43.996Z
+**Generated:** 2026-01-21T10:39:07.126Z
 
 ---
 
@@ -9,15 +9,15 @@
 | Metric | Count | Percentage |
 |--------|-------|------------|
 | **Total Endpoints** | 204 | 100% |
-| ✅ **Implemented** | 120 | 59% |
-| ❌ **Missing** | 72 | 35% |
+| ✅ **Implemented** | 122 | 60% |
+| ❌ **Missing** | 70 | 34% |
 | 🚫 **Not Applicable** | 12 | 6% |
 
-**Applicable Coverage:** 120/192 (63%)
+**Applicable Coverage:** 122/192 (64%)
 
 ---
 
-## ✅ Implemented Endpoints (120)
+## ✅ Implemented Endpoints (122)
 
 ### checkplaceischild
 
@@ -417,6 +417,13 @@ and if the reason supplied is too long, the request may fail as a bad request.
 - **Function:** `getChildAndParentsRelationshipNote()`
 - **Description:** Read a specific note (nid) on a child-and-parents relationship (caprid).
 
+### readcomments
+
+- **Title:** Read Comments
+- **Method:** GET
+- **Function:** `getDiscussionComments()`
+- **Description:** Read the list of comments for a specific discussion.
+
 ### readcouplerelationship
 
 - **Title:** Read Couple Relationship
@@ -528,6 +535,13 @@ and if the reason supplied is too long, the request may fail as a bad request.
 - **Method:** GET
 - **Function:** `getMemoryPersonas()`
 - **Description:** Read a memories personas.
+
+### readpartnereligibility
+
+- **Title:** Read Partner Eligibility
+- **Method:** GET
+- **Function:** `checkPartnerEligibility()`
+- **Description:** Determine whether the current user is eligible for a free partner account.
 
 ### readperson
 
@@ -867,7 +881,7 @@ and if the reason supplied is too long, the request may fail as a bad request.
 
 ---
 
-## ❌ Missing Endpoints (72)
+## ❌ Missing Endpoints (70)
 
 These endpoints need to be implemented. Implementation templates are provided below.
 
@@ -1849,47 +1863,6 @@ export async function performpersonmatchesbyexample(
 
 ---
 
-### readcomments
-
-- **Title:** Read Comments
-- **Method:** GET
-- **URL:** `https://apibeta.familysearch.org/platform/discussions/discussions/{did}/comments`
-- **Description:** Read the list of comments for a specific discussion.
-
-**Path Parameters:**
-
-- `did` (string) - required
-
-**Response Codes:** 200, 404
-
-**Implementation Template:**
-
-```typescript
-/**
- * Read Comments
- *
- * Read the list of comments for a specific discussion.
- *
- * @param did - did
- * @returns Promise with response data
- */
-export async function getcomments(
-	sdk: FamilySearchSDK,
-	did: string
-): Promise<any> {
-	try {
-		const response = await sdk.get<any>(`/platform/discussions/discussions/${did}/comments`);
-		return response.data;
-	} catch (error) {
-		sdk["logger"].error("[FamilySearch SDK] Failed to getcomments:", error);
-		throw error;
-	}
-}
-
-```
-
----
-
 ### readcurrenttree
 
 - **Title:** Read Current Tree Id
@@ -2157,41 +2130,6 @@ export async function getgenealogiestrees(
 		return response.data;
 	} catch (error) {
 		sdk["logger"].error("[FamilySearch SDK] Failed to getgenealogiestrees:", error);
-		throw error;
-	}
-}
-
-```
-
----
-
-### readpartnereligibility
-
-- **Title:** Read Partner Eligibility
-- **Method:** GET
-- **URL:** `https://apibeta.familysearch.org/platform/users/current/partner-eligible`
-- **Description:** Determine whether the current user is eligible for a free partner account.
-
-**Response Codes:** 204, 403
-
-**Implementation Template:**
-
-```typescript
-/**
- * Read Partner Eligibility
- *
- * Determine whether the current user is eligible for a free partner account.
- *
- * @returns Promise with response data
- */
-export async function getpartnereligibility(
-	sdk: FamilySearchSDK
-): Promise<any> {
-	try {
-		const response = await sdk.get<any>(`/platform/users/current/partner-eligible`);
-		return response.data;
-	} catch (error) {
-		sdk["logger"].error("[FamilySearch SDK] Failed to getpartnereligibility:", error);
 		throw error;
 	}
 }

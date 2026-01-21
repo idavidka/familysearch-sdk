@@ -151,12 +151,11 @@ function checkImplementation(endpointName) {
 		updategenealogytree: "updateGenealogyTree",
 		deletegenealogytree: "deleteGenealogyTree",
 
-		// Current User / Tree
-		readcurrenttreeperson: "getCurrentUser",
-		readcurrentuser: "getCurrentUser",
-		readagent: "getAgent",
-
-		// Person APIs
+	// Current User / Tree
+	readcurrenttreeperson: "getCurrentUser",
+	readcurrentuser: "getCurrentUser",
+	readagent: "getAgent",
+	readpartnereligibility: "checkPartnerEligibility",		// Person APIs
 		readperson: "getPerson",
 		readpersons: "getPersons",
 		createperson: "createPerson",
@@ -282,11 +281,14 @@ function checkImplementation(endpointName) {
 	deletememory: "deleteMemory",
 	readmemorycomments: "getMemoryWithComments",
 	readmemorypersona: "getMemoryPersona",
-	readmemorypersonas: "getMemoryPersonas",		// Discussions
-		readdiscussion: "getDiscussion",
-		creatediscussion: "createDiscussion",
-		updatediscussion: "updateDiscussion",
-		deletediscussion: "deleteDiscussion",
+	readmemorypersonas: "getMemoryPersonas",
+
+	// Discussions
+	readdiscussion: "getDiscussion",
+	creatediscussion: "createDiscussion",
+	updatediscussion: "updateDiscussion",
+	deletediscussion: "deleteDiscussion",
+	readcomments: "getDiscussionComments",
 
 		// Vocabularies & Standards
 		readvocabulary: "getVocabulary",
