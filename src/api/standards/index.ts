@@ -12,6 +12,15 @@
 export {
 	searchPlaces,
 	getPlaceDetails,
+	getPlaceChildren,
+	getPlaceDescriptions,
+	getPlaceDescription,
+	getPlaceTypes,
+	getPlaceType,
+	getPlaceTypeGroups,
+	getPlaceTypeGroup,
+	searchParentPlaces,
+	checkPlaceIsChild,
 } from "./places";
 
 // Dates API

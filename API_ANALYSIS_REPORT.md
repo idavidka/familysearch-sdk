@@ -1,6 +1,6 @@
 # FamilySearch SDK API Analysis Report
 
-**Generated:** 2026-01-21T13:16:23.554Z
+**Generated:** 2026-01-21T13:30:14.488Z
 
 ---
 
@@ -9,15 +9,15 @@
 | Metric | Count | Percentage |
 |--------|-------|------------|
 | **Total Endpoints** | 204 | 100% |
-| ✅ **Implemented** | 149 | 73% |
-| ❌ **Missing** | 43 | 21% |
+| ✅ **Implemented** | 150 | 74% |
+| ❌ **Missing** | 42 | 21% |
 | 🚫 **Not Applicable** | 12 | 6% |
 
-**Applicable Coverage:** 149/192 (78%)
+**Applicable Coverage:** 150/192 (78%)
 
 ---
 
-## ✅ Implemented Endpoints (149)
+## ✅ Implemented Endpoints (150)
 
 ### checkplaceischild
 
@@ -795,6 +795,13 @@ and if the reason supplied is too long, the request may fail as a bad request.
 - **Function:** `getPlaceType()`
 - **Description:** Read a place type.  A place type is a type of place, such as a cemetery, city, state, etc. Types have translated names, which is useful for localization purposes.
 
+### readplacetypegroup
+
+- **Title:** Read Place Type Group
+- **Method:** GET
+- **Function:** `getPlaceTypeGroup()`
+- **Description:** Read a place type group. A place type group is a collection of related place types that provides convenience when working with types. For example, there are a number of city-like types, such as city, populated place, and capital city. A "city-like" type group can be used to include all of them.
+
 ### readplacetypegroups
 
 - **Title:** Read Place Type Groups
@@ -1070,7 +1077,7 @@ and if the reason supplied is too long, the request may fail as a bad request.
 
 ---
 
-## ❌ Missing Endpoints (43)
+## ❌ Missing Endpoints (42)
 
 These endpoints need to be implemented. Implementation templates are provided below.
 
@@ -1848,47 +1855,6 @@ export async function getplacedescriptionwithrelated(
 		return response.data;
 	} catch (error) {
 		sdk["logger"].error("[FamilySearch SDK] Failed to getplacedescriptionwithrelated:", error);
-		throw error;
-	}
-}
-
-```
-
----
-
-### readplacetypegroup
-
-- **Title:** Read Place Type Group
-- **Method:** GET
-- **URL:** `https://apibeta.familysearch.org/platform/places/type-groups/{ptgid}`
-- **Description:** Read a place type group. A place type group is a collection of related place types that provides convenience when working with types. For example, there are a number of city-like types, such as city, populated place, and capital city. A "city-like" type group can be used to include all of them.
-
-**Path Parameters:**
-
-- `ptgid` (string) - required
-
-**Response Codes:** 200, 404
-
-**Implementation Template:**
-
-```typescript
-/**
- * Read Place Type Group
- *
- * Read a place type group. A place type group is a collection of related place types that provides convenience when working with types. For example, there are a number of city-like types, such as city, populated place, and capital city. A "city-like" type group can be used to include all of them.
- *
- * @param ptgid - ptgid
- * @returns Promise with response data
- */
-export async function getplacetypegroup(
-	sdk: FamilySearchSDK,
-	ptgid: string
-): Promise<any> {
-	try {
-		const response = await sdk.get<any>(`/platform/places/type-groups/${ptgid}`);
-		return response.data;
-	} catch (error) {
-		sdk["logger"].error("[FamilySearch SDK] Failed to getplacetypegroup:", error);
 		throw error;
 	}
 }

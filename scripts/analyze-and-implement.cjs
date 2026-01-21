@@ -311,6 +311,7 @@ function checkImplementation(endpointName) {
 		readplacetype: "getPlaceType",
 		readplacetypes: "getPlaceTypes",
 		readplacetypegroups: "getPlaceTypeGroups",
+		readplacetypegroup: "getPlaceTypeGroup",
 
 		// Memories
 		readmemory: "getMemory",

@@ -279,6 +279,38 @@ export async function getPlaceTypeGroups(
 }
 
 /**
+ * Get single place type group
+ * 
+ * Returns details for a specific place type group by ID.
+ * 
+ * @param sdk - SDK instance
+ * @param groupId - Place type group ID
+ * @returns Place type group or null
+ * 
+ * @example
+ * ```typescript
+ * const group = await getPlaceTypeGroup(sdk, 'city-like');
+ * ```
+ */
+export async function getPlaceTypeGroup(
+	sdk: FamilySearchSDK,
+	groupId: string
+): Promise<PlaceTypeGroupsResponse | null> {
+	try {
+		const response = await sdk.get<PlaceTypeGroupsResponse>(
+			`/platform/places/type-groups/${groupId}`
+		);
+		return response.data || null;
+	} catch (error) {
+		sdk["logger"].error(
+			`[FamilySearch SDK] Failed to get place type group ${groupId}:`,
+			error
+		);
+		return null;
+	}
+}
+
+/**
  * Search for parent places
  * 
  * Searches for places that could be parents of the given place.
