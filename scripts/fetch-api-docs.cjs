@@ -114,6 +114,7 @@ async function main() {
 	let success = 0;
 	let failed = 0;
 	let skipped = 0;
+	const failedUrls = []; // Track failed URLs for retry
 
 	// Fetch each URL
 	for (const url of filteredUrls) {
@@ -172,10 +173,67 @@ async function main() {
 			}
 		} catch (error) {
 			failed++;
+			failedUrls.push({ url, endpoint, error: error.message }); // Store for retry
 			log(`  ✗ Failed to fetch ${url}`, "red");
 			log(`    Error: ${error.message}`, "red");
 			logToFile(`FAILED - ${url} - ${error.message}`);
 		}
+	}
+
+	// Retry failed URLs
+	if (failedUrls.length > 0) {
+		console.log("");
+		log("========================================", "yellow");
+		log(`🔄 Retrying ${failedUrls.length} failed URL(s)...`, "yellow");
+		log("========================================", "yellow");
+		console.log("");
+
+		let retrySuccess = 0;
+		let retryFailed = 0;
+
+		for (let i = 0; i < failedUrls.length; i++) {
+			const { url, endpoint } = failedUrls[i];
+			const filename = path.join(DOCS_DIR, `${endpoint}.html`);
+
+			log(`[Retry ${i + 1}/${failedUrls.length}] Fetching: ${endpoint}`);
+
+			try {
+				// Navigate to page with fresh attempt
+				await page.goto(url, {
+					waitUntil: "networkidle",
+					timeout: 120000,
+				});
+
+				await page.waitForSelector("body", { timeout: 120000 });
+				await page.waitForTimeout(2000);
+
+				const html = await page.content();
+				fs.writeFileSync(filename, html, "utf-8");
+
+				retrySuccess++;
+				success++;
+				failed--;
+				log(`  ✓ Saved to ${filename}`, "green");
+				logToFile(`RETRY SUCCESS - ${url}`);
+
+				// Longer delay after retry success
+				const delayMs = Math.floor(Math.random() * 30000) + 60000;
+				log(`  ⏱️  Waiting ${Math.round(delayMs / 1000)}s before next retry...`, "yellow");
+				await page.waitForTimeout(delayMs);
+			} catch (error) {
+				retryFailed++;
+				log(`  ✗ Retry failed for ${url}`, "red");
+				log(`    Error: ${error.message}`, "red");
+				logToFile(`RETRY FAILED - ${url} - ${error.message}`);
+			}
+		}
+
+		console.log("");
+		log("========================================", "yellow");
+		log("Retry Complete!", "yellow");
+		console.log(`  Retry successful: ${retrySuccess}`);
+		console.log(`  Still failed:     ${retryFailed}`);
+		log("========================================", "yellow");
 	}
 
 	await browser.close();
