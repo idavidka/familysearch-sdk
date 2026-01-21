@@ -115,12 +115,19 @@ export async function getPersonWithDetails(
  */
 export async function createPerson(
 	sdk: FamilySearchSDK,
-	person: PersonInput
+	person: PersonInput,
+	reason?: string
 ): Promise<CreatePersonResponse | null> {
 	try {
+		const headers: Record<string, string> = {};
+		if (reason) {
+			headers["X-Reason"] = reason;
+		}
+
 		const response = await sdk.post<CreatePersonResponse>(
 			"/platform/tree/persons",
-			{ persons: [person] }
+			{ persons: [person] },
+			{ headers }
 		);
 		return response.data || null;
 	} catch (error) {
@@ -154,12 +161,19 @@ export async function createPerson(
 export async function updatePerson(
 	sdk: FamilySearchSDK,
 	personId: string,
-	person: PersonInput
+	person: PersonInput,
+	reason?: string
 ): Promise<UpdatePersonResponse | null> {
 	try {
+		const headers: Record<string, string> = {};
+		if (reason) {
+			headers["X-Reason"] = reason;
+		}
+
 		const response = await sdk.post<UpdatePersonResponse>(
 			`/platform/tree/persons/${personId}`,
-			{ persons: [{ ...person, id: personId }] }
+			{ persons: [{ ...person, id: personId }] },
+			{ headers }
 		);
 		return response.data || null;
 	} catch (error) {
@@ -192,11 +206,15 @@ export async function deletePerson(
 	reason?: string
 ): Promise<DeletePersonResponse | null> {
 	try {
-		const url = reason
-			? `/platform/tree/persons/${personId}?reason=${encodeURIComponent(reason)}`
-			: `/platform/tree/persons/${personId}`;
+		const headers: Record<string, string> = {};
+		if (reason) {
+			headers["X-Reason"] = reason;
+		}
 
-		const response = await sdk.delete<DeletePersonResponse>(url);
+		const response = await sdk.delete<DeletePersonResponse>(
+			`/platform/tree/persons/${personId}`,
+			{ headers }
+		);
 		return {
 			statusCode: response.statusCode,
 			statusText: response.statusText,

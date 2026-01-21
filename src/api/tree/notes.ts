@@ -85,9 +85,15 @@ export async function getPersonNote(
 export async function createPersonNote(
 	sdk: FamilySearchSDK,
 	personId: string,
-	note: NoteInput
+	note: NoteInput,
+	reason?: string
 ): Promise<NoteResponse | null> {
 	try {
+		const headers: Record<string, string> = {};
+		if (reason) {
+			headers["X-Reason"] = reason;
+		}
+
 		const body = {
 			persons: [{
 				id: personId,
@@ -101,7 +107,8 @@ export async function createPersonNote(
 
 		const response = await sdk.post<NoteResponse>(
 			`/platform/tree/persons/${personId}/notes`,
-			body
+			body,
+			{ headers }
 		);
 		return response.data || null;
 	} catch (error) {
@@ -126,9 +133,15 @@ export async function updatePersonNote(
 	sdk: FamilySearchSDK,
 	personId: string,
 	noteId: string,
-	note: NoteInput
+	note: NoteInput,
+	reason?: string
 ): Promise<NoteResponse | null> {
 	try {
+		const headers: Record<string, string> = {};
+		if (reason) {
+			headers["X-Reason"] = reason;
+		}
+
 		const body = {
 			persons: [{
 				id: personId,
@@ -143,7 +156,8 @@ export async function updatePersonNote(
 
 		const response = await sdk.post<NoteResponse>(
 			`/platform/tree/persons/${personId}/notes/${noteId}`,
-			body
+			body,
+			{ headers }
 		);
 		return response.data || null;
 	} catch (error) {
@@ -166,11 +180,18 @@ export async function updatePersonNote(
 export async function deletePersonNote(
 	sdk: FamilySearchSDK,
 	personId: string,
-	noteId: string
+	noteId: string,
+	reason?: string
 ): Promise<{ statusCode: number; statusText: string } | null> {
 	try {
+		const headers: Record<string, string> = {};
+		if (reason) {
+			headers["X-Reason"] = reason;
+		}
+
 		const response = await sdk.delete<void>(
-			`/platform/tree/persons/${personId}/notes/${noteId}`
+			`/platform/tree/persons/${personId}/notes/${noteId}`,
+			{ headers }
 		);
 		return {
 			statusCode: response.statusCode,
@@ -252,9 +273,15 @@ export async function getCoupleRelationshipNote(
 export async function createCoupleRelationshipNote(
 	sdk: FamilySearchSDK,
 	relationshipId: string,
-	note: NoteInput
+	note: NoteInput,
+	reason?: string
 ): Promise<NoteResponse | null> {
 	try {
+		const headers: Record<string, string> = {};
+		if (reason) {
+			headers["X-Reason"] = reason;
+		}
+
 		const body = {
 			relationships: [{
 				id: relationshipId,
@@ -268,7 +295,8 @@ export async function createCoupleRelationshipNote(
 
 		const response = await sdk.post<NoteResponse>(
 			`/platform/tree/couple-relationships/${relationshipId}/notes`,
-			body
+			body,
+			{ headers }
 		);
 		return response.data || null;
 	} catch (error) {
@@ -293,9 +321,15 @@ export async function updateCoupleRelationshipNote(
 	sdk: FamilySearchSDK,
 	relationshipId: string,
 	noteId: string,
-	note: NoteInput
+	note: NoteInput,
+	reason?: string
 ): Promise<NoteResponse | null> {
 	try {
+		const headers: Record<string, string> = {};
+		if (reason) {
+			headers["X-Reason"] = reason;
+		}
+
 		const body = {
 			relationships: [{
 				id: relationshipId,
@@ -310,7 +344,8 @@ export async function updateCoupleRelationshipNote(
 
 		const response = await sdk.post<NoteResponse>(
 			`/platform/tree/couple-relationships/${relationshipId}/notes/${noteId}`,
-			body
+			body,
+			{ headers }
 		);
 		return response.data || null;
 	} catch (error) {
@@ -333,11 +368,18 @@ export async function updateCoupleRelationshipNote(
 export async function deleteCoupleRelationshipNote(
 	sdk: FamilySearchSDK,
 	relationshipId: string,
-	noteId: string
+	noteId: string,
+	reason?: string
 ): Promise<{ statusCode: number; statusText: string } | null> {
 	try {
+		const headers: Record<string, string> = {};
+		if (reason) {
+			headers["X-Reason"] = reason;
+		}
+
 		const response = await sdk.delete<void>(
-			`/platform/tree/couple-relationships/${relationshipId}/notes/${noteId}`
+			`/platform/tree/couple-relationships/${relationshipId}/notes/${noteId}`,
+			{ headers }
 		);
 		return {
 			statusCode: response.statusCode,
@@ -419,9 +461,15 @@ export async function getChildAndParentsRelationshipNote(
 export async function createChildAndParentsRelationshipNote(
 	sdk: FamilySearchSDK,
 	relationshipId: string,
-	note: NoteInput
+	note: NoteInput,
+	reason?: string
 ): Promise<NoteResponse | null> {
 	try {
+		const headers: Record<string, string> = {};
+		if (reason) {
+			headers["X-Reason"] = reason;
+		}
+
 		const body = {
 			childAndParentsRelationships: [{
 				id: relationshipId,
@@ -435,7 +483,8 @@ export async function createChildAndParentsRelationshipNote(
 
 		const response = await sdk.post<NoteResponse>(
 			`/platform/tree/child-and-parents-relationships/${relationshipId}/notes`,
-			body
+			body,
+			{ headers }
 		);
 		return response.data || null;
 	} catch (error) {
@@ -460,9 +509,15 @@ export async function updateChildAndParentsRelationshipNote(
 	sdk: FamilySearchSDK,
 	relationshipId: string,
 	noteId: string,
-	note: NoteInput
+	note: NoteInput,
+	reason?: string
 ): Promise<NoteResponse | null> {
 	try {
+		const headers: Record<string, string> = {};
+		if (reason) {
+			headers["X-Reason"] = reason;
+		}
+
 		const body = {
 			childAndParentsRelationships: [{
 				id: relationshipId,
@@ -477,7 +532,8 @@ export async function updateChildAndParentsRelationshipNote(
 
 		const response = await sdk.post<NoteResponse>(
 			`/platform/tree/child-and-parents-relationships/${relationshipId}/notes/${noteId}`,
-			body
+			body,
+			{ headers }
 		);
 		return response.data || null;
 	} catch (error) {
@@ -500,11 +556,18 @@ export async function updateChildAndParentsRelationshipNote(
 export async function deleteChildAndParentsRelationshipNote(
 	sdk: FamilySearchSDK,
 	relationshipId: string,
-	noteId: string
+	noteId: string,
+	reason?: string
 ): Promise<{ statusCode: number; statusText: string } | null> {
 	try {
+		const headers: Record<string, string> = {};
+		if (reason) {
+			headers["X-Reason"] = reason;
+		}
+
 		const response = await sdk.delete<void>(
-			`/platform/tree/child-and-parents-relationships/${relationshipId}/notes/${noteId}`
+			`/platform/tree/child-and-parents-relationships/${relationshipId}/notes/${noteId}`,
+			{ headers }
 		);
 		return {
 			statusCode: response.statusCode,

@@ -1,6 +1,6 @@
 # FamilySearch SDK API Analysis Report
 
-**Generated:** 2026-01-21T10:22:00.872Z
+**Generated:** 2026-01-21T10:27:17.327Z
 
 ---
 
@@ -9,15 +9,15 @@
 | Metric | Count | Percentage |
 |--------|-------|------------|
 | **Total Endpoints** | 204 | 100% |
-| ✅ **Implemented** | 108 | 53% |
-| ❌ **Missing** | 84 | 41% |
+| ✅ **Implemented** | 110 | 54% |
+| ❌ **Missing** | 82 | 40% |
 | 🚫 **Not Applicable** | 12 | 6% |
 
-**Applicable Coverage:** 108/192 (56%)
+**Applicable Coverage:** 110/192 (57%)
 
 ---
 
-## ✅ Implemented Endpoints (108)
+## ✅ Implemented Endpoints (110)
 
 ### createchildandparentsrelationshipnote
 
@@ -319,6 +319,13 @@ and if the reason supplied is too long, the request may fail as a bad request.
 - **Function:** `getChildAndParentsRelationshipSourceReferences()`
 - **Description:** Read the source references attached to a child and parents relationship.
 
+### getchildandparentsrelationshipsources
+
+- **Title:** Read Child and Parents Relationship Sources
+- **Method:** GET
+- **Function:** `getChildAndParentsRelationshipSources()`
+- **Description:** Read sources associated with a child and parents relationship.
+
 ### getcouplerelationshipnotes
 
 - **Title:** Read Couple Relationship Notes
@@ -430,6 +437,13 @@ and if the reason supplied is too long, the request may fail as a bad request.
 - **Method:** GET
 - **Function:** `getCoupleRelationshipSourceReferences()`
 - **Description:** Read the source references for a couple relationship.
+
+### readcouplerelationshipsources
+
+- **Title:** Read Couple Relationship Sources
+- **Method:** GET
+- **Function:** `getCoupleRelationshipSources()`
+- **Description:** Read all sources associated with a couple relationship.
 
 ### readcurrenttreeperson
 
@@ -783,7 +797,7 @@ and if the reason supplied is too long, the request may fail as a bad request.
 
 ---
 
-## ❌ Missing Endpoints (84)
+## ❌ Missing Endpoints (82)
 
 These endpoints need to be implemented. Implementation templates are provided below.
 
@@ -1723,47 +1737,6 @@ export async function findrelationship(
 
 ---
 
-### getchildandparentsrelationshipsources
-
-- **Title:** Read Child and Parents Relationship Sources
-- **Method:** GET
-- **URL:** `https://apibeta.familysearch.org/platform/tree/child-and-parents-relationships/{caprid}/sources`
-- **Description:** Read sources associated with a child and parents relationship.
-
-**Path Parameters:**
-
-- `caprid` (string) - required
-
-**Response Codes:** 200, 301, 404, 410, 429
-
-**Implementation Template:**
-
-```typescript
-/**
- * Read Child and Parents Relationship Sources
- *
- * Read sources associated with a child and parents relationship.
- *
- * @param caprid - caprid
- * @returns Promise with response data
- */
-export async function getchildandparentsrelationshipsources(
-	sdk: FamilySearchSDK,
-	caprid: string
-): Promise<any> {
-	try {
-		const response = await sdk.get<any>(`/platform/tree/child-and-parents-relationships/${caprid}/sources`);
-		return response.data;
-	} catch (error) {
-		sdk["logger"].error("[FamilySearch SDK] Failed to getchildandparentsrelationshipsources:", error);
-		throw error;
-	}
-}
-
-```
-
----
-
 ### mergeperson
 
 - **Title:** Merge Person
@@ -1880,47 +1853,6 @@ export async function getcomments(
 		return response.data;
 	} catch (error) {
 		sdk["logger"].error("[FamilySearch SDK] Failed to getcomments:", error);
-		throw error;
-	}
-}
-
-```
-
----
-
-### readcouplerelationshipsources
-
-- **Title:** Read Couple Relationship Sources
-- **Method:** GET
-- **URL:** `https://apibeta.familysearch.org/platform/tree/couple-relationships/{crid}/sources`
-- **Description:** Read all sources associated with a couple relationship.
-
-**Path Parameters:**
-
-- `crid` (string) - required
-
-**Response Codes:** 200, 301, 404, 410, 429
-
-**Implementation Template:**
-
-```typescript
-/**
- * Read Couple Relationship Sources
- *
- * Read all sources associated with a couple relationship.
- *
- * @param crid - crid
- * @returns Promise with response data
- */
-export async function getcouplerelationshipsources(
-	sdk: FamilySearchSDK,
-	crid: string
-): Promise<any> {
-	try {
-		const response = await sdk.get<any>(`/platform/tree/couple-relationships/${crid}/sources`);
-		return response.data;
-	} catch (error) {
-		sdk["logger"].error("[FamilySearch SDK] Failed to getcouplerelationshipsources:", error);
 		throw error;
 	}
 }

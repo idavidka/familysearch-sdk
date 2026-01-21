@@ -39,6 +39,7 @@ import type {
 	AttachSourceInput,
 	AttachSourceResponse,
 	RelationshipSourceReferencesResponse,
+	RelationshipSourcesResponse,
 } from "../../types";
 
 /**
@@ -643,6 +644,39 @@ export async function getCoupleRelationshipSourceReferences(
 }
 
 /**
+ * Get full source descriptions for a couple relationship
+ * 
+ * Returns complete source descriptions (not just references) associated with the relationship.
+ * 
+ * @param sdk - SDK instance
+ * @param relationshipId - Couple relationship ID
+ * @returns Source descriptions response or null
+ * 
+ * @example
+ * ```typescript
+ * const sources = await getCoupleRelationshipSources(sdk, "XXXX-YYY");
+ * console.log(sources?.sourceDescriptions);
+ * ```
+ */
+export async function getCoupleRelationshipSources(
+	sdk: FamilySearchSDK,
+	relationshipId: string
+): Promise<RelationshipSourcesResponse | null> {
+	try {
+		const response = await sdk.get<RelationshipSourcesResponse>(
+			`/platform/tree/couple-relationships/${relationshipId}/sources`
+		);
+		return response.data || null;
+	} catch (error) {
+		sdk["logger"].error(
+			`[FamilySearch SDK] Failed to get couple relationship sources for ${relationshipId}:`,
+			error
+		);
+		return null;
+	}
+}
+
+/**
  * Get source references for a child-and-parents relationship
  * 
  * @param sdk - SDK instance
@@ -670,6 +704,39 @@ export async function getChildAndParentsRelationshipSourceReferences(
 			error
 		);
 		throw error;
+	}
+}
+
+/**
+ * Get full source descriptions for a child-and-parents relationship
+ * 
+ * Returns complete source descriptions (not just references) associated with the relationship.
+ * 
+ * @param sdk - SDK instance
+ * @param relationshipId - Child-and-parents relationship ID
+ * @returns Source descriptions response or null
+ * 
+ * @example
+ * ```typescript
+ * const sources = await getChildAndParentsRelationshipSources(sdk, "XXXX-YYY");
+ * console.log(sources?.sourceDescriptions);
+ * ```
+ */
+export async function getChildAndParentsRelationshipSources(
+	sdk: FamilySearchSDK,
+	relationshipId: string
+): Promise<RelationshipSourcesResponse | null> {
+	try {
+		const response = await sdk.get<RelationshipSourcesResponse>(
+			`/platform/tree/child-and-parents-relationships/${relationshipId}/sources`
+		);
+		return response.data || null;
+	} catch (error) {
+		sdk["logger"].error(
+			`[FamilySearch SDK] Failed to get child-and-parents relationship sources for ${relationshipId}:`,
+			error
+		);
+		return null;
 	}
 }
 

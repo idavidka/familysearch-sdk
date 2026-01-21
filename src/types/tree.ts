@@ -434,6 +434,29 @@ export interface PersonSourcesResponse {
 }
 
 /**
+ * Response for relationship sources endpoint
+ * Returns full source descriptions for couple or child-and-parents relationships
+ */
+export interface RelationshipSourcesResponse {
+	/** Couple relationships with their sources */
+	relationships?: Array<{
+		/** Relationship ID */
+		id?: string;
+		/** Source references attached to the relationship */
+		sources?: SourceReference[];
+	}>;
+	/** Child-and-parents relationships with their sources */
+	childAndParentsRelationships?: Array<{
+		/** Relationship ID */
+		id?: string;
+		/** Source references attached to the relationship */
+		sources?: SourceReference[];
+	}>;
+	/** Source descriptions providing details about sources */
+	sourceDescriptions?: SourceDescription[];
+}
+
+/**
  * Enhanced source description with full details
  */
 export interface SourceDescriptionDetail extends SourceDescription {
