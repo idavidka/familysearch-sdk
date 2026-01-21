@@ -38,6 +38,7 @@ export {
 	deletePersonDiscussionReference,
 	deletePersonMemoriesPersonaReference,
 	deletePersonSourceReference,
+	deleteTreePersonReference,
 } from "./persons";
 
 // Relationships API

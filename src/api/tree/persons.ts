@@ -774,3 +774,43 @@ export async function deletePersonSourceReference(
 		throw error;
 	}
 }
+
+/**
+ * Delete tree person reference
+ *
+ * Removes a reference to a tree person from a person's record.
+ * This is used to disconnect persons from tree metadata or cross-tree references.
+ *
+ * @param sdk - SDK instance
+ * @param personId - Person ID
+ * @param treePersonReferenceId - Tree person reference ID to remove
+ * @returns Delete response with status
+ * @throws Error if deletion fails
+ *
+ * @example
+ * ```typescript
+ * await deleteTreePersonReference(sdk, "PPPP-PPP", "TPRID-999");
+ * console.log("Tree person reference removed");
+ * ```
+ */
+export async function deleteTreePersonReference(
+	sdk: FamilySearchSDK,
+	personId: string,
+	treePersonReferenceId: string
+): Promise<DeleteResponse> {
+	try {
+		const response = await sdk.delete<DeleteResponse>(
+			`/platform/tree/persons/${personId}/tree-person-reference/${treePersonReferenceId}`
+		);
+		return {
+			statusCode: response.statusCode,
+			statusText: response.statusText,
+		};
+	} catch (error) {
+		sdk.logger.error(
+			`[FamilySearch SDK] Failed to delete tree person reference ${treePersonReferenceId} for ${personId}:`,
+			error
+		);
+		throw error;
+	}
+}
