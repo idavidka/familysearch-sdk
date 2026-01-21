@@ -21,11 +21,11 @@ import type { AgentResponse } from "../../types";
  *
  * @example
  * ```typescript
- * const agent = await getAgent(sdk, 'AGENT-ID');
+ * const agent = await readAgent(sdk, 'AGENT-ID');
  * console.log('Agent name:', agent?.agents?.[0]?.names?.[0]?.value);
  * ```
  */
-export async function getAgent(
+export async function readAgent(
 	sdk: FamilySearchSDK,
 	agentId: string
 ): Promise<AgentResponse | null> {

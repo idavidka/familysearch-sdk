@@ -166,15 +166,15 @@ export {
 } from "./source-box";
 
 // Agent API
-export { getAgent } from "./agent";
+export { readAgent } from "./agent";
 
 // Pending Modifications API
 export { getPendingModifications } from "./pending-modifications";
 
 // Groups (Community Trees) API
 export {
-	getGroup,
-	getGroups,
+	readGroup,
+	readGroups,
 	createGroup,
 	updateGroup,
 	deleteGroup,

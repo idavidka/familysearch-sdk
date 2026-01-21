@@ -16,11 +16,11 @@ import type {
  *
  * @example
  * ```typescript
- * const group = await getGroup(sdk, 'GROUP-123');
+ * const group = await readGroup(sdk, 'GROUP-123');
  * console.log('Group name:', group?.groups?.[0]?.names?.[0]?.value);
  * ```
  */
-export async function getGroup(
+export async function readGroup(
 	sdk: FamilySearchSDK,
 	groupId: string
 ): Promise<GroupResponse | null> {
@@ -48,11 +48,11 @@ export async function getGroup(
  *
  * @example
  * ```typescript
- * const groups = await getGroups(sdk);
+ * const groups = await readGroups(sdk);
  * console.log('User has access to', groups?.groups?.length, 'groups');
  * ```
  */
-export async function getGroups(
+export async function readGroups(
 	sdk: FamilySearchSDK
 ): Promise<GroupsResponse | null> {
 	try {
