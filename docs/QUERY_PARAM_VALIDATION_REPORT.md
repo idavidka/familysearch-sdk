@@ -77,7 +77,7 @@ During coverage analysis, a systematic issue was discovered: **multiple API impl
 
 ---
 
-### 4. ❌ getPlaceDescriptions - CRITICAL ERROR
+### 4. ❌ readPlaceDescriptions - CRITICAL ERROR
 - **File**: `src/api/standards/places.ts:120-160`
 - **API Doc**: `readplacedescriptions.html`
 
@@ -96,7 +96,7 @@ During coverage analysis, a systematic issue was discovered: **multiple API impl
 
 ---
 
-### 5. ❌ getNameScript - CRITICAL ERROR
+### 5. ❌ readNameScript - CRITICAL ERROR
 - **File**: `src/api/standards/names.ts:20-45`
 - **API Doc**: `getnamescript.html`
 
@@ -114,7 +114,7 @@ During coverage analysis, a systematic issue was discovered: **multiple API impl
 
 ---
 
-### 6. ❌ getNameSegments - CRITICAL ERROR
+### 6. ❌ readNameSegments - CRITICAL ERROR
 - **File**: `src/api/standards/names.ts:47-75`
 - **API Doc**: `getnamesegments.html`
 
@@ -156,9 +156,9 @@ The errors suggest that **implementations were written based on assumptions or i
 1. ✅ **Create validation script** - Done (`validate-query-params.cjs`)
 2. 🔧 **Fix 4 critical errors**:
    - `searchParentPlaces` - Complete rewrite
-   - `getPlaceDescriptions` - Parameter name fix
-   - `getNameScript` - Parameter name fix
-   - `getNameSegments` - Add missing parameters
+   - `readPlaceDescriptions` - Parameter name fix
+   - `readNameScript` - Parameter name fix
+   - `readNameSegments` - Add missing parameters
 
 ### Phase 2: Review All Endpoints (Priority: HIGH)
 3. 🔍 **Audit all other implementations** with query parameters
@@ -193,9 +193,9 @@ The errors suggest that **implementations were written based on assumptions or i
 ### Breaking Changes Required:
 Yes - Function signatures must change:
 - `searchParentPlaces(sdk, searchValue, parentIds?)` 
-- `getPlaceDescriptions(sdk, descriptionIds)`
-- `getNameScript(sdk, text)`
-- `getNameSegments(sdk, fullName, locale?, lang?)`
+- `readPlaceDescriptions(sdk, descriptionIds)`
+- `readNameScript(sdk, text)`
+- `readNameSegments(sdk, fullName, locale?, lang?)`
 
 ---
 
@@ -204,9 +204,9 @@ Yes - Function signatures must change:
 1. ✅ Document findings (this file)
 2. 🔧 Create GitHub issue for tracking
 3. 🔧 Fix critical errors in order:
-   - getNameScript (simplest)
-   - getPlaceDescriptions (simple)
-   - getNameSegments (medium)
+   - readNameScript (simplest)
+   - readPlaceDescriptions (simple)
+   - readNameSegments (medium)
    - searchParentPlaces (complex - complete rewrite)
 4. ⚠️ Update major version (breaking changes)
 5. 📝 Update CHANGELOG with breaking changes

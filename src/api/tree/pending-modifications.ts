@@ -40,3 +40,14 @@ export async function readPendingModifications(
 		return null;
 	}
 }
+
+/**
+ * PendingModificationsAPI class provides convenient methods for accessing pending tree modifications.
+ */
+export class PendingModificationsAPI {
+	constructor(private sdk: FamilySearchSDK) {}
+
+	async readPendingModifications() {
+		return readPendingModifications(this.sdk);
+	}
+}

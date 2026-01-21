@@ -11,6 +11,43 @@
  * - Configurable logging
  */
 
+import { DiscussionsAPI } from "./api/discussions";
+import {
+	GenealogyOtherAPI,
+	GenealogyPersonsAPI,
+	GenealogyRelationshipsAPI,
+	GenealogySourcesAPI,
+	TreesAPI as GenealogyTreesAPI,
+} from "./api/genealogies";
+import { MemoriesAPI } from "./api/memories";
+import {
+	DatesAPI,
+	NamesAPI,
+	PlacesAPI,
+	VocabulariesAPI,
+} from "./api/standards";
+import {
+	AgentAPI,
+	ConclusionsAPI,
+	GroupsAPI,
+	MatchesAPI,
+	MergesAPI,
+	NotesAPI,
+	PedigreesAPI,
+	PendingModificationsAPI,
+	PersonsAPI,
+	PreferencesAPI,
+	RelationshipsAPI,
+	SearchAPI,
+	SourceAttachmentsAPI,
+	SourceBoxAPI,
+	SourcesAPI,
+	TreeChangesAPI,
+	TreesManagementAPI,
+} from "./api/tree";
+import { CurrentTreeAPI } from "./api/trees";
+import { UserAPI } from "./api/user";
+import { VocabAPI } from "./api/vocab";
 import {
 	createErrorFromResponse,
 	createNetworkError,
@@ -26,7 +63,6 @@ import type {
 	FamilySearchUser,
 	FamilySearchPlace,
 	TreePersonMatchesResponse,
-	TreePersonMatchesOptions,
 	PersonMatchInput,
 	PersonMatchOptions,
 	PersonSearchResponse,
@@ -68,7 +104,7 @@ const noopLogger: SDKLogger = {
  *   accessToken: 'your-oauth-token'
  * });
  *
- * const user = await sdk.getCurrentUser();
+ * const user = await sdk.readCurrentUser();
  * console.log(user?.displayName);
  * ```
  */
@@ -79,6 +115,41 @@ export class FamilySearchSDK {
 	private rateLimiter: RateLimiter;
 	logger: SDKLogger;
 
+	// API module instances
+	public readonly persons: PersonsAPI;
+	public readonly notes: NotesAPI;
+	public readonly pedigrees: PedigreesAPI;
+	public readonly relationships: RelationshipsAPI;
+	public readonly matches: MatchesAPI;
+	public readonly discussions: DiscussionsAPI;
+	public readonly memories: MemoriesAPI;
+	public readonly sources: SourcesAPI;
+	public readonly places: PlacesAPI;
+	public readonly user: UserAPI;
+	public readonly dates: DatesAPI;
+	public readonly names: NamesAPI;
+	public readonly vocabularies: VocabulariesAPI;
+	// Tree-specific modules
+	public readonly agent: AgentAPI;
+	public readonly conclusions: ConclusionsAPI;
+	public readonly groups: GroupsAPI;
+	public readonly merges: MergesAPI;
+	public readonly pendingModifications: PendingModificationsAPI;
+	public readonly preferences: PreferencesAPI;
+	public readonly treesManagement: TreesManagementAPI;
+	public readonly search: SearchAPI;
+	public readonly sourceAttachments: SourceAttachmentsAPI;
+	public readonly sourceBox: SourceBoxAPI;
+	public readonly treeChanges: TreeChangesAPI;
+	public readonly currentTree: CurrentTreeAPI;
+	public readonly vocab: VocabAPI;
+	// Genealogies sub-modules
+	public readonly trees: GenealogyTreesAPI;
+	public readonly genealogyPersons: GenealogyPersonsAPI;
+	public readonly genealogyRelationships: GenealogyRelationshipsAPI;
+	public readonly genealogySources: GenealogySourcesAPI;
+	public readonly genealogyOther: GenealogyOtherAPI;
+
 	constructor(config: FamilySearchSDKConfig = {}) {
 		this.environment = config.environment || "integration";
 		this.accessToken = config.accessToken || null;
@@ -88,6 +159,41 @@ export class FamilySearchSDK {
 		// Initialize rate limiter with optional config
 		const rateLimiterConfig: RateLimiterConfig = config.rateLimiter || {};
 		this.rateLimiter = new RateLimiter(rateLimiterConfig);
+
+		// Initialize API modules
+		this.persons = new PersonsAPI(this);
+		this.notes = new NotesAPI(this);
+		this.pedigrees = new PedigreesAPI(this);
+		this.relationships = new RelationshipsAPI(this);
+		this.matches = new MatchesAPI(this);
+		this.discussions = new DiscussionsAPI(this);
+		this.memories = new MemoriesAPI(this);
+		this.sources = new SourcesAPI(this);
+		this.places = new PlacesAPI(this);
+		this.user = new UserAPI(this);
+		this.dates = new DatesAPI(this);
+		this.names = new NamesAPI(this);
+		this.vocabularies = new VocabulariesAPI(this);
+		// Tree-specific modules
+		this.agent = new AgentAPI(this);
+		this.conclusions = new ConclusionsAPI(this);
+		this.groups = new GroupsAPI(this);
+		this.merges = new MergesAPI(this);
+		this.pendingModifications = new PendingModificationsAPI(this);
+		this.preferences = new PreferencesAPI(this);
+		this.treesManagement = new TreesManagementAPI(this);
+		this.search = new SearchAPI(this);
+		this.sourceAttachments = new SourceAttachmentsAPI(this);
+		this.sourceBox = new SourceBoxAPI(this);
+		this.treeChanges = new TreeChangesAPI(this);
+		this.currentTree = new CurrentTreeAPI(this);
+		this.vocab = new VocabAPI(this);
+		// Genealogies sub-modules
+		this.trees = new GenealogyTreesAPI(this);
+		this.genealogyPersons = new GenealogyPersonsAPI(this);
+		this.genealogyRelationships = new GenealogyRelationshipsAPI(this);
+		this.genealogySources = new GenealogySourcesAPI(this);
+		this.genealogyOther = new GenealogyOtherAPI(this);
 	}
 
 	/**
@@ -341,7 +447,7 @@ export class FamilySearchSDK {
 	/**
 	 * Get current authenticated user
 	 */
-	async getCurrentUser(): Promise<FamilySearchUser | null> {
+	async readCurrentUser(): Promise<FamilySearchUser | null> {
 		try {
 			const response = await this.get<{ users: FamilySearchUser[] }>(
 				"/platform/users/current"
@@ -361,39 +467,6 @@ export class FamilySearchSDK {
 	// ====================================
 	// Tree/Pedigree API
 	// ====================================
-
-	/**
-	 * Get tree person matches (record hints and possible duplicates)
-	 *
-	 * This is a convenience wrapper for the matches API with filtering options.
-	 */
-	async getTreePersonMatches(
-		personId: string,
-		options: TreePersonMatchesOptions = {}
-	): Promise<TreePersonMatchesResponse | null> {
-		try {
-			const params = new URLSearchParams();
-			if (options.status) params.append("status", options.status);
-			if (options.collection)
-				params.append("collection", options.collection);
-			if (options.count !== undefined)
-				params.append("count", options.count.toString());
-			if (options.start !== undefined)
-				params.append("start", options.start.toString());
-
-			const queryString = params.toString();
-			const url = `/platform/tree/persons/${personId}/matches${queryString ? `?${queryString}` : ""}`;
-
-			const response = await this.get<TreePersonMatchesResponse>(url);
-			return response.data || null;
-		} catch (error) {
-			this.logger.error(
-				`[FamilySearch SDK] Failed to get tree person matches for ${personId}:`,
-				error
-			);
-			return null;
-		}
-	}
 
 	/**
 	 * Match person using external GEDCOM data
@@ -777,7 +850,7 @@ export class FamilySearchSDK {
 	 * This is a convenience wrapper that simplifies the place details API
 	 * by returning just the place object instead of the full response structure.
 	 *
-	 * @deprecated Use `getPlaceDetails` from `@treeviz/familysearch-sdk/api/standards/places` for full response
+	 * @deprecated Use `readPlaceDetails` from `@treeviz/familysearch-sdk/api/standards/places` for full response
 	 */
 	async getPlace(placeId: string): Promise<FamilySearchPlace | null> {
 		try {

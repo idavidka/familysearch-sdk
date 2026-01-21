@@ -72,3 +72,18 @@ export async function readDescendancy(
 		return null;
 	}
 }
+
+/**
+ * PedigreesAPI class provides convenient methods for ancestry and descendancy queries.
+ */
+export class PedigreesAPI {
+	constructor(private sdk: FamilySearchSDK) {}
+
+	async readAncestry(personId: string, generations: number = 4) {
+		return readAncestry(this.sdk, personId, generations);
+	}
+
+	async readDescendancy(personId: string, generations: number = 2) {
+		return readDescendancy(this.sdk, personId, generations);
+	}
+}

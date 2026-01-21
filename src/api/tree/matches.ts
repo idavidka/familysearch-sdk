@@ -23,18 +23,57 @@ import type {
  * @param personId - Person ID
  * @returns Matches data or null
  */
+/**
+ * Read person matches with filtering options
+ *
+ * Retrieves record hints and possible duplicates for a person.
+ * Supports filtering by status, collection, and pagination.
+ *
+ * @param sdk - SDK instance
+ * @param personId - Person ID
+ * @param options - Filter and pagination options
+ * @returns Matches response or null
+ *
+ * @example
+ * ```typescript
+ * // Get all matches
+ * const matches = await readPersonMatches(sdk, "PPPP-PPP");
+ *
+ * // Get only pending matches from records collection
+ * const recordMatches = await readPersonMatches(sdk, "PPPP-PPP", {
+ *   status: "pending",
+ *   collection: "records",
+ *   count: 20
+ * });
+ * ```
+ */
 export async function readPersonMatches(
 	sdk: FamilySearchSDK,
-	personId: string
+	personId: string,
+	options: {
+		status?: string;
+		collection?: string;
+		count?: number;
+		start?: number;
+	} = {}
 ): Promise<MatchesResponse | null> {
 	try {
-		const response = await sdk.get<MatchesResponse>(
-			`/platform/tree/persons/${personId}/matches`
-		);
+		const params = new URLSearchParams();
+		if (options.status) params.append("status", options.status);
+		if (options.collection) params.append("collection", options.collection);
+		if (options.count !== undefined)
+			params.append("count", options.count.toString());
+		if (options.start !== undefined)
+			params.append("start", options.start.toString());
+
+		const queryString = params.toString();
+		const url = `/platform/tree/persons/${personId}/matches${queryString ? `?${queryString}` : ""}`;
+
+		const response = await sdk.get<MatchesResponse>(url);
 		return response.data || null;
 	} catch (error) {
 		sdk.logger.error(
-			`[FamilySearch SDK] Failed to read matches for ${personId}:`,
+			`[FamilySearch SDK] Failed to get person matches for ${personId}:`,
 			error
 		);
 		return null;
@@ -537,7 +576,7 @@ export async function deletePersonNotAMatch(
  *     about: "#primaryPerson"
  *   }]
  * });
- * 
+ *
  * matches?.entries?.forEach(entry => {
  *   console.log("Match:", entry.person?.display?.name, "Confidence:", entry.confidence);
  * });
@@ -559,5 +598,101 @@ export async function performPersonMatchesByExample(
 			error
 		);
 		throw error;
+	}
+}
+
+/**
+ * MatchesAPI class provides convenient methods for managing person matches and duplicates.
+ */
+export class MatchesAPI {
+	constructor(private sdk: FamilySearchSDK) {}
+
+	async readPersonMatches(
+		personId: string,
+		options: {
+			status?: string;
+			collection?: string;
+			count?: number;
+			start?: number;
+		} = {}
+	) {
+		return readPersonMatches(this.sdk, personId, options);
+	}
+
+	async readPersonNonMatches(personId: string) {
+		return readPersonNonMatches(this.sdk, personId);
+	}
+
+	async updateMatchResolution(
+		personId: string,
+		matchId: string,
+		status: "pending" | "accepted" | "rejected"
+	) {
+		return updateMatchResolution(this.sdk, personId, matchId, status);
+	}
+
+	async readNotAMatchDeclarations(personId: string) {
+		return readNotAMatchDeclarations(this.sdk, personId);
+	}
+
+	async createNotAMatchDeclaration(
+		personId: string,
+		notAMatchPersonId: string
+	) {
+		return createNotAMatchDeclaration(
+			this.sdk,
+			personId,
+			notAMatchPersonId
+		);
+	}
+
+	async deleteNotAMatchDeclaration(
+		personId: string,
+		notAMatchPersonId: string
+	) {
+		return deleteNotAMatchDeclaration(
+			this.sdk,
+			personId,
+			notAMatchPersonId
+		);
+	}
+
+	async deleteAllNotAMatchDeclarations(personId: string) {
+		return deleteAllNotAMatchDeclarations(this.sdk, personId);
+	}
+
+	async readTreeMatches(
+		treeId: string,
+		options?: {
+			status?: string;
+			collection?: string;
+			count?: number;
+			start?: number;
+		}
+	) {
+		return readTreeMatches(this.sdk, treeId, options);
+	}
+
+	async readPersonNotAMatches(personId: string) {
+		return readPersonNotAMatches(this.sdk, personId);
+	}
+
+	async updatePersonNotAMatches(
+		personId: string,
+		notAMatchPersonIds: string[]
+	) {
+		return updatePersonNotAMatches(this.sdk, personId, notAMatchPersonIds);
+	}
+
+	async deletePersonNotAMatches(personId: string) {
+		return deletePersonNotAMatches(this.sdk, personId);
+	}
+
+	async deletePersonNotAMatch(personId: string, notAMatchPersonId: string) {
+		return deletePersonNotAMatch(this.sdk, personId, notAMatchPersonId);
+	}
+
+	async performPersonMatchesByExample(gedcomxData: unknown) {
+		return performPersonMatchesByExample(this.sdk, gedcomxData);
 	}
 }

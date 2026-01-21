@@ -104,7 +104,7 @@ export async function searchPlaces(
  * @param id - The FamilySearch place ID
  * @returns Promise with place details
  */
-export async function getPlaceById(
+export async function readPlaceById(
 	sdk: FamilySearchSDK,
 	id: string
 ): Promise<PlaceDescription | null> {
@@ -122,7 +122,7 @@ export async function getPlaceById(
  * @param options - Optional parameters
  * @returns Promise with child places
  */
-export async function getPlaceChildren(
+export async function readPlaceChildren(
 	sdk: FamilySearchSDK,
 	id: string,
 	options?: {
@@ -163,7 +163,7 @@ export async function getPlaceChildren(
  * @param id - The FamilySearch place ID
  * @returns Promise with detailed place information
  */
-export async function getPlaceDetails(
+export async function readPlaceDetails(
 	sdk: FamilySearchSDK,
 	id: string
 ): Promise<{
@@ -175,7 +175,7 @@ export async function getPlaceDetails(
 	longitude?: number;
 	jurisdiction?: string;
 } | null> {
-	const place = await getPlaceById(sdk, id);
+	const place = await readPlaceById(sdk, id);
 
 	if (!place) {
 		return null;

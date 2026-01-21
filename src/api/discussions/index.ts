@@ -23,7 +23,7 @@ import type {
  * @param discussionId - Discussion ID
  * @returns Discussion or null
  */
-export async function getDiscussion(
+export async function readDiscussion(
 	sdk: FamilySearchSDK,
 	discussionId: string
 ): Promise<Discussion | null> {
@@ -130,7 +130,7 @@ export async function updateDiscussion(
  * @param discussionId - Discussion ID
  * @returns Discussion with comments or null
  */
-export async function getDiscussionComments(
+export async function readDiscussionComments(
 	sdk: FamilySearchSDK,
 	discussionId: string
 ): Promise<DiscussionResponse | null> {
@@ -223,5 +223,39 @@ export async function deleteDiscussionComment(
 			error
 		);
 		throw error;
+	}
+}
+
+/**
+ * DiscussionsAPI class provides convenient methods for managing discussions and comments.
+ */
+export class DiscussionsAPI {
+	constructor(private sdk: FamilySearchSDK) {}
+
+	async readDiscussion(discussionId: string) {
+		return readDiscussion(this.sdk, discussionId);
+	}
+
+	async createDiscussion(discussion: DiscussionInput) {
+		return createDiscussion(this.sdk, discussion);
+	}
+
+	async updateDiscussion(discussionId: string, discussion: DiscussionInput) {
+		return updateDiscussion(this.sdk, discussionId, discussion);
+	}
+
+	async readDiscussionComments(discussionId: string) {
+		return readDiscussionComments(this.sdk, discussionId);
+	}
+
+	async addDiscussionComment(
+		discussionId: string,
+		comment: DiscussionCommentInput
+	) {
+		return addDiscussionComment(this.sdk, discussionId, comment);
+	}
+
+	async deleteDiscussionComment(discussionId: string, commentId: string) {
+		return deleteDiscussionComment(this.sdk, discussionId, commentId);
 	}
 }

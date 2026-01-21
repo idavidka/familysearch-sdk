@@ -164,15 +164,15 @@
 - ✅ `getMemory()` - Read single memory
 - ✅ `createMemory()` - Create memory
 - ✅ `createMemories()` - Batch create memories
-- ✅ `getMemories()` - Batch get memories by IDs
+- ✅ `readMemories()` - Batch get memories by IDs
 - ✅ `updateMemory()` - Update memory
 - ✅ `deleteMemory()` - Delete memory
-- ✅ `getMemoryPersonas()` - Read memory personas
-- ✅ `getMemoryPersona()` - Read single persona
+- ✅ `readMemoryPersonas()` - Read memory personas
+- ✅ `readMemoryPersona()` - Read single persona
 - ✅ `createMemoryPersona()` - Create persona (tag person)
 - ✅ `updateMemoryPersona()` - Update persona
 - ✅ `deleteMemoryPersona()` - Delete persona
-- ✅ `getMemoryComments()` - Read memory comments
+- ✅ `readMemoryComments()` - Read memory comments
 - ✅ `createMemoryComment()` - Create comment
 - ✅ `deleteMemoryComment()` - Delete comment
 - ✅ `updateMemoryArtifact()` - Update artifact metadata
@@ -183,10 +183,10 @@
 ---
 
 ### 13. **Discussions API** ✅
-- ✅ `getDiscussion()` - Read discussion
+- ✅ `readDiscussion()` - Read discussion
 - ✅ `createDiscussion()` - Create discussion
 - ✅ `updateDiscussion()` - Update discussion
-- ✅ `getDiscussionComments()` - Read comments
+- ✅ `readDiscussionComments()` - Read comments
 - ✅ `addDiscussionComment()` - Add comment
 - ✅ `deleteDiscussionComment()` - Delete comment
 - ❌ `headDiscussion()` - HEAD request (not implemented)
@@ -199,18 +199,18 @@
 
 ### 14. **Places API** ✅
 - ✅ `searchPlaces()` - Search places
-- ✅ `getPlaceDetails()` - Read place details
-- ✅ `getPlaceChildren()` - Read child places
-- ✅ `getPlaceDescriptions()` - Read place descriptions
-- ✅ `getPlaceDescription()` - Read single place description
-- ✅ `getPlaceTypes()` - Get place type vocabulary
-- ✅ `getPlaceType()` - Get single place type
-- ✅ `getPlaceTypeGroups()` - Get place type groups
+- ✅ `readPlaceDetails()` - Read place details
+- ✅ `readPlaceChildren()` - Read child places
+- ✅ `readPlaceDescriptions()` - Read place descriptions
+- ✅ `readPlaceDescription()` - Read single place description
+- ✅ `readPlaceTypes()` - Get place type vocabulary
+- ✅ `readPlaceType()` - Get single place type
+- ✅ `readPlaceTypeGroups()` - Get place type groups
 - ✅ `searchParentPlaces()` - Search for parent places
 - ✅ `checkPlaceIsChild()` - Verify parent-child relationship
-- ❌ `getPlaceAttributes()` - Read place attributes (not verified)
-- ❌ `getPlaceDescriptionWithRelated()` - Read with related (not verified)
-- ❌ `getPlaceDescriptionsGroup()` - Read descriptions group (not verified)
+- ❌ `readPlaceAttributes()` - Read place attributes (not verified)
+- ❌ `readPlaceDescriptionWithRelated()` - Read with related (not verified)
+- ❌ `readPlaceDescriptionsGroup()` - Read descriptions group (not verified)
 
 **Status:** 10/13 endpoints (77%)
 
@@ -218,8 +218,8 @@
 
 ### 15. **Standards API** (Date standardization) ✅
 - ✅ `standardizeDate()` - Standardize date
-- ✅ `getNameScript()` - Get name script
-- ✅ `getNameSegments()` - Parse name segments
+- ✅ `readNameScript()` - Get name script
+- ✅ `readNameSegments()` - Parse name segments
 - ✅ `createNameSegments()` - Create name from segments
 
 **Status:** 4/4 endpoints (100%)
@@ -227,11 +227,11 @@
 ---
 
 ### 16. **User API** ✅
-- ✅ `getCurrentUser()` - Read current user
+- ✅ `readCurrentUser()` - Read current user
 - ✅ `createPartnerAccount()` - Create partner account
 - ✅ `updatePartnerAccount()` - Update partner account
 - ✅ `checkPartnerEligibility()` - Check eligibility
-- ✅ `getUserHistory()` - Read user history
+- ✅ `readUserHistory()` - Read user history
 - ✅ `updateUserHistory()` - Update user history
 - ✅ `deleteUserAccount()` - Delete user account
 

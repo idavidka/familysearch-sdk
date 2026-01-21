@@ -70,11 +70,11 @@ export async function searchVocabConcepts(
  *
  * @example
  * ```typescript
- * const term = await getVocabTerm(sdk, 'Marriage');
+ * const term = await readVocabTerm(sdk, 'Marriage');
  * console.log('Term label:', term?.labels?.[0]?.value);
  * ```
  */
-export async function getVocabTerm(
+export async function readVocabTerm(
 	sdk: FamilySearchSDK,
 	termId: string
 ): Promise<VocabTermResponse | null> {
@@ -104,11 +104,11 @@ export async function getVocabTerm(
  *
  * @example
  * ```typescript
- * const translation = await getVocabTermTranslation(sdk, 'Marriage', 'es');
+ * const translation = await readVocabTermTranslation(sdk, 'Marriage', 'es');
  * console.log('Spanish label:', translation?.labels?.[0]?.value);
  * ```
  */
-export async function getVocabTermTranslation(
+export async function readVocabTermTranslation(
 	sdk: FamilySearchSDK,
 	termId: string,
 	lang: string
@@ -138,11 +138,11 @@ export async function getVocabTermTranslation(
  *
  * @example
  * ```typescript
- * const concept = await getVocabConcept(sdk, 'http://gedcomx.org/Marriage');
+ * const concept = await readVocabConcept(sdk, 'http://gedcomx.org/Marriage');
  * console.log('Concept type:', concept?.type);
  * ```
  */
-export async function getVocabConcept(
+export async function readVocabConcept(
 	sdk: FamilySearchSDK,
 	conceptId: string
 ): Promise<VocabConceptResponse | null> {
@@ -172,11 +172,11 @@ export async function getVocabConcept(
  *
  * @example
  * ```typescript
- * const definition = await getVocabConceptDefinition(sdk, 'http://gedcomx.org/Marriage', 'en');
+ * const definition = await readVocabConceptDefinition(sdk, 'http://gedcomx.org/Marriage', 'en');
  * console.log('Definition:', definition?.description);
  * ```
  */
-export async function getVocabConceptDefinition(
+export async function readVocabConceptDefinition(
 	sdk: FamilySearchSDK,
 	conceptId: string,
 	lang?: string
@@ -207,11 +207,11 @@ export async function getVocabConceptDefinition(
  *
  * @example
  * ```typescript
- * const lists = await getVocabList(sdk);
+ * const lists = await readVocabList(sdk);
  * console.log('Available vocabularies:', lists?.schemes?.length);
  * ```
  */
-export async function getVocabList(
+export async function readVocabList(
 	sdk: FamilySearchSDK
 ): Promise<VocabListResponse | null> {
 	try {
@@ -221,5 +221,39 @@ export async function getVocabList(
 	} catch (error) {
 		sdk.logger.error(`[FamilySearch SDK] Failed to get vocab list:`, error);
 		return null;
+	}
+}
+
+/**
+ * VocabAPI class provides convenient methods for vocabulary concepts, terms, and translations.
+ */
+export class VocabAPI {
+	constructor(private sdk: FamilySearchSDK) {}
+
+	async searchVocabConcepts(
+		query: string,
+		options?: { lang?: string; scheme?: string }
+	) {
+		return searchVocabConcepts(this.sdk, query, options);
+	}
+
+	async readVocabTerm(termId: string) {
+		return readVocabTerm(this.sdk, termId);
+	}
+
+	async readVocabTermTranslation(termId: string, lang: string) {
+		return readVocabTermTranslation(this.sdk, termId, lang);
+	}
+
+	async readVocabConcept(conceptId: string) {
+		return readVocabConcept(this.sdk, conceptId);
+	}
+
+	async readVocabConceptDefinition(conceptId: string, lang?: string) {
+		return readVocabConceptDefinition(this.sdk, conceptId, lang);
+	}
+
+	async readVocabList() {
+		return readVocabList(this.sdk);
 	}
 }

@@ -181,3 +181,44 @@ export async function deleteChildAndParentsRelationshipConclusion(
 		throw error;
 	}
 }
+
+/**
+ * ConclusionsAPI class provides convenient methods for deleting conclusions from persons and relationships.
+ */
+export class ConclusionsAPI {
+	constructor(private sdk: FamilySearchSDK) {}
+
+	async deletePersonConclusion(
+		personId: string,
+		conclusionId: string,
+		reason?: string
+	) {
+		return deletePersonConclusion(this.sdk, personId, conclusionId, reason);
+	}
+
+	async deleteCoupleRelationshipConclusion(
+		relationshipId: string,
+		conclusionId: string,
+		reason?: string
+	) {
+		return deleteCoupleRelationshipConclusion(
+			this.sdk,
+			relationshipId,
+			conclusionId,
+			reason
+		);
+	}
+
+	async deleteChildAndParentsRelationshipConclusion(
+		relationshipId: string,
+		conclusionId: string,
+		reason?: string
+	) {
+		return deleteChildAndParentsRelationshipConclusion(
+			this.sdk,
+			relationshipId,
+			conclusionId,
+			reason
+		);
+	}
+}

@@ -184,3 +184,30 @@ export async function deleteGenealogyTree(
 		return false;
 	}
 }
+
+/**
+ * TreesAPI class provides convenient methods for managing research trees (genealogies).
+ */
+export class TreesAPI {
+	constructor(private sdk: FamilySearchSDK) {}
+
+	async readTree(treeId: string) {
+		return readGenealogyTree(this.sdk, treeId);
+	}
+
+	async readTrees() {
+		return readGenealogyTrees(this.sdk);
+	}
+
+	async createTree(input: CreateGenealogyTreeInput) {
+		return createGenealogyTree(this.sdk, input);
+	}
+
+	async updateTree(treeId: string, input: UpdateGenealogyTreeInput) {
+		return updateGenealogyTree(this.sdk, treeId, input);
+	}
+
+	async deleteTree(treeId: string) {
+		return deleteGenealogyTree(this.sdk, treeId);
+	}
+}

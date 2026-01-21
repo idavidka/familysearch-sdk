@@ -6,7 +6,7 @@
 
 export {
 	searchPlaces,
-	getPlaceById,
-	getPlaceChildren,
-	getPlaceDetails,
+	readPlaceById,
+	readPlaceChildren,
+	readPlaceDetails,
 } from "./places";

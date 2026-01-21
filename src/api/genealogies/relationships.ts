@@ -85,3 +85,27 @@ export async function deleteGenealogyRelationship(
 		return false;
 	}
 }
+
+/**
+ * GenealogyRelationshipsAPI class provides convenient methods for managing relationships within research trees.
+ */
+export class GenealogyRelationshipsAPI {
+	constructor(private sdk: FamilySearchSDK) {}
+
+	async updateRelationship(
+		treeId: string,
+		relationshipId: string,
+		input: UpdateGenealogyRelationshipInput
+	) {
+		return updateGenealogyRelationship(
+			this.sdk,
+			treeId,
+			relationshipId,
+			input
+		);
+	}
+
+	async deleteRelationship(treeId: string, relationshipId: string) {
+		return deleteGenealogyRelationship(this.sdk, treeId, relationshipId);
+	}
+}

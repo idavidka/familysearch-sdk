@@ -1,6 +1,6 @@
 /**
  * FamilySearch Standards API
- * 
+ *
  * Exports all standards-related API functions:
  * - Places (search and details)
  * - Dates (normalization)
@@ -11,32 +11,29 @@
 // Places API
 export {
 	searchPlaces,
-	getPlaceDetails,
-	getPlaceChildren,
-	getPlaceDescriptions,
-	getPlaceDescription,
-	getPlaceTypes,
-	getPlaceType,
-	getPlaceTypeGroups,
-	getPlaceTypeGroup,
+	readPlaceDetails,
+	readPlaceChildren,
+	readPlaceDescriptions,
+	readPlaceDescription,
+	readPlaceTypes,
+	readPlaceType,
+	readPlaceTypeGroups,
+	readPlaceTypeGroup,
 	searchParentPlaces,
 	checkPlaceIsChild,
+	PlacesAPI,
 } from "./places";
 
 // Dates API
-export {
-	normalizeDate,
-} from "./dates";
+export { normalizeDate, DatesAPI } from "./dates";
 
 // Names API
-export {
-	getNameScript,
-	getNameSegments,
-} from "./names";
+export { readNameScript, readNameSegments, NamesAPI } from "./names";
 
 // Vocabularies API
 export {
-	getVocabularies,
-	getVocabularyConcepts,
-	getVocabularyConcept,
+	readVocabularies,
+	readVocabularyConcepts,
+	readVocabularyConcept,
+	VocabulariesAPI,
 } from "./vocabularies";

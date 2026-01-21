@@ -72,3 +72,27 @@ export async function searchPersons(
 		return null;
 	}
 }
+
+/**
+ * SearchAPI class provides convenient methods for searching persons in the tree.
+ */
+export class SearchAPI {
+	constructor(private sdk: FamilySearchSDK) {}
+
+	async searchPersons(query: {
+		givenName?: string;
+		surname?: string;
+		birthYear?: string;
+		birthPlace?: string;
+		deathYear?: string;
+		deathPlace?: string;
+		gender?: "male" | "female";
+		spouseName?: string;
+		fatherName?: string;
+		motherName?: string;
+		start?: number;
+		count?: number;
+	}) {
+		return searchPersons(this.sdk, query);
+	}
+}

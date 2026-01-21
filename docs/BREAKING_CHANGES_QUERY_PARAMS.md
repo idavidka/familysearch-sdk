@@ -14,45 +14,45 @@ This release fixes **4 critical bugs** where API implementations used incorrect 
 
 ## Breaking Changes
 
-### 1. `getNameScript()` - Parameter Rename
+### 1. `readNameScript()` - Parameter Rename
 
 **Location**: `src/api/standards/names.ts`
 
 **Before**:
 ```typescript
-getNameScript(sdk: FamilySearchSDK, name: string)
+readNameScript(sdk: FamilySearchSDK, name: string)
 ```
 
 **After**:
 ```typescript
-getNameScript(sdk: FamilySearchSDK, text: string)
+readNameScript(sdk: FamilySearchSDK, text: string)
 ```
 
 **Migration**:
 ```typescript
 // Old (broken)
-await getNameScript(sdk, 'John Smith');
+await readNameScript(sdk, 'John Smith');
 
 // New (correct)
-await getNameScript(sdk, 'John Smith'); // Same call, different param name
+await readNameScript(sdk, 'John Smith'); // Same call, different param name
 ```
 
 **Impact**: LOW - Same usage, only parameter name changed internally
 
 ---
 
-### 2. `getNameSegments()` - Parameter Rename + New Parameters
+### 2. `readNameSegments()` - Parameter Rename + New Parameters
 
 **Location**: `src/api/standards/names.ts`
 
 **Before**:
 ```typescript
-getNameSegments(sdk: FamilySearchSDK, name: string)
+readNameSegments(sdk: FamilySearchSDK, name: string)
 ```
 
 **After**:
 ```typescript
-getNameSegments(
+readNameSegments(
   sdk: FamilySearchSDK, 
   fullName: string,
   locale?: string,
@@ -63,41 +63,41 @@ getNameSegments(
 **Migration**:
 ```typescript
 // Old (broken)
-await getNameSegments(sdk, 'John Robert Smith');
+await readNameSegments(sdk, 'John Robert Smith');
 
 // New (correct - basic)
-await getNameSegments(sdk, 'John Robert Smith');
+await readNameSegments(sdk, 'John Robert Smith');
 
 // New (with locale support)
-await getNameSegments(sdk, 'John Robert Smith', 'en-US');
-await getNameSegments(sdk, '山田太郎', 'ja-JP', 'ja');
+await readNameSegments(sdk, 'John Robert Smith', 'en-US');
+await readNameSegments(sdk, '山田太郎', 'ja-JP', 'ja');
 ```
 
 **Impact**: MEDIUM - Same basic usage, but locale support now available
 
 ---
 
-### 3. `getPlaceDescriptions()` - Parameter Rename
+### 3. `readPlaceDescriptions()` - Parameter Rename
 
 **Location**: `src/api/standards/places.ts`
 
 **Before**:
 ```typescript
-getPlaceDescriptions(sdk: FamilySearchSDK, placeIds: string[])
+readPlaceDescriptions(sdk: FamilySearchSDK, placeIds: string[])
 ```
 
 **After**:
 ```typescript
-getPlaceDescriptions(sdk: FamilySearchSDK, descriptionIds: string[])
+readPlaceDescriptions(sdk: FamilySearchSDK, descriptionIds: string[])
 ```
 
 **Migration**:
 ```typescript
 // Old (broken)
-await getPlaceDescriptions(sdk, ['12345', '67890']);
+await readPlaceDescriptions(sdk, ['12345', '67890']);
 
 // New (correct - use description IDs, not place IDs!)
-await getPlaceDescriptions(sdk, ['DESC-123', 'DESC-456']);
+await readPlaceDescriptions(sdk, ['DESC-123', 'DESC-456']);
 ```
 
 **Impact**: HIGH - Parameter name AND semantic meaning changed!
@@ -204,23 +204,23 @@ All functions updated with:
 
 ### Critical Tests Required:
 
-1. **getNameScript**:
+1. **readNameScript**:
    ```typescript
-   const result = await getNameScript(sdk, 'John Smith');
+   const result = await readNameScript(sdk, 'John Smith');
    expect(result?.script).toBe('Latn');
    ```
 
-2. **getNameSegments**:
+2. **readNameSegments**:
    ```typescript
-   const result = await getNameSegments(sdk, 'John Robert Smith', 'en-US');
+   const result = await readNameSegments(sdk, 'John Robert Smith', 'en-US');
    expect(result?.givenName).toBe('John Robert');
    expect(result?.surname).toBe('Smith');
    ```
 
-3. **getPlaceDescriptions**:
+3. **readPlaceDescriptions**:
    ```typescript
    // Use DESCRIPTION IDs, not place IDs!
-   const result = await getPlaceDescriptions(sdk, ['DESC-123']);
+   const result = await readPlaceDescriptions(sdk, ['DESC-123']);
    expect(result?.descriptions).toBeDefined();
    ```
 
@@ -243,9 +243,9 @@ All functions updated with:
 
 ## Migration Checklist
 
-- [ ] Review all usages of `getNameScript()` - likely no changes needed
-- [ ] Review all usages of `getNameSegments()` - consider adding locale
-- [ ] **CRITICAL**: Review all usages of `getPlaceDescriptions()` - ensure using description IDs!
+- [ ] Review all usages of `readNameScript()` - likely no changes needed
+- [ ] Review all usages of `readNameSegments()` - consider adding locale
+- [ ] **CRITICAL**: Review all usages of `readPlaceDescriptions()` - ensure using description IDs!
 - [ ] **CRITICAL**: Review all usages of `searchParentPlaces()` - complete API change!
 - [ ] Review all usages of `searchPlaces()` - consider adding pagination
 - [ ] Update unit tests for all 5 functions

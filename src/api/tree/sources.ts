@@ -296,3 +296,41 @@ export async function readSourceDescriptionHead(
 		return { exists: false };
 	}
 }
+
+/**
+ * SourcesAPI class provides convenient methods for managing source descriptions.
+ */
+export class SourcesAPI {
+	constructor(private sdk: FamilySearchSDK) {}
+
+	async readSourceDescriptions() {
+		return readSourceDescriptions(this.sdk);
+	}
+
+	async readSourceDescription(sourceId: string) {
+		return readSourceDescription(this.sdk, sourceId);
+	}
+
+	async createSourceDescription(source: SourceDescriptionInput) {
+		return createSourceDescription(this.sdk, source);
+	}
+
+	async updateSourceDescription(
+		sourceId: string,
+		source: SourceDescriptionInput
+	) {
+		return updateSourceDescription(this.sdk, sourceId, source);
+	}
+
+	async deleteSourceDescription(sourceId: string) {
+		return deleteSourceDescription(this.sdk, sourceId);
+	}
+
+	async readSourceDescriptionChanges(sourceIds: string[], since: number) {
+		return readSourceDescriptionChanges(this.sdk, sourceIds, since);
+	}
+
+	async readSourceDescriptionHead(sourceId: string) {
+		return readSourceDescriptionHead(this.sdk, sourceId);
+	}
+}

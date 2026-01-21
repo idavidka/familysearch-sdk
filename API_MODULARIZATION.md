@@ -66,30 +66,30 @@ Handles all Family Tree operations:
 
 Handles photos, documents, stories, and comments:
 
-- `getMemoryWithComments()`
-- `getUserMemories()`
+- `readMemoryWithComments()`
+- `readUserMemories()`
 
 ### 3. Standards API (`api/standards/`)
 
 Handles standardization and normalization:
 
 - **Places** (`places.ts`): 2 functions
-  - `searchPlaces()`, `getPlaceDetails()`
+  - `searchPlaces()`, `readPlaceDetails()`
 
 - **Dates** (`dates.ts`): 1 function
   - `normalizeDate()`
 
 - **Names** (`names.ts`): 2 functions
-  - `getNameScript()`, `getNameSegments()`
+  - `readNameScript()`, `readNameSegments()`
 
 - **Vocabularies** (`vocabularies.ts`): 3 functions
-  - `getVocabularies()`, `getVocabularyConcepts()`, `getVocabularyConcept()`
+  - `readVocabularies()`, `readVocabularyConcepts()`, `readVocabularyConcept()`
 
 ### 4. User API (`api/user/`)
 
 Handles user profile:
 
-- `getCurrentUser()`
+- `readCurrentUser()`
 
 ## Usage
 
@@ -112,7 +112,7 @@ const sdk = new FamilySearchSDK({
 const person = await TreeAPI.getPerson(sdk, 'KWQS-BBQ');
 const ancestry = await TreeAPI.getAncestry(sdk, 'KWQS-BBQ', 4);
 const places = await StandardsAPI.searchPlaces(sdk, 'London, England');
-const user = await UserAPI.getCurrentUser(sdk);
+const user = await UserAPI.readCurrentUser(sdk);
 ```
 
 ### Importing specific functions

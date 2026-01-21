@@ -48,3 +48,14 @@ export async function readTreeChanges(
 		return null;
 	}
 }
+
+/**
+ * TreeChangesAPI class provides convenient methods for reading tree changes.
+ */
+export class TreeChangesAPI {
+	constructor(private sdk: FamilySearchSDK) {}
+
+	async readTreeChanges(options?: { count?: number; from?: number }) {
+		return readTreeChanges(this.sdk, options);
+	}
+}

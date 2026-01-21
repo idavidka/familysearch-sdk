@@ -250,3 +250,58 @@ export async function detachSourceFromChildAndParentsRelationship(
 		throw error;
 	}
 }
+
+/**
+ * SourceAttachmentsAPI class provides convenient methods for attaching and detaching sources.
+ */
+export class SourceAttachmentsAPI {
+	constructor(private sdk: FamilySearchSDK) {}
+
+	async attachSourceToPerson(personId: string, source: AttachSourceInput) {
+		return attachSourceToPerson(this.sdk, personId, source);
+	}
+
+	async detachSourceFromPerson(personId: string, sourceReferenceId: string) {
+		return detachSourceFromPerson(this.sdk, personId, sourceReferenceId);
+	}
+
+	async attachSourceToCoupleRelationship(
+		relationshipId: string,
+		source: AttachSourceInput
+	) {
+		return attachSourceToCoupleRelationship(this.sdk, relationshipId, source);
+	}
+
+	async detachSourceFromCoupleRelationship(
+		relationshipId: string,
+		sourceReferenceId: string
+	) {
+		return detachSourceFromCoupleRelationship(
+			this.sdk,
+			relationshipId,
+			sourceReferenceId
+		);
+	}
+
+	async attachSourceToChildAndParentsRelationship(
+		relationshipId: string,
+		source: AttachSourceInput
+	) {
+		return attachSourceToChildAndParentsRelationship(
+			this.sdk,
+			relationshipId,
+			source
+		);
+	}
+
+	async detachSourceFromChildAndParentsRelationship(
+		relationshipId: string,
+		sourceReferenceId: string
+	) {
+		return detachSourceFromChildAndParentsRelationship(
+			this.sdk,
+			relationshipId,
+			sourceReferenceId
+		);
+	}
+}

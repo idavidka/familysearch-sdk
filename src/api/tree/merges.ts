@@ -92,9 +92,12 @@ export async function allowPersonMerge(
 			`/platform/tree/persons/${survivorId}/merges/${duplicateId}`
 		);
 
-		const allowHeader = response.headers?.["allow"] || response.headers?.["Allow"] || "";
-		const warningHeader = response.headers?.["warning"] || response.headers?.["Warning"];
-		const linkHeader = response.headers?.["link"] || response.headers?.["Link"];
+		const allowHeader =
+			response.headers?.["allow"] || response.headers?.["Allow"] || "";
+		const warningHeader =
+			response.headers?.["warning"] || response.headers?.["Warning"];
+		const linkHeader =
+			response.headers?.["link"] || response.headers?.["Link"];
 
 		// Extract mirror link if present (for swapped roles)
 		let mirrorLink: string | undefined;
@@ -106,7 +109,8 @@ export async function allowPersonMerge(
 		}
 
 		return {
-			allowed: allowHeader.includes("GET") || allowHeader.includes("POST"),
+			allowed:
+				allowHeader.includes("GET") || allowHeader.includes("POST"),
 			methods: allowHeader
 				.split(",")
 				.map((m) => m.trim())
@@ -204,5 +208,32 @@ export async function mergePerson(
 			error
 		);
 		throw error;
+	}
+}
+
+/**
+ * MergesAPI class provides convenient methods for person merge operations.
+ */
+export class MergesAPI {
+	constructor(private sdk: FamilySearchSDK) {}
+
+	async readPersonMergeAnalysis(personId1: string, personId2: string) {
+		return readPersonMergeAnalysis(this.sdk, personId1, personId2);
+	}
+
+	async allowPersonMerge(survivorId: string, duplicateId: string) {
+		return allowPersonMerge(this.sdk, survivorId, duplicateId);
+	}
+
+	async canMergePersons(personId1: string, personId2: string) {
+		return canMergePersons(this.sdk, personId1, personId2);
+	}
+
+	async mergePerson(
+		survivorId: string,
+		duplicateId: string,
+		mergeOptions?: PersonMergeInput
+	) {
+		return mergePerson(this.sdk, survivorId, duplicateId, mergeOptions);
 	}
 }

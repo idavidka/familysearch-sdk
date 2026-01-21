@@ -191,7 +191,7 @@
 ### 10. Vocabularies - 2 Missing (67% coverage)
 
 - ⚠️ `readVocabConceptsSearch` → Already have `searchVocabConcepts()`?
-- ⚠️ `readVocabConceptV2` → Already have `getVocabularyConcept()`?
+- ⚠️ `readVocabConceptV2` → Already have `readVocabularyConcept()`?
 
 **Assessment:** Likely naming mismatches, verify implementation exists.
 
@@ -263,7 +263,7 @@ grep -r "export.*function.*NotAMatch" src/api/tree/
    - `getSourceDescriptionChanges()`
 
 5. **Current Tree Management** (30 min)
-   - `getCurrentTree()`
+   - `readCurrentTree()`
    - `setCurrentTree()`
 
 6. **GEDCOM-X Relationship Creation** (1 hour)

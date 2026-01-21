@@ -23,7 +23,7 @@ import type {
  * @param sdk - SDK instance
  * @returns Current user data or null
  */
-export async function getCurrentUser(
+export async function readCurrentUser(
 	sdk: FamilySearchSDK
 ): Promise<FamilySearchUser | null> {
 	try {
@@ -169,11 +169,11 @@ export async function checkPartnerEligibility(
  *
  * @example
  * ```typescript
- * const history = await getUserHistory(sdk, 'current');
+ * const history = await readUserHistory(sdk, 'current');
  * console.log('Recent entries:', history?.entries?.length);
  * ```
  */
-export async function getUserHistory(
+export async function readUserHistory(
 	sdk: FamilySearchSDK,
 	userId: string = "current"
 ): Promise<UserHistoryResponse | null> {
@@ -269,5 +269,40 @@ export async function deleteUserAccount(
 			error
 		);
 		throw error;
+	}
+}
+
+/**
+ * UserAPI class provides convenient methods for managing user accounts and history.
+ */
+export class UserAPI {
+	constructor(private sdk: FamilySearchSDK) {}
+
+	async readCurrentUser() {
+		return readCurrentUser(this.sdk);
+	}
+
+	async createPartnerAccount(account: PartnerAccountInput) {
+		return createPartnerAccount(this.sdk, account);
+	}
+
+	async updatePartnerAccount(userId: string, account: PartnerAccountInput) {
+		return updatePartnerAccount(this.sdk, userId, account);
+	}
+
+	async checkPartnerEligibility(userId: string) {
+		return checkPartnerEligibility(this.sdk, userId);
+	}
+
+	async readUserHistory(userId?: string) {
+		return readUserHistory(this.sdk, userId);
+	}
+
+	async updateUserHistory(userId: string, history: UserHistoryEntryInput) {
+		return updateUserHistory(this.sdk, userId, history);
+	}
+
+	async deleteUserAccount(userId: string) {
+		return deleteUserAccount(this.sdk, userId);
 	}
 }

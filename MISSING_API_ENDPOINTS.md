@@ -14,7 +14,7 @@ Reference: [FamilySearch API Reference Guide](https://developers.familysearch.or
 - ✅ OAuth v3 authentication utilities
 
 ### Users
-- ✅ Get current user (`getCurrentUser`)
+- ✅ Get current user (`readCurrentUser`)
 
 ### Persons (Tree API)
 - ✅ Read person (`getPerson`)
@@ -48,8 +48,8 @@ Reference: [FamilySearch API Reference Guide](https://developers.familysearch.or
 
 ### Memories
 - ✅ Get memory (`getMemory`)
-- ✅ Get user memories (`getUserMemories`)
-- ✅ Get memory comments (`getMemoryComments`)
+- ✅ Get user memories (`readUserMemories`)
+- ✅ Get memory comments (`readMemoryComments`)
 
 ### Utilities
 - ✅ GEDCOM export (`exportGEDCOM`)

@@ -150,3 +150,26 @@ export async function readGenealogyNote(
 		return null;
 	}
 }
+
+/**
+ * GenealogyOtherAPI class provides convenient methods for miscellaneous genealogy operations.
+ */
+export class GenealogyOtherAPI {
+	constructor(private sdk: FamilySearchSDK) {}
+
+	async deleteConclusion(treeId: string, conclusionId: string) {
+		return deleteGenealogyConclusion(this.sdk, treeId, conclusionId);
+	}
+
+	async readBulkMatch(treeId: string) {
+		return readGenealogyBulkMatch(this.sdk, treeId);
+	}
+
+	async readPersonMatches(treeId: string, personId: string) {
+		return readGenealogyPersonMatches(this.sdk, treeId, personId);
+	}
+
+	async readNote(treeId: string, noteId: string) {
+		return readGenealogyNote(this.sdk, treeId, noteId);
+	}
+}

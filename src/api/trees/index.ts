@@ -29,11 +29,11 @@ export interface TreeResponse {
  *
  * @example
  * ```typescript
- * const currentTree = await getCurrentTree(sdk);
+ * const currentTree = await readCurrentTree(sdk);
  * console.log('Current tree ID:', currentTree?.id);
  * ```
  */
-export async function getCurrentTree(
+export async function readCurrentTree(
 	sdk: FamilySearchSDK
 ): Promise<TreeResponse | null> {
 	try {
@@ -45,5 +45,16 @@ export async function getCurrentTree(
 			error
 		);
 		return null;
+	}
+}
+
+/**
+ * CurrentTreeAPI class provides convenient methods for accessing current tree information.
+ */
+export class CurrentTreeAPI {
+	constructor(private sdk: FamilySearchSDK) {}
+
+	async readCurrentTree() {
+		return readCurrentTree(this.sdk);
 	}
 }

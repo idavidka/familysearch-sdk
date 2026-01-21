@@ -1064,25 +1064,25 @@ export async function restoreCoupleRelationship(
 	try {
 		const headers: Record<string, string> = {};
 		if (reason) {
-		headers["X-Reason"] = reason;
-	}
+			headers["X-Reason"] = reason;
+		}
 
-	const response = await sdk.post<DeletePersonResponse>(
-		`/platform/tree/couple-relationships/${relationshipId}/restore`,
-		{},
-		{ headers }
-	);
-	return {
-		statusCode: response.statusCode,
-		statusText: response.statusText,
-	};
-} catch (error) {
-	sdk.logger.error(
-		`[FamilySearch SDK] Failed to restore couple relationship ${relationshipId}:`,
-		error
-	);
-	throw error;
-}
+		const response = await sdk.post<DeletePersonResponse>(
+			`/platform/tree/couple-relationships/${relationshipId}/restore`,
+			{},
+			{ headers }
+		);
+		return {
+			statusCode: response.statusCode,
+			statusText: response.statusText,
+		};
+	} catch (error) {
+		sdk.logger.error(
+			`[FamilySearch SDK] Failed to restore couple relationship ${relationshipId}:`,
+			error
+		);
+		throw error;
+	}
 }
 
 /**
@@ -1181,5 +1181,226 @@ export async function createRelationshipGedcomx(
 			error
 		);
 		throw error;
+	}
+}
+
+/**
+ * RelationshipsAPI class provides convenient methods for managing relationships.
+ */
+export class RelationshipsAPI {
+	constructor(private sdk: FamilySearchSDK) {}
+
+	async readCoupleRelationship(relationshipId: string) {
+		return readCoupleRelationship(this.sdk, relationshipId);
+	}
+
+	async createCoupleRelationship(
+		relationship: CreateCoupleRelationshipInput,
+		reason?: string
+	) {
+		return createCoupleRelationship(this.sdk, relationship, reason);
+	}
+
+	async updateCoupleRelationship(
+		relationshipId: string,
+		relationship: CreateCoupleRelationshipInput,
+		reason?: string
+	) {
+		return updateCoupleRelationship(
+			this.sdk,
+			relationshipId,
+			relationship,
+			reason
+		);
+	}
+
+	async deleteCoupleRelationship(relationshipId: string, reason?: string) {
+		return deleteCoupleRelationship(this.sdk, relationshipId, reason);
+	}
+
+	async readChildAndParentsRelationship(relationshipId: string) {
+		return readChildAndParentsRelationship(this.sdk, relationshipId);
+	}
+
+	async createChildAndParentsRelationship(
+		relationship: CreateChildAndParentsRelationshipInput,
+		reason?: string
+	) {
+		return createChildAndParentsRelationship(
+			this.sdk,
+			relationship,
+			reason
+		);
+	}
+
+	async updateChildAndParentsRelationship(
+		relationshipId: string,
+		relationship: CreateChildAndParentsRelationshipInput,
+		reason?: string
+	) {
+		return updateChildAndParentsRelationship(
+			this.sdk,
+			relationshipId,
+			relationship,
+			reason
+		);
+	}
+
+	async deleteChildAndParentsRelationship(
+		relationshipId: string,
+		reason?: string
+	) {
+		return deleteChildAndParentsRelationship(
+			this.sdk,
+			relationshipId,
+			reason
+		);
+	}
+
+	async readCoupleRelationshipChangeHistory(relationshipId: string) {
+		return readCoupleRelationshipChangeHistory(this.sdk, relationshipId);
+	}
+
+	async readChildAndParentsRelationshipChangeHistory(relationshipId: string) {
+		return readChildAndParentsRelationshipChangeHistory(
+			this.sdk,
+			relationshipId
+		);
+	}
+
+	async restoreChange(changeId: string) {
+		return restoreChange(this.sdk, changeId);
+	}
+
+	async setParentOrder(
+		relationshipId: string,
+		parent1Id: string,
+		parent2Id: string
+	) {
+		return setParentOrder(this.sdk, relationshipId, parent1Id, parent2Id);
+	}
+
+	async setSpouseOrder(
+		relationshipId: string,
+		person1Id: string,
+		person2Id: string
+	) {
+		return setSpouseOrder(this.sdk, relationshipId, person1Id, person2Id);
+	}
+
+	async readCoupleRelationshipSourceReferences(relationshipId: string) {
+		return readCoupleRelationshipSourceReferences(this.sdk, relationshipId);
+	}
+
+	async readCoupleRelationshipSources(relationshipId: string) {
+		return readCoupleRelationshipSources(this.sdk, relationshipId);
+	}
+
+	async readChildAndParentsRelationshipSourceReferences(
+		relationshipId: string
+	) {
+		return readChildAndParentsRelationshipSourceReferences(
+			this.sdk,
+			relationshipId
+		);
+	}
+
+	async readChildAndParentsRelationshipSources(relationshipId: string) {
+		return readChildAndParentsRelationshipSources(this.sdk, relationshipId);
+	}
+
+	async createCoupleRelationshipSourceReference(
+		relationshipId: string,
+		source: AttachSourceInput,
+		reason?: string
+	) {
+		return createCoupleRelationshipSourceReference(
+			this.sdk,
+			relationshipId,
+			source,
+			reason
+		);
+	}
+
+	async createChildAndParentsRelationshipSourceReference(
+		relationshipId: string,
+		source: AttachSourceInput,
+		reason?: string
+	) {
+		return createChildAndParentsRelationshipSourceReference(
+			this.sdk,
+			relationshipId,
+			source,
+			reason
+		);
+	}
+
+	async deleteCoupleRelationshipSourceReference(
+		relationshipId: string,
+		sourceId: string,
+		reason?: string
+	) {
+		return deleteCoupleRelationshipSourceReference(
+			this.sdk,
+			relationshipId,
+			sourceId,
+			reason
+		);
+	}
+
+	async deleteChildAndParentsRelationshipSourceReference(
+		relationshipId: string,
+		sourceId: string,
+		reason?: string
+	) {
+		return deleteChildAndParentsRelationshipSourceReference(
+			this.sdk,
+			relationshipId,
+			sourceId,
+			reason
+		);
+	}
+
+	async deleteChildAndParentsRelationshipParent(
+		relationshipId: string,
+		role: "parent1" | "parent2",
+		reason?: string
+	) {
+		return deleteChildAndParentsRelationshipParent(
+			this.sdk,
+			relationshipId,
+			role,
+			reason
+		);
+	}
+
+	async restoreChildAndParentsRelationship(
+		relationshipId: string,
+		reason?: string
+	) {
+		return restoreChildAndParentsRelationship(
+			this.sdk,
+			relationshipId,
+			reason
+		);
+	}
+
+	async restoreCoupleRelationship(relationshipId: string, reason?: string) {
+		return restoreCoupleRelationship(this.sdk, relationshipId, reason);
+	}
+
+	async readChildAndParentRelationshipNote(
+		relationshipId: string,
+		noteId: string
+	) {
+		return readChildAndParentRelationshipNote(
+			this.sdk,
+			relationshipId,
+			noteId
+		);
+	}
+
+	async createRelationshipGedcomx(relationshipData: unknown) {
+		return createRelationshipGedcomx(this.sdk, relationshipData);
 	}
 }

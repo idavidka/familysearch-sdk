@@ -316,7 +316,7 @@ This document lists **ALL** available FamilySearch API endpoints from the offici
 - ❌ **Create Memory** - `POST /platform/memories` - Upload photo/document/story
 - ✅ **Read Memory** - `GET /platform/memories/{mid}` (implemented as `getMemory`)
 - ❌ **Read Memories** - `GET /platform/memories` - Bulk read
-- ✅ **Read User Memories** - `GET /platform/memories` with user filter (implemented as `getUserMemories`)
+- ✅ **Read User Memories** - `GET /platform/memories` with user filter (implemented as `readUserMemories`)
 - ❌ **Update Memory** - `POST /platform/memories/{mid}`
 - ❌ **Delete Memory** - `DELETE /platform/memories/{mid}`
 
@@ -334,8 +334,8 @@ This document lists **ALL** available FamilySearch API endpoints from the offici
 
 ### Personas (5 endpoints)
 - ❌ **Create Memory Persona** - `POST /platform/memories/{mid}/personas`
-- ✅ **Read Memory Persona** - `GET /platform/memories/{mid}/personas/{personaid}` (implemented as `getMemoryPersona`)
-- ✅ **Read Memory Personas** - `GET /platform/memories/{mid}/personas` (implemented as `getMemoryPersonas`)
+- ✅ **Read Memory Persona** - `GET /platform/memories/{mid}/personas/{personaid}` (implemented as `readMemoryPersona`)
+- ✅ **Read Memory Personas** - `GET /platform/memories/{mid}/personas` (implemented as `readMemoryPersonas`)
 - ❌ **Update Memory Persona** - `POST /platform/memories/{mid}/personas/{personaid}`
 - ❌ **Delete Memory Persona** - `DELETE /platform/memories/{mid}/personas/{personaid}`
 
@@ -345,7 +345,7 @@ This document lists **ALL** available FamilySearch API endpoints from the offici
 
 ### Comments (Memories) (3 endpoints)
 - ❌ **Create Memory Comments** - `POST /platform/memories/{mid}/comments`
-- ✅ **Read Memory Comments** - `GET /platform/memories/{mid}/comments` (implemented as `getMemoryComments`)
+- ✅ **Read Memory Comments** - `GET /platform/memories/{mid}/comments` (implemented as `readMemoryComments`)
 - ❌ **Delete Memory Comment** - `DELETE /platform/memories/{mid}/comments/{cid}`
 
 **SDK Status:** ⚠️ Only read implemented (1/3)
@@ -388,7 +388,7 @@ This document lists **ALL** available FamilySearch API endpoints from the offici
 ---
 
 ### Names (3 endpoints)
-- ✅ **Get Name Script** - `GET /platform/names` (implemented as `getNameScript`) - Detect writing system
+- ✅ **Get Name Script** - `GET /platform/names` (implemented as `readNameScript`) - Detect writing system
 - ✅ **Segment a Name** - `GET /platform/names/segments` (implemented as `segmentName`) - Parse name into parts
 - ❌ **Compose Full Name** - `POST /platform/names/segments` - Create full name from parts
 
@@ -398,11 +398,11 @@ This document lists **ALL** available FamilySearch API endpoints from the offici
 
 ### Vocabularies (6 endpoints)
 - ✅ **Search Controlled Vocabulary Terms** - `GET /platform/vocabularies/{vid}/concepts` (implemented as `getVocabularyTerms`)
-- ✅ **Read Controlled Vocabulary Term** - `GET /platform/vocabularies/{vid}/concepts/{cid}` (implemented as `getVocabularyConcept`)
+- ✅ **Read Controlled Vocabulary Term** - `GET /platform/vocabularies/{vid}/concepts/{cid}` (implemented as `readVocabularyConcept`)
 - ❌ **Read Controlled Vocabulary Term Translation** - `GET /platform/vocabularies/{vid}/concepts/{cid}/translations/{lang}`
 - ❌ **Read Vocabulary Concept V2** - `GET /platform/vocabularies/concepts/{cid}`
 - ❌ **Read Vocabulary Concept Definition** - `GET /platform/vocabularies/concepts/{cid}/definition`
-- ✅ **Read Controlled Vocabulary List** - `GET /platform/vocabularies` (implemented as `getVocabularies`)
+- ✅ **Read Controlled Vocabulary List** - `GET /platform/vocabularies` (implemented as `readVocabularies`)
 
 **SDK Status:** ⚠️ Basic operations implemented (3/6)
 
@@ -418,7 +418,7 @@ This document lists **ALL** available FamilySearch API endpoints from the offici
 ---
 
 ### Users (7 endpoints)
-- ✅ **Read Current User** - `GET /platform/users/current` (implemented as `getCurrentUser`)
+- ✅ **Read Current User** - `GET /platform/users/current` (implemented as `readCurrentUser`)
 - ❌ **Create Partner Account** - `GET /platform/users/partner-account` - DEPRECATED
 - ❌ **Update Partner Account** - `POST /platform/users/partner-account` - DEPRECATED
 - ❌ **Read Partner Eligibility** - `GET /platform/users/partner-eligibility`

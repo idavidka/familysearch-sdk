@@ -94,10 +94,7 @@ export async function createTree(
 	treeData: any
 ): Promise<unknown> {
 	try {
-		const response = await sdk.post<unknown>(
-			"/platform/trees",
-			treeData
-		);
+		const response = await sdk.post<unknown>("/platform/trees", treeData);
 		return response.data || null;
 	} catch (error) {
 		sdk.logger.error(`[FamilySearch SDK] Failed to create tree:`, error);
@@ -180,5 +177,36 @@ export async function readResearchTreePersons(
 			error
 		);
 		throw error;
+	}
+}
+
+/**
+ * TreesManagementAPI class provides convenient methods for managing CET (Collaborative Event Trees).
+ */
+export class TreesManagementAPI {
+	constructor(private sdk: FamilySearchSDK) {}
+
+	async readTree(tid: string) {
+		return readTree(this.sdk, tid);
+	}
+
+	async deleteTree(tid: string) {
+		return deleteTree(this.sdk, tid);
+	}
+
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	async createTree(treeData: any) {
+		return createTree(this.sdk, treeData);
+	}
+
+	async readResearchTreePersons(
+		treeId: string,
+		options?: {
+			count?: number;
+			from?: string;
+			view?: string;
+		}
+	) {
+		return readResearchTreePersons(this.sdk, treeId, options);
 	}
 }

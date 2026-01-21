@@ -19,7 +19,7 @@ import type {
  * @param sdk - SDK instance
  * @returns Vocabularies response or null
  */
-export async function getVocabularies(
+export async function readVocabularies(
 	sdk: FamilySearchSDK
 ): Promise<VocabulariesResponse | null> {
 	try {
@@ -43,7 +43,7 @@ export async function getVocabularies(
  * @param vocabularyId - Vocabulary ID (e.g., 'gender-types', 'fact-types')
  * @returns Vocabulary concepts or null
  */
-export async function getVocabularyConcepts(
+export async function readVocabularyConcepts(
 	sdk: FamilySearchSDK,
 	vocabularyId: string
 ): Promise<VocabularyConceptsResponse | null> {
@@ -69,7 +69,7 @@ export async function getVocabularyConcepts(
  * @param conceptId - Concept ID
  * @returns Vocabulary concept or null
  */
-export async function getVocabularyConcept(
+export async function readVocabularyConcept(
 	sdk: FamilySearchSDK,
 	vocabularyId: string,
 	conceptId: string
@@ -100,7 +100,7 @@ export async function getVocabularyConcept(
  * @param vocabularyId - Vocabulary ID to search within (optional)
  * @returns Vocabulary concepts search results or null
  */
-export async function getVocabConceptsSearch(
+export async function readVocabConceptsSearch(
 	sdk: FamilySearchSDK,
 	query?: string,
 	vocabularyId?: string
@@ -137,7 +137,7 @@ export async function getVocabConceptsSearch(
  * @param cvcid - Controlled Vocabulary Concept ID
  * @returns Vocabulary concept or null
  */
-export async function getVocabConceptV2(
+export async function readVocabConceptV2(
 	sdk: FamilySearchSDK,
 	cvcid: string
 ): Promise<VocabularyConceptResponse | null> {
@@ -152,5 +152,32 @@ export async function getVocabConceptV2(
 			error
 		);
 		return null;
+	}
+}
+
+/**
+ * VocabulariesAPI class provides convenient methods for working with controlled vocabularies.
+ */
+export class VocabulariesAPI {
+	constructor(private sdk: FamilySearchSDK) {}
+
+	async readVocabularies() {
+		return readVocabularies(this.sdk);
+	}
+
+	async readVocabularyConcepts(vocabularyId: string) {
+		return readVocabularyConcepts(this.sdk, vocabularyId);
+	}
+
+	async readVocabularyConcept(vocabularyId: string, conceptId: string) {
+		return readVocabularyConcept(this.sdk, vocabularyId, conceptId);
+	}
+
+	async searchVocabConcepts(query?: string, vocabularyId?: string) {
+		return readVocabConceptsSearch(this.sdk, query, vocabularyId);
+	}
+
+	async readVocabConceptV2(cvcid: string) {
+		return readVocabConceptV2(this.sdk, cvcid);
 	}
 }

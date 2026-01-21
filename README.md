@@ -100,7 +100,7 @@ Search and retrieve place information from FamilySearch.
 
 ```typescript
 import { createFamilySearchSDK } from 'familysearch-sdk';
-import { searchPlaces, getPlaceDetails } from 'familysearch-sdk/places';
+import { searchPlaces, readPlaceDetails } from 'familysearch-sdk/places';
 
 const sdk = createFamilySearchSDK({ accessToken: 'token' });
 
@@ -111,7 +111,7 @@ const results = await searchPlaces(sdk, 'London, England', {
 });
 
 // Get place details
-const details = await getPlaceDetails(sdk, 'place-id');
+const details = await readPlaceDetails(sdk, 'place-id');
 console.log(details.name, details.latitude, details.longitude);
 ```
 
@@ -121,12 +121,12 @@ Fetch and manage family tree data.
 
 ```typescript
 import { createFamilySearchSDK } from 'familysearch-sdk';
-import { fetchPedigree, getCurrentUser } from 'familysearch-sdk/tree';
+import { fetchPedigree, readCurrentUser } from 'familysearch-sdk/tree';
 
 const sdk = createFamilySearchSDK({ accessToken: 'token' });
 
 // Get current user
-const user = await getCurrentUser(sdk);
+const user = await readCurrentUser(sdk);
 console.log(user?.displayName);
 
 // Fetch pedigree (will use current user's personId)
@@ -285,10 +285,10 @@ const sdk = createFamilySearchSDK({ accessToken: 'token' });
 const memory = await sdk.getMemory('MEM-123');
 
 // Get user's uploaded memories
-const userMemories = await sdk.getUserMemories({ count: 50 });
+const userMemories = await sdk.readUserMemories({ count: 50 });
 
 // Get comments on a memory
-const comments = await sdk.getMemoryComments('MEM-123');
+const comments = await sdk.readMemoryComments('MEM-123');
 if (comments?.discussions?.[0]?.comments) {
   comments.discussions[0].comments.forEach(comment => {
     console.log('Comment:', comment.text);
@@ -433,14 +433,14 @@ const sdk = createFamilySearchSDK({
 ### Places (`/places`)
 
 - `searchPlaces(sdk, query, options)` - Search for places
-- `getPlaceById(sdk, id)` - Get place by ID
-- `getPlaceChildren(sdk, id, options)` - Get child places
-- `getPlaceDetails(sdk, id)` - Get detailed place info
+- `readPlaceById(sdk, id)` - Get place by ID
+- `readPlaceChildren(sdk, id, options)` - Get child places
+- `readPlaceDetails(sdk, id)` - Get detailed place info
 
 ### Tree (`/tree`)
 
 - `fetchPedigree(sdk, personId, options)` - Fetch ancestry data
-- `getCurrentUser(sdk)` - Get current user info
+- `readCurrentUser(sdk)` - Get current user info
 - `getPersonWithDetails(sdk, personId)` - Get person details
 - `fetchMultiplePersons(sdk, personIds)` - Batch fetch persons
 
@@ -463,8 +463,8 @@ const sdk = createFamilySearchSDK({
 ### Memories APIs
 
 - `sdk.getMemory(memoryId)` - Get memory by ID
-- `sdk.getUserMemories(options)` - Get user's uploaded memories
-- `sdk.getMemoryComments(memoryId)` - Get comments for a memory
+- `sdk.readUserMemories(options)` - Get user's uploaded memories
+- `sdk.readMemoryComments(memoryId)` - Get comments for a memory
 
 ### Relationships APIs
 

@@ -407,3 +407,63 @@ export async function readUserSourceDescriptions(
 		throw error;
 	}
 }
+
+/**
+ * SourceBoxAPI class provides convenient methods for managing user source folders and collections.
+ */
+export class SourceBoxAPI {
+	constructor(private sdk: FamilySearchSDK) {}
+
+	async readUserSourceFolders() {
+		return readUserSourceFolders(this.sdk);
+	}
+
+	async readSourceFolders() {
+		return readSourceFolders(this.sdk);
+	}
+
+	async createSourceFolder(title: string, description?: string) {
+		return createSourceFolder(this.sdk, title, description);
+	}
+
+	async readUserDefinedCollection(collectionId: string) {
+		return readUserDefinedCollection(this.sdk, collectionId);
+	}
+
+	async updateUserDefinedCollection(
+		collectionId: string,
+		title?: string,
+		description?: string
+	) {
+		return updateUserDefinedCollection(
+			this.sdk,
+			collectionId,
+			title,
+			description
+		);
+	}
+
+	async deleteUserDefinedCollection(collectionId: string) {
+		return deleteUserDefinedCollection(this.sdk, collectionId);
+	}
+
+	async readCollectionSourceDescriptions(collectionId: string) {
+		return readCollectionSourceDescriptions(this.sdk, collectionId);
+	}
+
+	async addSourcesToCollection(collectionId: string, sourceIds: string[]) {
+		return addSourcesToCollection(this.sdk, collectionId, sourceIds);
+	}
+
+	async removeSourcesFromCollection(collectionId: string, sourceIds: string[]) {
+		return removeSourcesFromCollection(this.sdk, collectionId, sourceIds);
+	}
+
+	async readUserSourceDescriptions(
+		userId: string = "current",
+		start: number = 0,
+		count: number = 25
+	) {
+		return readUserSourceDescriptions(this.sdk, userId, start, count);
+	}
+}

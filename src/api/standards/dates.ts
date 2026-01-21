@@ -41,3 +41,14 @@ export async function normalizeDate(
 		return null;
 	}
 }
+
+/**
+ * DatesAPI class provides convenient methods for date standardization and normalization.
+ */
+export class DatesAPI {
+	constructor(private sdk: FamilySearchSDK) {}
+
+	async normalizeDate(dateString: string) {
+		return normalizeDate(this.sdk, dateString);
+	}
+}

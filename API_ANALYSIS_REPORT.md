@@ -414,21 +414,21 @@ and if the reason supplied is too long, the request may fail as a bad request.
 
 - **Title:** Read Memories
 - **Method:** GET
-- **Function:** `getMemories()`
+- **Function:** `readMemories()`
 - **Description:** Read a list of memories.
 
 ### getnamescript
 
 - **Title:** Get Name Script
 - **Method:** GET
-- **Function:** `getNameScript()`
+- **Function:** `readNameScript()`
 - **Description:** Get the script of a name.
 
 ### getnamesegments
 
 - **Title:** Segment a Name
 - **Method:** GET
-- **Function:** `getNameSegments()`
+- **Function:** `readNameSegments()`
 - **Description:** Segment a full name into its parts.
 
 ### getpersonmemories
@@ -484,7 +484,7 @@ and if the reason supplied is too long, the request may fail as a bad request.
 
 - **Title:** Read Comments
 - **Method:** GET
-- **Function:** `getDiscussionComments()`
+- **Function:** `readDiscussionComments()`
 - **Description:** Read the list of comments for a specific discussion.
 
 ### readcouplerelationship
@@ -526,21 +526,21 @@ and if the reason supplied is too long, the request may fail as a bad request.
 
 - **Title:** Read Current Tree Id
 - **Method:** GET
-- **Function:** `getCurrentTree()`
+- **Function:** `readCurrentTree()`
 - **Description:** Retrieve the id of the current tree.
 
 ### readcurrenttreeperson
 
 - **Title:** Read Current User Tree Person
 - **Method:** GET
-- **Function:** `getCurrentUser()`
+- **Function:** `readCurrentUser()`
 - **Description:** Read the tree person that represents the current user.
 
 ### readcurrentuser
 
 - **Title:** Read Current User
 - **Method:** GET
-- **Function:** `getCurrentUser()`
+- **Function:** `readCurrentUser()`
 - **Description:** Read the current user's profile information.
 
 ### readdescendancy
@@ -554,7 +554,7 @@ and if the reason supplied is too long, the request may fail as a bad request.
 
 - **Title:** Read Discussion
 - **Method:** GET
-- **Function:** `getDiscussion()`
+- **Function:** `readDiscussion()`
 - **Description:** Read a discussion.
 
 ### readgenealogiesbulkmatch
@@ -631,21 +631,21 @@ and if the reason supplied is too long, the request may fail as a bad request.
 
 - **Title:** Read Memory Comments
 - **Method:** GET
-- **Function:** `getMemoryWithComments()`
+- **Function:** `readMemoryWithComments()`
 - **Description:** Read a memory's comments.
 
 ### readmemorypersona
 
 - **Title:** Read Memory Persona
 - **Method:** GET
-- **Function:** `getMemoryPersona()`
+- **Function:** `readMemoryPersona()`
 - **Description:** Read a memories persona.
 
 ### readmemorypersonas
 
 - **Title:** Read Memory Personas
 - **Method:** GET
-- **Function:** `getMemoryPersonas()`
+- **Function:** `readMemoryPersonas()`
 - **Description:** Read a memories personas.
 
 ### readpartnereligibility
@@ -757,28 +757,28 @@ and if the reason supplied is too long, the request may fail as a bad request.
 
 - **Title:** Read Place
 - **Method:** GET
-- **Function:** `getPlaceDetails()`
+- **Function:** `readPlaceDetails()`
 - **Description:** Read a place. A Place resource represents a logical place and will have one or more Place Descriptions associated with it. For example, the city of Provo exists in the county of Utah, in the state of Utah, in the United States. However, when Provo was first established, the state of Utah did not exist. Utah County existed in the Utah Territory. So, Provo has two Place Descriptions but only one Place resource:
 
 ### readplacechildren
 
 - **Title:** Read Place Children
 - **Method:** GET
-- **Function:** `getPlaceChildren()`
+- **Function:** `readPlaceChildren()`
 - **Description:** Read the children of a place. It returns the direct children (those place descriptions that are in the jurisdiction) of a given place description. It is generally used for traversing from parent jurisdiction to child jurisdiction where no additional flexibility is needed or wanted. For example, if there's a need to filter on type, year, etc. this resource should not be used. Using this resource to search for children of a place (/description/1/children) will return the same results as searching for everything with the parentId of place "1" (/search?q=+parentId:1).
 
 ### readplacedescription
 
 - **Title:** Read Place Description
 - **Method:** GET
-- **Function:** `getPlaceDescription()`
+- **Function:** `readPlaceDescription()`
 - **Description:** Read a place description. A Place Description represents a place in a given time period, within a specific jurisdiction, with a specific official name. Place Description identifiers are in a different namespace than Place identifiers - for example, Place ID 123 is not the same as Place Description ID 123.
 
 ### readplacedescriptions
 
 - **Title:** Read Place Descriptions
 - **Method:** GET
-- **Function:** `getPlaceDescriptions()`
+- **Function:** `readPlaceDescriptions()`
 - **Description:** Read a list of place descriptions.  See the Place Description resource for a definition of a Place Description.
 
 ### readplaces
@@ -792,28 +792,28 @@ and if the reason supplied is too long, the request may fail as a bad request.
 
 - **Title:** Read Place Type
 - **Method:** GET
-- **Function:** `getPlaceType()`
+- **Function:** `readPlaceType()`
 - **Description:** Read a place type.  A place type is a type of place, such as a cemetery, city, state, etc. Types have translated names, which is useful for localization purposes.
 
 ### readplacetypegroup
 
 - **Title:** Read Place Type Group
 - **Method:** GET
-- **Function:** `getPlaceTypeGroup()`
+- **Function:** `readPlaceTypeGroup()`
 - **Description:** Read a place type group. A place type group is a collection of related place types that provides convenience when working with types. For example, there are a number of city-like types, such as city, populated place, and capital city. A "city-like" type group can be used to include all of them.
 
 ### readplacetypegroups
 
 - **Title:** Read Place Type Groups
 - **Method:** GET
-- **Function:** `getPlaceTypeGroups()`
+- **Function:** `readPlaceTypeGroups()`
 - **Description:** Read the list of place type groups. A place type group is a collection of related place types that provides convenience when working with types. For example, a "city-like" type group includes city, populated place, and capital city types.
 
 ### readplacetypes
 
 - **Title:** Read Place Types
 - **Method:** GET
-- **Function:** `getPlaceTypes()`
+- **Function:** `readPlaceTypes()`
 - **Description:** Read the list of place types. A place type defines a category of place such as cemetery, city, state, etc. Types have translated names for localization purposes.
 
 ### readpreferredspouserelationship
@@ -862,14 +862,14 @@ and if the reason supplied is too long, the request may fail as a bad request.
 
 - **Title:** Read User History
 - **Method:** GET
-- **Function:** `getUserHistory()`
+- **Function:** `readUserHistory()`
 - **Description:** Read a user's history.
 
 ### readusermemories
 
 - **Title:** Read User Memories
 - **Method:** GET
-- **Function:** `getUserMemories()`
+- **Function:** `readUserMemories()`
 - **Description:** Read a user's memories. The user memories query provides a (paged) list of artifacts of memories that belong to a specific user. This allows users to get a list of all memories that have been uploaded by the current user. To do this, make a request to the User Memories resource with the Accept header set to application/x-fs-v1+json.
 
 ### readusersourcefolders

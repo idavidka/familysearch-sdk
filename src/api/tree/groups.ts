@@ -164,3 +164,32 @@ export async function deleteGroup(
 		return false;
 	}
 }
+
+/**
+ * GroupsAPI class provides convenient methods for managing person groups.
+ */
+export class GroupsAPI {
+	constructor(private sdk: FamilySearchSDK) {}
+
+	async readGroup(groupId: string) {
+		return readGroup(this.sdk, groupId);
+	}
+
+	async readGroups() {
+		return readGroups(this.sdk);
+	}
+
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	async createGroup(groupData: any) {
+		return createGroup(this.sdk, groupData);
+	}
+
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	async updateGroup(groupId: string, groupData: any) {
+		return updateGroup(this.sdk, groupId, groupData);
+	}
+
+	async deleteGroup(groupId: string) {
+		return deleteGroup(this.sdk, groupId);
+	}
+}

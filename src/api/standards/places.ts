@@ -73,7 +73,7 @@ export async function searchPlaces(
  * @param placeId - Place ID
  * @returns Place details or null
  */
-export async function getPlaceDetails(
+export async function readPlaceDetails(
 	sdk: FamilySearchSDK,
 	placeId: string
 ): Promise<PlaceDetailsResponse | null> {
@@ -103,11 +103,11 @@ export async function getPlaceDetails(
  *
  * @example
  * ```typescript
- * const children = await getPlaceChildren(sdk, '12345');
+ * const children = await readPlaceChildren(sdk, '12345');
  * console.log('Child places:', children?.places?.length);
  * ```
  */
-export async function getPlaceChildren(
+export async function readPlaceChildren(
 	sdk: FamilySearchSDK,
 	placeId: string
 ): Promise<PlaceChildrenResponse | null> {
@@ -137,10 +137,10 @@ export async function getPlaceChildren(
  *
  * @example
  * ```typescript
- * const descriptions = await getPlaceDescriptions(sdk, ['DESC-123', 'DESC-456']);
+ * const descriptions = await readPlaceDescriptions(sdk, ['DESC-123', 'DESC-456']);
  * ```
  */
-export async function getPlaceDescriptions(
+export async function readPlaceDescriptions(
 	sdk: FamilySearchSDK,
 	descriptionIds: string[]
 ): Promise<PlaceDescriptionsResponse | null> {
@@ -172,10 +172,10 @@ export async function getPlaceDescriptions(
  *
  * @example
  * ```typescript
- * const description = await getPlaceDescription(sdk, 'DESC-ID');
+ * const description = await readPlaceDescription(sdk, 'DESC-ID');
  * ```
  */
-export async function getPlaceDescription(
+export async function readPlaceDescription(
 	sdk: FamilySearchSDK,
 	descriptionId: string
 ): Promise<PlaceDescriptionResponse | null> {
@@ -203,11 +203,11 @@ export async function getPlaceDescription(
  *
  * @example
  * ```typescript
- * const types = await getPlaceTypes(sdk);
+ * const types = await readPlaceTypes(sdk);
  * console.log('Available place types:', types?.elements?.length);
  * ```
  */
-export async function getPlaceTypes(
+export async function readPlaceTypes(
 	sdk: FamilySearchSDK
 ): Promise<PlaceTypesResponse | null> {
 	try {
@@ -235,10 +235,10 @@ export async function getPlaceTypes(
  *
  * @example
  * ```typescript
- * const type = await getPlaceType(sdk, 'City');
+ * const type = await readPlaceType(sdk, 'City');
  * ```
  */
-export async function getPlaceType(
+export async function readPlaceType(
 	sdk: FamilySearchSDK,
 	typeId: string
 ): Promise<PlaceTypeResponse | null> {
@@ -267,10 +267,10 @@ export async function getPlaceType(
  *
  * @example
  * ```typescript
- * const groups = await getPlaceTypeGroups(sdk);
+ * const groups = await readPlaceTypeGroups(sdk);
  * ```
  */
-export async function getPlaceTypeGroups(
+export async function readPlaceTypeGroups(
 	sdk: FamilySearchSDK
 ): Promise<PlaceTypeGroupsResponse | null> {
 	try {
@@ -298,10 +298,10 @@ export async function getPlaceTypeGroups(
  *
  * @example
  * ```typescript
- * const group = await getPlaceTypeGroup(sdk, 'city-like');
+ * const group = await readPlaceTypeGroup(sdk, 'city-like');
  * ```
  */
-export async function getPlaceTypeGroup(
+export async function readPlaceTypeGroup(
 	sdk: FamilySearchSDK,
 	groupId: string
 ): Promise<PlaceTypeGroupsResponse | null> {
@@ -412,11 +412,11 @@ export async function checkPlaceIsChild(
  *
  * @example
  * ```typescript
- * const attributes = await getPlaceAttributes(sdk, '12345');
+ * const attributes = await readPlaceAttributes(sdk, '12345');
  * console.log(attributes);
  * ```
  */
-export async function getPlaceAttributes(
+export async function readPlaceAttributes(
 	sdk: FamilySearchSDK,
 	pdid: string
 ): Promise<PlaceDescriptionResponse | null> {
@@ -446,11 +446,11 @@ export async function getPlaceAttributes(
  *
  * @example
  * ```typescript
- * const placeWithRelated = await getPlaceDescriptionWithRelated(sdk, '12345');
+ * const placeWithRelated = await readPlaceDescriptionWithRelated(sdk, '12345');
  * console.log(placeWithRelated);
  * ```
  */
-export async function getPlaceDescriptionWithRelated(
+export async function readPlaceDescriptionWithRelated(
 	sdk: FamilySearchSDK,
 	pdid: string
 ): Promise<PlaceDescriptionResponse | null> {
@@ -480,11 +480,11 @@ export async function getPlaceDescriptionWithRelated(
  *
  * @example
  * ```typescript
- * const group = await getPlaceDescriptionsGroup(sdk, 'group-123');
+ * const group = await readPlaceDescriptionsGroup(sdk, 'group-123');
  * console.log(group);
  * ```
  */
-export async function getPlaceDescriptionsGroup(
+export async function readPlaceDescriptionsGroup(
 	sdk: FamilySearchSDK,
 	groupId: string
 ): Promise<PlaceDescriptionsResponse | null> {
@@ -499,5 +499,68 @@ export async function getPlaceDescriptionsGroup(
 			error
 		);
 		return null;
+	}
+}
+
+/**
+ * PlacesAPI class provides convenient methods for searching and managing place standards.
+ */
+export class PlacesAPI {
+	constructor(private sdk: FamilySearchSDK) {}
+
+	async searchPlaces(name: string, count?: number, start?: number) {
+		return searchPlaces(this.sdk, name, count, start);
+	}
+
+	async readPlaceDetails(placeId: string) {
+		return readPlaceDetails(this.sdk, placeId);
+	}
+
+	async readPlaceChildren(placeId: string) {
+		return readPlaceChildren(this.sdk, placeId);
+	}
+
+	async readPlaceDescriptions(descriptionIds: string[]) {
+		return readPlaceDescriptions(this.sdk, descriptionIds);
+	}
+
+	async readPlaceDescription(descriptionId: string) {
+		return readPlaceDescription(this.sdk, descriptionId);
+	}
+
+	async readPlaceTypes() {
+		return readPlaceTypes(this.sdk);
+	}
+
+	async readPlaceType(typeId: string) {
+		return readPlaceType(this.sdk, typeId);
+	}
+
+	async readPlaceTypeGroups() {
+		return readPlaceTypeGroups(this.sdk);
+	}
+
+	async readPlaceTypeGroup(groupId: string) {
+		return readPlaceTypeGroup(this.sdk, groupId);
+	}
+
+	async searchParentPlaces(searchValue: string, parentIds?: string) {
+		return searchParentPlaces(this.sdk, searchValue, parentIds);
+	}
+
+	async checkPlaceIsChild(childPlaceId: string, parentPlaceId: string) {
+		return checkPlaceIsChild(this.sdk, childPlaceId, parentPlaceId);
+	}
+
+	async readPlaceAttributes(placeId: string) {
+		return readPlaceAttributes(this.sdk, placeId);
+	}
+
+	async readPlaceDescriptionWithRelated(descriptionId: string) {
+		return readPlaceDescriptionWithRelated(this.sdk, descriptionId);
+	}
+
+	async readPlaceDescriptionsGroup(groupId: string) {
+		return readPlaceDescriptionsGroup(this.sdk, groupId);
 	}
 }

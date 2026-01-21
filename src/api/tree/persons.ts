@@ -836,3 +836,123 @@ export async function createPersonMemory(
 		throw error;
 	}
 }
+
+/**
+ * PersonsAPI class provides a convenient interface for person-related operations.
+ * All methods delegate to the functional API implementations.
+ */
+export class PersonsAPI {
+	constructor(private sdk: FamilySearchSDK) {}
+
+	async readPerson(personId: string) {
+		return readPerson(this.sdk, personId);
+	}
+
+	async readPersonWithDetails(
+		personId: string,
+		options: { sourceDescriptions?: boolean } = {}
+	) {
+		return readPersonWithDetails(this.sdk, personId, options);
+	}
+
+	async createPerson(person: PersonInput, reason?: string) {
+		return createPerson(this.sdk, person, reason);
+	}
+
+	async updatePerson(personId: string, person: PersonInput, reason?: string) {
+		return updatePerson(this.sdk, personId, person, reason);
+	}
+
+	async deletePerson(personId: string, reason?: string) {
+		return deletePerson(this.sdk, personId, reason);
+	}
+
+	async restorePerson(personId: string) {
+		return restorePerson(this.sdk, personId);
+	}
+
+	async readPersonMemories(personId: string) {
+		return readPersonMemories(this.sdk, personId);
+	}
+
+	async readPersonSources(personId: string) {
+		return readPersonSources(this.sdk, personId);
+	}
+
+	async readPersonDiscussions(personId: string) {
+		return readPersonDiscussions(this.sdk, personId);
+	}
+
+	async readPersonPortraits(personId: string) {
+		return readPersonPortraits(this.sdk, personId);
+	}
+
+	async readPersonChangeHistory(personId: string) {
+		return readPersonChangeHistory(this.sdk, personId);
+	}
+
+	async readPersonFamilies(personId: string) {
+		return readPersonFamilies(this.sdk, personId);
+	}
+
+	async readPersonParents(personId: string) {
+		return readPersonParents(this.sdk, personId);
+	}
+
+	async readPersonSpouses(personId: string) {
+		return readPersonSpouses(this.sdk, personId);
+	}
+
+	async updatePersonPortraits(personId: string, memoryId: string) {
+		return updatePersonPortraits(this.sdk, personId, memoryId);
+	}
+
+	async readPersonChildren(personId: string) {
+		return readPersonChildren(this.sdk, personId);
+	}
+
+	async deletePersonPortrait(personId: string, mediaId: string) {
+		return deletePersonPortrait(this.sdk, personId, mediaId);
+	}
+
+	async deletePersonDiscussionReference(
+		personId: string,
+		discussionId: string
+	) {
+		return deletePersonDiscussionReference(
+			this.sdk,
+			personId,
+			discussionId
+		);
+	}
+
+	async deletePersonMemoriesPersonaReference(
+		personId: string,
+		memoryReferenceId: string
+	) {
+		return deletePersonMemoriesPersonaReference(
+			this.sdk,
+			personId,
+			memoryReferenceId
+		);
+	}
+
+	async deletePersonSourceReference(personId: string, sourceId: string) {
+		return deletePersonSourceReference(this.sdk, personId, sourceId);
+	}
+
+	async deleteTreePersonReference(
+		personId: string,
+		treePersonReferenceId: string
+	) {
+		return deleteTreePersonReference(
+			this.sdk,
+			personId,
+			treePersonReferenceId
+		);
+	}
+
+	async createPersonMemory(personId: string, memoryData: unknown) {
+		return createPersonMemory(this.sdk, personId, memoryData);
+	}
+}

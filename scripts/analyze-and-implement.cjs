@@ -152,11 +152,11 @@ function checkImplementation(endpointName) {
 		deletegenealogytree: "deleteGenealogyTree",
 
 		// Current User / Tree
-		readcurrenttreeperson: "getCurrentUser",
-		readcurrentuser: "getCurrentUser",
+		readcurrenttreeperson: "readCurrentUser",
+		readcurrentuser: "readCurrentUser",
 		readagent: "getAgent",
 		readpartnereligibility: "checkPartnerEligibility",
-		readuserhistory: "getUserHistory",
+		readuserhistory: "readUserHistory",
 		updateuserhistory: "updateUserHistory",
 		deleteuser: "deleteUserAccount",
 
@@ -266,9 +266,9 @@ function checkImplementation(endpointName) {
 		getpersonmemories: "getPersonMemories",
 		getchildandparentsrelationship: "getChildAndParentsRelationship",
 		getgroups: "getGroups",
-		getmemories: "getMemories",
-		getnamescript: "getNameScript",
-		getnamesegments: "getNameSegments",
+		getmemories: "readMemories",
+		getnamescript: "readNameScript",
+		getnamesegments: "readNameSegments",
 		getpreferredparentrelationship: "getPreferredParentRelationship",
 		updatepreferredparentrelationship: "setPreferredParentRelationship",
 		deletepreferredparentrelationship: "deletePreferredParentRelationship",
@@ -302,27 +302,27 @@ function checkImplementation(endpointName) {
 		// Places
 		standardizedate: "normalizeDate",
 		readplaces: "searchPlaces",
-		readplace: "getPlaceDetails",
+		readplace: "readPlaceDetails",
 		searchforparentplaces: "searchParentPlaces",
-		readplacechildren: "getPlaceChildren",
-		readplacedescription: "getPlaceDescription",
-		readplacedescriptions: "getPlaceDescriptions",
+		readplacechildren: "readPlaceChildren",
+		readplacedescription: "readPlaceDescription",
+		readplacedescriptions: "readPlaceDescriptions",
 		checkplaceischild: "checkPlaceIsChild",
-		readplacetype: "getPlaceType",
-		readplacetypes: "getPlaceTypes",
-		readplacetypegroups: "getPlaceTypeGroups",
-		readplacetypegroup: "getPlaceTypeGroup",
+		readplacetype: "readPlaceType",
+		readplacetypes: "readPlaceTypes",
+		readplacetypegroups: "readPlaceTypeGroups",
+		readplacetypegroup: "readPlaceTypeGroup",
 
 		// Memories
 		readmemory: "getMemory",
-		readmemories: "getMemories",
-		readusermemories: "getUserMemories",
+		readmemories: "readMemories",
+		readusermemories: "readUserMemories",
 		creatememory: "createMemory",
 		updatememory: "updateMemory",
 		deletememory: "deleteMemory",
-		readmemorycomments: "getMemoryWithComments",
-		readmemorypersona: "getMemoryPersona",
-		readmemorypersonas: "getMemoryPersonas",
+		readmemorycomments: "readMemoryWithComments",
+		readmemorypersona: "readMemoryPersona",
+		readmemorypersonas: "readMemoryPersonas",
 
 		// Genealogies (User-Submitted Trees)
 		readgenealogiestree: "getGenealogyTree",
@@ -345,21 +345,21 @@ function checkImplementation(endpointName) {
 		deletegenealogiespersonrelationship: "deleteGenealogyRelationship",
 
 		// Discussions
-		readdiscussion: "getDiscussion",
+		readdiscussion: "readDiscussion",
 		creatediscussion: "createDiscussion",
 		updatediscussion: "updateDiscussion",
 		deletediscussion: "deleteDiscussion",
-		readcomments: "getDiscussionComments",
+		readcomments: "readDiscussionComments",
 
 		// Vocabularies & Standards
 		readvocabulary: "getVocabulary",
-		readvocabularies: "getVocabularies",
+		readvocabularies: "readVocabularies",
 		readname: "getNameType",
 		readnames: "getNameTypes",
 		createnamesegments: "createNameSegments",
 
 		// Trees (Tree Management)
-		readcurrenttree: "getCurrentTree",
+		readcurrenttree: "readCurrentTree",
 	};
 	if (mappings[name]) {
 		return { implemented: true, function: mappings[name] };

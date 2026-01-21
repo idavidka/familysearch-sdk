@@ -605,3 +605,140 @@ export async function deleteChildAndParentsRelationshipNote(
 		throw error;
 	}
 }
+
+/**
+ * NotesAPI class provides convenient methods for managing notes on persons and relationships.
+ */
+export class NotesAPI {
+	constructor(private sdk: FamilySearchSDK) {}
+
+	async readPersonNotes(personId: string) {
+		return readPersonNotes(this.sdk, personId);
+	}
+
+	async readPersonNote(personId: string, noteId: string) {
+		return readPersonNote(this.sdk, personId, noteId);
+	}
+
+	async createPersonNote(personId: string, note: NoteInput, reason?: string) {
+		return createPersonNote(this.sdk, personId, note, reason);
+	}
+
+	async updatePersonNote(
+		personId: string,
+		noteId: string,
+		note: NoteInput,
+		reason?: string
+	) {
+		return updatePersonNote(this.sdk, personId, noteId, note, reason);
+	}
+
+	async deletePersonNote(personId: string, noteId: string, reason?: string) {
+		return deletePersonNote(this.sdk, personId, noteId, reason);
+	}
+
+	async readCoupleRelationshipNotes(relationshipId: string) {
+		return readCoupleRelationshipNotes(this.sdk, relationshipId);
+	}
+
+	async readCoupleRelationshipNote(relationshipId: string, noteId: string) {
+		return readCoupleRelationshipNote(this.sdk, relationshipId, noteId);
+	}
+
+	async createCoupleRelationshipNote(
+		relationshipId: string,
+		note: NoteInput,
+		reason?: string
+	) {
+		return createCoupleRelationshipNote(
+			this.sdk,
+			relationshipId,
+			note,
+			reason
+		);
+	}
+
+	async updateCoupleRelationshipNote(
+		relationshipId: string,
+		noteId: string,
+		note: NoteInput,
+		reason?: string
+	) {
+		return updateCoupleRelationshipNote(
+			this.sdk,
+			relationshipId,
+			noteId,
+			note,
+			reason
+		);
+	}
+
+	async deleteCoupleRelationshipNote(
+		relationshipId: string,
+		noteId: string,
+		reason?: string
+	) {
+		return deleteCoupleRelationshipNote(
+			this.sdk,
+			relationshipId,
+			noteId,
+			reason
+		);
+	}
+
+	async readChildAndParentsRelationshipNotes(relationshipId: string) {
+		return readChildAndParentsRelationshipNotes(this.sdk, relationshipId);
+	}
+
+	async readChildAndParentsRelationshipNote(
+		relationshipId: string,
+		noteId: string
+	) {
+		return readChildAndParentsRelationshipNote(
+			this.sdk,
+			relationshipId,
+			noteId
+		);
+	}
+
+	async createChildAndParentsRelationshipNote(
+		relationshipId: string,
+		note: NoteInput,
+		reason?: string
+	) {
+		return createChildAndParentsRelationshipNote(
+			this.sdk,
+			relationshipId,
+			note,
+			reason
+		);
+	}
+
+	async updateChildAndParentsRelationshipNote(
+		relationshipId: string,
+		noteId: string,
+		note: NoteInput,
+		reason?: string
+	) {
+		return updateChildAndParentsRelationshipNote(
+			this.sdk,
+			relationshipId,
+			noteId,
+			note,
+			reason
+		);
+	}
+
+	async deleteChildAndParentsRelationshipNote(
+		relationshipId: string,
+		noteId: string,
+		reason?: string
+	) {
+		return deleteChildAndParentsRelationshipNote(
+			this.sdk,
+			relationshipId,
+			noteId,
+			reason
+		);
+	}
+}

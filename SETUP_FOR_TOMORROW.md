@@ -49,8 +49,8 @@ const endpointToFunction = (endpoint) => {
   // Exact mappings (add more as needed)
   const mappings = {
     // Current user / Agent
-    'readcurrenttreeperson': 'getCurrentUser',
-    'readcurrentuser': 'getCurrentUser',
+    'readcurrenttreeperson': 'readCurrentUser',
+    'readcurrentuser': 'readCurrentUser',
     'readagent': 'getAgent',
     
     // Genealogies (most critical)
@@ -78,11 +78,11 @@ const endpointToFunction = (endpoint) => {
     
     // Vocabularies
     'readvocabconceptssearch': 'searchVocabConcepts',
-    'readvocabconceptv2': 'getVocabularyConcept',
+    'readvocabconceptv2': 'readVocabularyConcept',
     
     // Places
     'readplaces': 'searchPlaces',
-    'readplace': 'getPlaceDetails',
+    'readplace': 'readPlaceDetails',
     'searchforparentplaces': 'searchParentPlaces',
     
     // Standardization
@@ -317,7 +317,7 @@ export async function getSourceDescriptionChanges(
 /**
  * Get the current active tree for the user
  */
-export async function getCurrentTree(
+export async function readCurrentTree(
   sdk: FamilySearchSDK
 ): Promise<TreeResponse> {
   // GET /platform/tree/current-tree
@@ -392,7 +392,7 @@ export {
 
 // User/Tree
 export {
-  getCurrentTree,
+  readCurrentTree,
   setCurrentTree,
 } from './user/index';
 ```

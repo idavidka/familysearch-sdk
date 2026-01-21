@@ -228,3 +228,38 @@ export async function restoreGenealogyPerson(
 		return null;
 	}
 }
+
+/**
+ * GenealogyPersonsAPI class provides convenient methods for managing persons within research trees.
+ */
+export class GenealogyPersonsAPI {
+	constructor(private sdk: FamilySearchSDK) {}
+
+	async readPerson(treeId: string, personId: string) {
+		return readGenealogyPerson(this.sdk, treeId, personId);
+	}
+
+	async readPersons(treeId: string) {
+		return readGenealogyPersons(this.sdk, treeId);
+	}
+
+	async createPerson(treeId: string, input: CreateGenealogyPersonInput) {
+		return createGenealogyPerson(this.sdk, treeId, input);
+	}
+
+	async updatePerson(
+		treeId: string,
+		personId: string,
+		input: UpdateGenealogyPersonInput
+	) {
+		return updateGenealogyPerson(this.sdk, treeId, personId, input);
+	}
+
+	async deletePerson(treeId: string, personId: string) {
+		return deleteGenealogyPerson(this.sdk, treeId, personId);
+	}
+
+	async restorePerson(treeId: string, personId: string) {
+		return restoreGenealogyPerson(this.sdk, treeId, personId);
+	}
+}

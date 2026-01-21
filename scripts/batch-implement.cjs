@@ -2,7 +2,7 @@
 
 /**
  * Batch Implementation Generator
- * 
+ *
  * This script generates TypeScript implementations for multiple endpoints at once
  */
 
@@ -42,13 +42,11 @@ const implementations = {
 		"searchTreePersons",
 	],
 	"src/api/standards/names.ts": [
-		"getNameSegments",
+		"readNameSegments",
 		"createNameSegments",
-		"getNameScript",
+		"readNameScript",
 	],
-	"src/api/standards/places.ts": [
-		"checkPlaceIsChild",
-	],
+	"src/api/standards/places.ts": ["checkPlaceIsChild"],
 	"src/api/memories/comments.ts": [
 		"createMemoryComments",
 		"deleteMemoryComment",
@@ -57,13 +55,8 @@ const implementations = {
 		"createMemoryPersona",
 		"deleteMemoryPersona",
 	],
-	"src/api/memories/artifacts.ts": [
-		"deleteMemoryArtifactCoverage",
-	],
-	"src/api/discussions/comments.ts": [
-		"getComments",
-		"deleteComment",
-	],
+	"src/api/memories/artifacts.ts": ["deleteMemoryArtifactCoverage"],
+	"src/api/discussions/comments.ts": ["getComments", "deleteComment"],
 	"src/api/user/preferences.ts": [
 		"getPreferredParentRelationship",
 		"deletePreferredParentRelationship",
@@ -73,7 +66,9 @@ const implementations = {
 
 console.log("🚀 Batch Implementation Generator\n");
 console.log(`  Total files to update: ${Object.keys(implementations).length}`);
-console.log(`  Total endpoints to implement: ${Object.values(implementations).flat().length}\n`);
+console.log(
+	`  Total endpoints to implement: ${Object.values(implementations).flat().length}\n`
+);
 
 // Count by file
 Object.entries(implementations).forEach(([file, endpoints]) => {

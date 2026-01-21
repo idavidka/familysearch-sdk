@@ -25,11 +25,11 @@ import type {
  *
  * @example
  * ```typescript
- * const script = await getNameScript(sdk, 'John Smith');
+ * const script = await readNameScript(sdk, 'John Smith');
  * console.log('Script:', script?.script); // "Latn"
  * ```
  */
-export async function getNameScript(
+export async function readNameScript(
 	sdk: FamilySearchSDK,
 	text: string
 ): Promise<NameScriptResponse | null> {
@@ -63,12 +63,12 @@ export async function getNameScript(
  *
  * @example
  * ```typescript
- * const segments = await getNameSegments(sdk, 'John Robert Smith', 'en-US');
+ * const segments = await readNameSegments(sdk, 'John Robert Smith', 'en-US');
  * console.log('Given:', segments?.givenName); // "John Robert"
  * console.log('Surname:', segments?.surname); // "Smith"
  * ```
  */
-export async function getNameSegments(
+export async function readNameSegments(
 	sdk: FamilySearchSDK,
 	fullName: string,
 	locale?: string,
@@ -135,5 +135,24 @@ export async function createNameSegments(
 			error
 		);
 		return null;
+	}
+}
+
+/**
+ * NamesAPI class provides convenient methods for name script detection and segmentation.
+ */
+export class NamesAPI {
+	constructor(private sdk: FamilySearchSDK) {}
+
+	async readNameScript(text: string) {
+		return readNameScript(this.sdk, text);
+	}
+
+	async readNameSegments(fullName: string, locale?: string, lang?: string) {
+		return readNameSegments(this.sdk, fullName, locale, lang);
+	}
+
+	async createNameSegments(input: CreateNameSegmentsInput) {
+		return createNameSegments(this.sdk, input);
 	}
 }

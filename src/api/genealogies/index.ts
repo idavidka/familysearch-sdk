@@ -1,9 +1,9 @@
 /**
  * FamilySearch Genealogies API
- * 
+ *
  * Provides access to research trees (genealogies) - separate from the main FamilySearch Family Tree.
  * Genealogies allow users to create hypothesis trees for research without affecting the main tree.
- * 
+ *
  * @see https://developers.familysearch.org/main/reference/genealogies
  */
 
@@ -14,6 +14,7 @@ export {
 	createGenealogyTree,
 	updateGenealogyTree,
 	deleteGenealogyTree,
+	TreesAPI,
 } from "./trees";
 
 // Person operations
@@ -24,12 +25,14 @@ export {
 	updateGenealogyPerson,
 	deleteGenealogyPerson,
 	restoreGenealogyPerson,
+	GenealogyPersonsAPI,
 } from "./persons";
 
 // Relationship operations
 export {
 	updateGenealogyRelationship,
 	deleteGenealogyRelationship,
+	GenealogyRelationshipsAPI,
 } from "./relationships";
 
 // Source operations
@@ -38,6 +41,7 @@ export {
 	createGenealogySourceDescription,
 	updateGenealogySourceDescription,
 	deleteGenealogySourceDescription,
+	GenealogySourcesAPI,
 } from "./sources";
 
 // Other operations
@@ -46,4 +50,5 @@ export {
 	readGenealogyBulkMatch,
 	readGenealogyPersonMatches,
 	readGenealogyNote,
+	GenealogyOtherAPI,
 } from "./other";

@@ -188,13 +188,32 @@ export {
 	deleteGroup,
 } from "./groups";
 
-// Tree Changes API
-export { readTreeChanges } from "./tree-changes";
-
 // Trees API
 export {
 	readTree,
 	deleteTree,
 	createTree,
 	readResearchTreePersons,
+	TreesManagementAPI,
 } from "./trees";
+
+// Tree Changes API
+export { readTreeChanges } from "./tree-changes";
+
+// Export API Classes
+export { PersonsAPI } from "./persons";
+export { RelationshipsAPI } from "./relationships";
+export { PedigreesAPI } from "./pedigrees";
+export { MatchesAPI } from "./matches";
+export { SourcesAPI } from "./sources";
+export { NotesAPI } from "./notes";
+export { MergesAPI } from "./merges";
+export { PreferencesAPI } from "./preferences";
+export { ConclusionsAPI } from "./conclusions";
+export { AgentAPI } from "./agent";
+export { PendingModificationsAPI } from "./pending-modifications";
+export { GroupsAPI } from "./groups";
+export { TreeChangesAPI } from "./tree-changes";
+export { SearchAPI } from "./search";
+export { SourceAttachmentsAPI } from "./source-attachments";
+export { SourceBoxAPI } from "./source-box";

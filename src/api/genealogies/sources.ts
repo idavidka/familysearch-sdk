@@ -159,3 +159,38 @@ export async function deleteGenealogySourceDescription(
 		return false;
 	}
 }
+
+/**
+ * GenealogySourcesAPI class provides convenient methods for managing source descriptions within research trees.
+ */
+export class GenealogySourcesAPI {
+	constructor(private sdk: FamilySearchSDK) {}
+
+	async readSourceDescription(treeId: string, sourceId: string) {
+		return readGenealogySourceDescription(this.sdk, treeId, sourceId);
+	}
+
+	async createSourceDescription(
+		treeId: string,
+		input: CreateGenealogySourceDescriptionInput
+	) {
+		return createGenealogySourceDescription(this.sdk, treeId, input);
+	}
+
+	async updateSourceDescription(
+		treeId: string,
+		sourceId: string,
+		input: UpdateGenealogySourceDescriptionInput
+	) {
+		return updateGenealogySourceDescription(
+			this.sdk,
+			treeId,
+			sourceId,
+			input
+		);
+	}
+
+	async deleteSourceDescription(treeId: string, sourceId: string) {
+		return deleteGenealogySourceDescription(this.sdk, treeId, sourceId);
+	}
+}

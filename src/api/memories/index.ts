@@ -31,7 +31,7 @@ import type {
  * @param memoryId - Memory artifact reference
  * @returns Memory with comments or null
  */
-export async function getMemoryWithComments(
+export async function readMemoryWithComments(
 	sdk: FamilySearchSDK,
 	memoryId: string
 ): Promise<MemoryWithCommentsResponse | null> {
@@ -56,7 +56,7 @@ export async function getMemoryWithComments(
  * @param userId - User ID (use 'current' for authenticated user)
  * @returns User memories or null
  */
-export async function getUserMemories(
+export async function readUserMemories(
 	sdk: FamilySearchSDK,
 	userId: string = "current"
 ): Promise<UserMemoriesResponse | null> {
@@ -199,11 +199,11 @@ export async function createMemories(
  *
  * @example
  * ```typescript
- * const memories = await getMemories(sdk, ['MEM-1', 'MEM-2', 'MEM-3']);
+ * const memories = await readMemories(sdk, ['MEM-1', 'MEM-2', 'MEM-3']);
  * console.log('Retrieved', memories?.sourceDescriptions?.length, 'memories');
  * ```
  */
-export async function getMemories(
+export async function readMemories(
 	sdk: FamilySearchSDK,
 	memoryIds: string[]
 ): Promise<UserMemoriesResponse | null> {
@@ -324,7 +324,7 @@ export async function deleteMemory(
  * @param memoryId - Memory ID
  * @returns Memory personas or null
  */
-export async function getMemoryPersonas(
+export async function readMemoryPersonas(
 	sdk: FamilySearchSDK,
 	memoryId: string
 ): Promise<MemoryPersonasResponse | null> {
@@ -350,7 +350,7 @@ export async function getMemoryPersonas(
  * @param personaId - Persona ID
  * @returns Memory persona or null
  */
-export async function getMemoryPersona(
+export async function readMemoryPersona(
 	sdk: FamilySearchSDK,
 	memoryId: string,
 	personaId: string
@@ -491,7 +491,7 @@ export async function deleteMemoryPersona(
  * @param memoryId - Memory ID
  * @returns Memory comments or null
  */
-export async function getMemoryComments(
+export async function readMemoryComments(
 	sdk: FamilySearchSDK,
 	memoryId: string
 ): Promise<MemoryWithCommentsResponse | null> {
@@ -672,5 +672,93 @@ export async function deleteMemoryArtifactCoverage(
 			error
 		);
 		throw error;
+	}
+}
+
+/**
+ * MemoriesAPI class provides convenient methods for managing memories and related artifacts.
+ */
+export class MemoriesAPI {
+	constructor(private sdk: FamilySearchSDK) {}
+
+	async readMemoryWithComments(memoryId: string) {
+		return readMemoryWithComments(this.sdk, memoryId);
+	}
+
+	async readUserMemories(userId?: string) {
+		return readUserMemories(this.sdk, userId);
+	}
+
+	async createMemory(memory: CreateMemoryInput) {
+		return createMemory(this.sdk, memory);
+	}
+
+	async createMemories(memories: CreateMemoryInput[]) {
+		return createMemories(this.sdk, memories);
+	}
+
+	async readMemories(memoryIds: string[]) {
+		return readMemories(this.sdk, memoryIds);
+	}
+
+	async updateMemory(memoryId: string, memory: UpdateMemoryInput) {
+		return updateMemory(this.sdk, memoryId, memory);
+	}
+
+	async deleteMemory(memoryId: string) {
+		return deleteMemory(this.sdk, memoryId);
+	}
+
+	async readMemoryPersonas(memoryId: string) {
+		return readMemoryPersonas(this.sdk, memoryId);
+	}
+
+	async readMemoryPersona(memoryId: string, personaId: string) {
+		return readMemoryPersona(this.sdk, memoryId, personaId);
+	}
+
+	async createMemoryPersona(
+		memoryId: string,
+		persona: CreateMemoryPersonaInput
+	) {
+		return createMemoryPersona(this.sdk, memoryId, persona);
+	}
+
+	async updateMemoryPersona(
+		memoryId: string,
+		personaId: string,
+		persona: CreateMemoryPersonaInput
+	) {
+		return updateMemoryPersona(this.sdk, memoryId, personaId, persona);
+	}
+
+	async deleteMemoryPersona(memoryId: string, personaId: string) {
+		return deleteMemoryPersona(this.sdk, memoryId, personaId);
+	}
+
+	async readMemoryComments(memoryId: string) {
+		return readMemoryComments(this.sdk, memoryId);
+	}
+
+	async createMemoryComment(
+		memoryId: string,
+		comment: CreateMemoryCommentInput
+	) {
+		return createMemoryComment(this.sdk, memoryId, comment);
+	}
+
+	async deleteMemoryComment(memoryId: string, commentId: string) {
+		return deleteMemoryComment(this.sdk, memoryId, commentId);
+	}
+
+	async updateMemoryArtifact(
+		memoryId: string,
+		artifact: UpdateMemoryArtifactInput
+	) {
+		return updateMemoryArtifact(this.sdk, memoryId, artifact);
+	}
+
+	async deleteMemoryArtifactCoverage(memoryId: string, coverageId: string) {
+		return deleteMemoryArtifactCoverage(this.sdk, memoryId, coverageId);
 	}
 }

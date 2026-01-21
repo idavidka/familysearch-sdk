@@ -268,3 +268,52 @@ export async function deletePreferredSpouseRelationship(
 		throw error;
 	}
 }
+
+/**
+ * PreferencesAPI class provides convenient methods for managing user preferences for parent and spouse relationships.
+ */
+export class PreferencesAPI {
+	constructor(private sdk: FamilySearchSDK) {}
+
+	async readPreferredParentRelationship(userId: string, personId: string) {
+		return readPreferredParentRelationship(this.sdk, userId, personId);
+	}
+
+	async setPreferredParentRelationship(
+		userId: string,
+		personId: string,
+		preferredParentId: string
+	) {
+		return setPreferredParentRelationship(
+			this.sdk,
+			userId,
+			personId,
+			preferredParentId
+		);
+	}
+
+	async deletePreferredParentRelationship(userId: string, personId: string) {
+		return deletePreferredParentRelationship(this.sdk, userId, personId);
+	}
+
+	async readPreferredSpouseRelationship(userId: string, personId: string) {
+		return readPreferredSpouseRelationship(this.sdk, userId, personId);
+	}
+
+	async setPreferredSpouseRelationship(
+		userId: string,
+		personId: string,
+		preferredSpouseId: string
+	) {
+		return setPreferredSpouseRelationship(
+			this.sdk,
+			userId,
+			personId,
+			preferredSpouseId
+		);
+	}
+
+	async deletePreferredSpouseRelationship(userId: string, personId: string) {
+		return deletePreferredSpouseRelationship(this.sdk, userId, personId);
+	}
+}

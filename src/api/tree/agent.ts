@@ -42,3 +42,14 @@ export async function readAgent(
 		return null;
 	}
 }
+
+/**
+ * AgentAPI class provides convenient methods for accessing agent information.
+ */
+export class AgentAPI {
+	constructor(private sdk: FamilySearchSDK) {}
+
+	async readAgent(uid: string) {
+		return readAgent(this.sdk, uid);
+	}
+}
