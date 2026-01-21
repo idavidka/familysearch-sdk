@@ -1,6 +1,6 @@
 # FamilySearch SDK API Analysis Report
 
-**Generated:** 2026-01-21T10:47:40.972Z
+**Generated:** 2026-01-21T10:54:09.201Z
 
 ---
 
@@ -9,15 +9,15 @@
 | Metric | Count | Percentage |
 |--------|-------|------------|
 | **Total Endpoints** | 204 | 100% |
-| ✅ **Implemented** | 134 | 66% |
-| ❌ **Missing** | 58 | 28% |
+| ✅ **Implemented** | 147 | 72% |
+| ❌ **Missing** | 45 | 22% |
 | 🚫 **Not Applicable** | 12 | 6% |
 
-**Applicable Coverage:** 134/192 (70%)
+**Applicable Coverage:** 147/192 (77%)
 
 ---
 
-## ✅ Implemented Endpoints (134)
+## ✅ Implemented Endpoints (147)
 
 ### checkplaceischild
 
@@ -67,6 +67,20 @@
 - **Method:** POST
 - **Function:** `createGenealogyPerson()`
 - **Description:** Create a person in the specified tree.
+
+### creategenealogiessourcedescription
+
+- **Title:** Create Source Description
+- **Method:** POST
+- **Function:** `createGenealogySourceDescription()`
+- **Description:** Create a source description in a tree.
+
+### creategenealogiestree
+
+- **Title:** Create Genealogies Tree
+- **Method:** POST
+- **Function:** `createGenealogyTree()`
+- **Description:** Create a tree in the user-submitted genealogies.
 
 ### creategroup
 
@@ -194,6 +208,13 @@
 - **Function:** `deleteCoupleRelationshipSourceReference()`
 - **Description:** Delete a couple relationship source reference.
 
+### deletegenealogiesconclusion
+
+- **Title:** Delete Conclusion
+- **Method:** DELETE
+- **Function:** `deleteGenealogyConclusion()`
+- **Description:** Delete a conclusion on a person.
+
 ### deletegenealogiesperson
 
 - **Title:** Delete Genealogies Person
@@ -207,6 +228,20 @@
 - **Method:** DELETE
 - **Function:** `deleteGenealogyRelationship()`
 - **Description:** Delete a relationship.
+
+### deletegenealogiessourcedescription
+
+- **Title:** Delete Source Description
+- **Method:** DELETE
+- **Function:** `deleteGenealogySourceDescription()`
+- **Description:** Delete a source description.
+
+### deletegenealogiestree
+
+- **Title:** Delete Tree
+- **Method:** DELETE
+- **Function:** `deleteGenealogyTree()`
+- **Description:** Delete a genealogies tree.
 
 ### deletegroup
 
@@ -522,6 +557,20 @@ and if the reason supplied is too long, the request may fail as a bad request.
 - **Function:** `getDiscussion()`
 - **Description:** Read a discussion.
 
+### readgenealogiesbulkmatch
+
+- **Title:** Read Genealogies Bulk Matches
+- **Method:** GET
+- **Function:** `getGenealogyBulkMatch()`
+- **Description:** Read a set of matches for the given genealogies persons.
+
+### readgenealogiesnote
+
+- **Title:** Read Genealogies Note
+- **Method:** GET
+- **Function:** `getGenealogyNote()`
+- **Description:** Read a genealogies note.
+
 ### readgenealogiesperson
 
 - **Title:** Read Genealogies Person
@@ -529,12 +578,40 @@ and if the reason supplied is too long, the request may fail as a bad request.
 - **Function:** `getGenealogyPerson()`
 - **Description:** Read a genealogies person, including the names, gender, and facts of the person.
 
+### readgenealogiespersonmatches
+
+- **Title:** Read Genealogies Person Matches
+- **Method:** GET
+- **Function:** `getGenealogyPersonMatches()`
+- **Description:** The Person Matches by Genealogies Person Id resource defines the set of matches in the system for a person in the user-submitted genealogies.
+
 ### readgenealogiespersons
 
 - **Title:** Read Genealogies Persons
 - **Method:** GET
 - **Function:** `getGenealogyPersons()`
 - **Description:** Read the list of persons in the specified tree.
+
+### readgenealogiessourcedescription
+
+- **Title:** Read Source Description
+- **Method:** GET
+- **Function:** `getGenealogySourceDescription()`
+- **Description:** Read a source description.
+
+### readgenealogiestree
+
+- **Title:** Read Tree
+- **Method:** GET
+- **Function:** `getGenealogyTree()`
+- **Description:** Read a tree in a user-submitted genealogy.
+
+### readgenealogiestrees
+
+- **Title:** Read Genealogies Trees
+- **Method:** GET
+- **Function:** `getGenealogyTrees()`
+- **Description:** Read the trees the current user has created.
 
 ### readgroup
 
@@ -879,6 +956,20 @@ and if the reason supplied is too long, the request may fail as a bad request.
 - **Function:** `updateGenealogyRelationship()`
 - **Description:** Update a relationship. The Relationship resource provides the interface to add or update specific facts attached to a relationship.
 
+### updategenealogiessourcedescription
+
+- **Title:** Update Source Description
+- **Method:** POST
+- **Function:** `updateGenealogySourceDescription()`
+- **Description:** Update a source description.
+
+### updategenealogiestree
+
+- **Title:** Update Tree
+- **Method:** POST
+- **Function:** `updateGenealogyTree()`
+- **Description:** Update a genealogies tree with persons and/or relationships.
+
 ### updategroup
 
 - **Title:** Update Group
@@ -965,7 +1056,7 @@ and if the reason supplied is too long, the request may fail as a bad request.
 
 ---
 
-## ❌ Missing Endpoints (58)
+## ❌ Missing Endpoints (45)
 
 These endpoints need to be implemented. Implementation templates are provided below.
 
@@ -1004,82 +1095,6 @@ export async function allowpersonmerge(
 		return response.data;
 	} catch (error) {
 		sdk["logger"].error("[FamilySearch SDK] Failed to allowpersonmerge:", error);
-		throw error;
-	}
-}
-
-```
-
----
-
-### creategenealogiessourcedescription
-
-- **Title:** Create Source Description
-- **Method:** POST
-- **URL:** `https://apibeta.familysearch.org/platform/genealogies/trees/{tid}/sources`
-- **Description:** Create a source description in a tree.
-
-**Path Parameters:**
-
-- `tid` (string) - required
-
-**Response Codes:** 201, 404, 429
-
-**Implementation Template:**
-
-```typescript
-/**
- * Create Source Description
- *
- * Create a source description in a tree.
- *
- * @param tid - tid
- * @returns Promise with response data
- */
-export async function creategenealogiessourcedescription(
-	sdk: FamilySearchSDK,
-	tid: string
-): Promise<any> {
-	try {
-		const response = await sdk.post<any>(`/platform/genealogies/trees/${tid}/sources`, data);
-		return response.data;
-	} catch (error) {
-		sdk["logger"].error("[FamilySearch SDK] Failed to creategenealogiessourcedescription:", error);
-		throw error;
-	}
-}
-
-```
-
----
-
-### creategenealogiestree
-
-- **Title:** Create Genealogies Tree
-- **Method:** POST
-- **URL:** `https://apibeta.familysearch.org/platform/genealogies/trees`
-- **Description:** Create a tree in the user-submitted genealogies.
-
-**Response Codes:** 201, 429
-
-**Implementation Template:**
-
-```typescript
-/**
- * Create Genealogies Tree
- *
- * Create a tree in the user-submitted genealogies.
- *
- * @returns Promise with response data
- */
-export async function creategenealogiestree(
-	sdk: FamilySearchSDK
-): Promise<any> {
-	try {
-		const response = await sdk.post<any>(`/platform/genealogies/trees`, data);
-		return response.data;
-	} catch (error) {
-		sdk["logger"].error("[FamilySearch SDK] Failed to creategenealogiestree:", error);
 		throw error;
 	}
 }
@@ -1311,132 +1326,6 @@ export async function deletecomment(
 		return response.data;
 	} catch (error) {
 		sdk["logger"].error("[FamilySearch SDK] Failed to deletecomment:", error);
-		throw error;
-	}
-}
-
-```
-
----
-
-### deletegenealogiesconclusion
-
-- **Title:** Delete Conclusion
-- **Method:** DELETE
-- **URL:** `https://apibeta.familysearch.org/platform/genealogies/persons/{pid}/conclusions/{cid}`
-- **Description:** Delete a conclusion on a person.
-
-**Path Parameters:**
-
-- `pid` (string) - required
-- `cid` (string) - required
-
-**Response Codes:** 204, 301, 404, 410
-
-**Implementation Template:**
-
-```typescript
-/**
- * Delete Conclusion
- *
- * Delete a conclusion on a person.
- *
- * @param pid - pid
- * @param cid - cid
- * @returns Promise with response data
- */
-export async function deletegenealogiesconclusion(
-	sdk: FamilySearchSDK,
-	pid: string,
-	cid: string
-): Promise<any> {
-	try {
-		const response = await sdk.delete<any>(`/platform/genealogies/persons/${pid}/conclusions/${cid}`);
-		return response.data;
-	} catch (error) {
-		sdk["logger"].error("[FamilySearch SDK] Failed to deletegenealogiesconclusion:", error);
-		throw error;
-	}
-}
-
-```
-
----
-
-### deletegenealogiessourcedescription
-
-- **Title:** Delete Source Description
-- **Method:** DELETE
-- **URL:** `https://apibeta.familysearch.org/platform/genealogies/sources/{sdid}`
-- **Description:** Delete a source description.
-
-**Path Parameters:**
-
-- `sdid` (string) - required
-
-**Response Codes:** 204, 404
-
-**Implementation Template:**
-
-```typescript
-/**
- * Delete Source Description
- *
- * Delete a source description.
- *
- * @param sdid - sdid
- * @returns Promise with response data
- */
-export async function deletegenealogiessourcedescription(
-	sdk: FamilySearchSDK,
-	sdid: string
-): Promise<any> {
-	try {
-		const response = await sdk.delete<any>(`/platform/genealogies/sources/${sdid}`);
-		return response.data;
-	} catch (error) {
-		sdk["logger"].error("[FamilySearch SDK] Failed to deletegenealogiessourcedescription:", error);
-		throw error;
-	}
-}
-
-```
-
----
-
-### deletegenealogiestree
-
-- **Title:** Delete Tree
-- **Method:** DELETE
-- **URL:** `https://apibeta.familysearch.org/platform/genealogies/trees/{tid}`
-- **Description:** Delete a genealogies tree.
-
-**Path Parameters:**
-
-- `tid` (string) - required
-
-**Response Codes:** 204, 429
-
-**Implementation Template:**
-
-```typescript
-/**
- * Delete Tree
- *
- * Delete a genealogies tree.
- *
- * @param tid - tid
- * @returns Promise with response data
- */
-export async function deletegenealogiestree(
-	sdk: FamilySearchSDK,
-	tid: string
-): Promise<any> {
-	try {
-		const response = await sdk.delete<any>(`/platform/genealogies/trees/${tid}`);
-		return response.data;
-	} catch (error) {
-		sdk["logger"].error("[FamilySearch SDK] Failed to deletegenealogiestree:", error);
 		throw error;
 	}
 }
@@ -1787,246 +1676,6 @@ export async function performpersonmatchesbyexample(
 		return response.data;
 	} catch (error) {
 		sdk["logger"].error("[FamilySearch SDK] Failed to performpersonmatchesbyexample:", error);
-		throw error;
-	}
-}
-
-```
-
----
-
-### readgenealogiesbulkmatch
-
-- **Title:** Read Genealogies Bulk Matches
-- **Method:** GET
-- **URL:** `https://apibeta.familysearch.org/platform/genealogies/persons/{gpids}/bulkmatches`
-- **Description:** Read a set of matches for the given genealogies persons.
-
-**Path Parameters:**
-
-- `gpids` (string) - required
-
-**Response Codes:** 200, 204, 404
-
-**Implementation Template:**
-
-```typescript
-/**
- * Read Genealogies Bulk Matches
- *
- * Read a set of matches for the given genealogies persons.
- *
- * @param gpids - gpids
- * @returns Promise with response data
- */
-export async function getgenealogiesbulkmatch(
-	sdk: FamilySearchSDK,
-	gpids: string
-): Promise<any> {
-	try {
-		const response = await sdk.get<any>(`/platform/genealogies/persons/${gpids}/bulkmatches`);
-		return response.data;
-	} catch (error) {
-		sdk["logger"].error("[FamilySearch SDK] Failed to getgenealogiesbulkmatch:", error);
-		throw error;
-	}
-}
-
-```
-
----
-
-### readgenealogiesnote
-
-- **Title:** Read Genealogies Note
-- **Method:** GET
-- **URL:** `https://apibeta.familysearch.org/platform/genealogies/notes/{nid}`
-- **Description:** Read a genealogies note.
-
-**Path Parameters:**
-
-- `nid` (string) - required
-
-**Response Codes:** 200, 404
-
-**Implementation Template:**
-
-```typescript
-/**
- * Read Genealogies Note
- *
- * Read a genealogies note.
- *
- * @param nid - nid
- * @returns Promise with response data
- */
-export async function getgenealogiesnote(
-	sdk: FamilySearchSDK,
-	nid: string
-): Promise<any> {
-	try {
-		const response = await sdk.get<any>(`/platform/genealogies/notes/${nid}`);
-		return response.data;
-	} catch (error) {
-		sdk["logger"].error("[FamilySearch SDK] Failed to getgenealogiesnote:", error);
-		throw error;
-	}
-}
-
-```
-
----
-
-### readgenealogiespersonmatches
-
-- **Title:** Read Genealogies Person Matches
-- **Method:** GET
-- **URL:** `https://apibeta.familysearch.org/platform/genealogies/persons/{pid}/matches`
-- **Description:** The Person Matches by Genealogies Person Id resource defines the set of matches in the system for a person in the user-submitted genealogies.
-
-**Path Parameters:**
-
-- `pid` (string) - required
-
-**Response Codes:** 200, 204, 301, 404, 410, 429
-
-**Implementation Template:**
-
-```typescript
-/**
- * Read Genealogies Person Matches
- *
- * The Person Matches by Genealogies Person Id resource defines the set of matches in the system for a person in the user-submitted genealogies.
- *
- * @param pid - pid
- * @returns Promise with response data
- */
-export async function getgenealogiespersonmatches(
-	sdk: FamilySearchSDK,
-	pid: string
-): Promise<any> {
-	try {
-		const response = await sdk.get<any>(`/platform/genealogies/persons/${pid}/matches`);
-		return response.data;
-	} catch (error) {
-		sdk["logger"].error("[FamilySearch SDK] Failed to getgenealogiespersonmatches:", error);
-		throw error;
-	}
-}
-
-```
-
----
-
-### readgenealogiessourcedescription
-
-- **Title:** Read Source Description
-- **Method:** GET
-- **URL:** `https://apibeta.familysearch.org/platform/genealogies/sources/{sdid}`
-- **Description:** Read a source description.
-
-**Path Parameters:**
-
-- `sdid` (string) - required
-
-**Response Codes:** 200, 404, 429
-
-**Implementation Template:**
-
-```typescript
-/**
- * Read Source Description
- *
- * Read a source description.
- *
- * @param sdid - sdid
- * @returns Promise with response data
- */
-export async function getgenealogiessourcedescription(
-	sdk: FamilySearchSDK,
-	sdid: string
-): Promise<any> {
-	try {
-		const response = await sdk.get<any>(`/platform/genealogies/sources/${sdid}`);
-		return response.data;
-	} catch (error) {
-		sdk["logger"].error("[FamilySearch SDK] Failed to getgenealogiessourcedescription:", error);
-		throw error;
-	}
-}
-
-```
-
----
-
-### readgenealogiestree
-
-- **Title:** Read Tree
-- **Method:** GET
-- **URL:** `https://apibeta.familysearch.org/platform/genealogies/trees/{tid}`
-- **Description:** Read a tree in a user-submitted genealogy.
-
-**Path Parameters:**
-
-- `tid` (string) - required
-
-**Response Codes:** 200, 404, 429
-
-**Implementation Template:**
-
-```typescript
-/**
- * Read Tree
- *
- * Read a tree in a user-submitted genealogy.
- *
- * @param tid - tid
- * @returns Promise with response data
- */
-export async function getgenealogiestree(
-	sdk: FamilySearchSDK,
-	tid: string
-): Promise<any> {
-	try {
-		const response = await sdk.get<any>(`/platform/genealogies/trees/${tid}`);
-		return response.data;
-	} catch (error) {
-		sdk["logger"].error("[FamilySearch SDK] Failed to getgenealogiestree:", error);
-		throw error;
-	}
-}
-
-```
-
----
-
-### readgenealogiestrees
-
-- **Title:** Read Genealogies Trees
-- **Method:** GET
-- **URL:** `https://apibeta.familysearch.org/platform/genealogies/trees`
-- **Description:** Read the trees the current user has created.
-
-**Response Codes:** 200
-
-**Implementation Template:**
-
-```typescript
-/**
- * Read Genealogies Trees
- *
- * Read the trees the current user has created.
- *
- * @returns Promise with response data
- */
-export async function getgenealogiestrees(
-	sdk: FamilySearchSDK
-): Promise<any> {
-	try {
-		const response = await sdk.get<any>(`/platform/genealogies/trees`);
-		return response.data;
-	} catch (error) {
-		sdk["logger"].error("[FamilySearch SDK] Failed to getgenealogiestrees:", error);
 		throw error;
 	}
 }
@@ -3022,88 +2671,6 @@ export async function updatecouplerelationshipspousesorder(
 		return response.data;
 	} catch (error) {
 		sdk["logger"].error("[FamilySearch SDK] Failed to updatecouplerelationshipspousesorder:", error);
-		throw error;
-	}
-}
-
-```
-
----
-
-### updategenealogiessourcedescription
-
-- **Title:** Update Source Description
-- **Method:** POST
-- **URL:** `https://apibeta.familysearch.org/platform/genealogies/sources/{sdid}`
-- **Description:** Update a source description.
-
-**Path Parameters:**
-
-- `sdid` (string) - required
-
-**Response Codes:** 204, 404
-
-**Implementation Template:**
-
-```typescript
-/**
- * Update Source Description
- *
- * Update a source description.
- *
- * @param sdid - sdid
- * @returns Promise with response data
- */
-export async function updategenealogiessourcedescription(
-	sdk: FamilySearchSDK,
-	sdid: string
-): Promise<any> {
-	try {
-		const response = await sdk.post<any>(`/platform/genealogies/sources/${sdid}`, data);
-		return response.data;
-	} catch (error) {
-		sdk["logger"].error("[FamilySearch SDK] Failed to updategenealogiessourcedescription:", error);
-		throw error;
-	}
-}
-
-```
-
----
-
-### updategenealogiestree
-
-- **Title:** Update Tree
-- **Method:** POST
-- **URL:** `https://apibeta.familysearch.org/platform/genealogies/trees/{tid}`
-- **Description:** Update a genealogies tree with persons and/or relationships.
-
-**Path Parameters:**
-
-- `tid` (string) - required
-
-**Response Codes:** 200, 204, 404, 429
-
-**Implementation Template:**
-
-```typescript
-/**
- * Update Tree
- *
- * Update a genealogies tree with persons and/or relationships.
- *
- * @param tid - tid
- * @returns Promise with response data
- */
-export async function updategenealogiestree(
-	sdk: FamilySearchSDK,
-	tid: string
-): Promise<any> {
-	try {
-		const response = await sdk.post<any>(`/platform/genealogies/trees/${tid}`, data);
-		return response.data;
-	} catch (error) {
-		sdk["logger"].error("[FamilySearch SDK] Failed to updategenealogiestree:", error);
 		throw error;
 	}
 }

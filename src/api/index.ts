@@ -19,6 +19,9 @@ export * from "./tree";
 // Trees API (Tree Management)
 export * from "./trees";
 
+// Genealogies API (User-Submitted Trees)
+export * from "./genealogies";
+
 // Memories API
 export * from "./memories";
 

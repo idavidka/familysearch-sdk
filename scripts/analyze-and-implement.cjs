@@ -5,7 +5,15 @@
  *
  * This script:
  * 1. Reads all HTML documentation files
- * 2. Extracts endpoint details (method, params, response)
+ * 2. Extracts endpoint detai	readpersonchangehistory: "getPersonChangeHistory",
+	readpersonmerge: "getPersonMerge",
+	readpersonmatches: "getPersonMatches",
+	readpersonnonmatches: "getPersonNonMatches",
+	updatematchresolution: "updateMatchResolution",
+	readpersonnotamatches: "getNotAMatchDeclarations",
+	updatepersonnotamatches: "createNotAMatchDeclaration",
+	deletepersonnotamatches: "deleteAllNotAMatchDeclarations",
+	deletepersonnotamatch: "deleteNotAMatchDeclaration",thod, params, response)
  * 3. Checks existing implementation
  * 4. Generates missing implementations
  * 5. Creates detailed report
@@ -298,6 +306,26 @@ function checkImplementation(endpointName) {
 	readmemorycomments: "getMemoryWithComments",
 	readmemorypersona: "getMemoryPersona",
 	readmemorypersonas: "getMemoryPersonas",
+
+	// Genealogies (User-Submitted Trees)
+	readgenealogiestree: "getGenealogyTree",
+	readgenealogiestrees: "getGenealogyTrees",
+	creategenealogiestree: "createGenealogyTree",
+	updategenealogiestree: "updateGenealogyTree",
+	deletegenealogiestree: "deleteGenealogyTree",
+	readgenealogiessourcedescription: "getGenealogySourceDescription",
+	creategenealogiessourcedescription: "createGenealogySourceDescription",
+	updategenealogiessourcedescription: "updateGenealogySourceDescription",
+	deletegenealogiessourcedescription: "deleteGenealogySourceDescription",
+	deletegenealogiesconclusion: "deleteGenealogyConclusion",
+	readgenealogiesbulkmatch: "getGenealogyBulkMatch",
+	readgenealogiespersonmatches: "getGenealogyPersonMatches",
+	readgenealogiesnote: "getGenealogyNote",
+	updategenealogiesperson: "updateGenealogyPerson",
+	deletegenealogiesperson: "deleteGenealogyPerson",
+	restoregenealogiesperson: "restoreGenealogyPerson",
+	updategenealogiespersonrelationship: "updateGenealogyRelationship",
+	deletegenealogiespersonrelationship: "deleteGenealogyRelationship",
 
 	// Discussions
 	readdiscussion: "getDiscussion",
