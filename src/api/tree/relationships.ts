@@ -1130,3 +1130,56 @@ export async function readChildAndParentRelationshipNote(
 		throw error;
 	}
 }
+
+/**
+ * Create a relationship using GEDCOM X format
+ *
+ * Generic relationship creation endpoint that accepts raw GEDCOM X data.
+ * This allows creating relationships with full control over all GEDCOM X properties.
+ *
+ * For most use cases, prefer using `createCoupleRelationship()` or
+ * `createChildAndParentsRelationship()` which provide type-safe interfaces.
+ *
+ * @param sdk - SDK instance
+ * @param relationshipData - GEDCOM X relationship data
+ * @returns Created relationship response
+ * @throws Error if creation fails
+ *
+ * @example
+ * ```typescript
+ * const relationship = await createRelationshipGedcomx(sdk, {
+ *   relationships: [{
+ *     type: "http://gedcomx.org/Couple",
+ *     person1: { resource: "#person1" },
+ *     person2: { resource: "#person2" },
+ *     facts: [{
+ *       type: "http://gedcomx.org/Marriage",
+ *       date: { original: "1850" },
+ *       place: { original: "London, England" }
+ *     }]
+ *   }],
+ *   persons: [
+ *     { id: "person1", resource: "#PPPP-PPP" },
+ *     { id: "person2", resource: "#PPPP-PPQ" }
+ *   ]
+ * });
+ * ```
+ */
+export async function createRelationshipGedcomx(
+	sdk: FamilySearchSDK,
+	relationshipData: unknown
+): Promise<CreateRelationshipResponse | null> {
+	try {
+		const response = await sdk.post<CreateRelationshipResponse>(
+			"/platform/tree/relationships",
+			relationshipData
+		);
+		return response.data || null;
+	} catch (error) {
+		sdk.logger.error(
+			`[FamilySearch SDK] Failed to create relationship with GEDCOM X:`,
+			error
+		);
+		throw error;
+	}
+}

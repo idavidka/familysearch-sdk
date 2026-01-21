@@ -69,6 +69,7 @@ export {
 	deleteChildAndParentsRelationshipSourceReference,
 	deleteChildAndParentsRelationshipParent,
 	readChildAndParentRelationshipNote,
+	createRelationshipGedcomx,
 } from "./relationships";
 
 // Pedigrees API
