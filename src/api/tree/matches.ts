@@ -316,9 +316,12 @@ export async function getTreeMatches(
 		if (options) {
 			const params = new URLSearchParams();
 			if (options.status) params.set("status", options.status);
-			if (options.collection) params.set("collection", options.collection);
-			if (options.count !== undefined) params.set("count", options.count.toString());
-			if (options.start !== undefined) params.set("start", options.start.toString());
+			if (options.collection)
+				params.set("collection", options.collection);
+			if (options.count !== undefined)
+				params.set("count", options.count.toString());
+			if (options.start !== undefined)
+				params.set("start", options.start.toString());
 
 			const queryString = params.toString();
 			if (queryString) {
@@ -334,5 +337,157 @@ export async function getTreeMatches(
 			error
 		);
 		return null;
+	}
+}
+
+/**
+ * Get not-a-match declarations for a person
+ *
+ * Returns all "not-a-match" declarations for a specific person.
+ * These are declarations that two persons are NOT the same individual.
+ *
+ * @param sdk - SDK instance
+ * @param personId - Person ID
+ * @returns Not-a-match declarations or null
+ *
+ * @example
+ * ```typescript
+ * const notMatches = await getPersonNotAMatches(sdk, 'PPPP-PPP');
+ * console.log('Not-a-match declarations:', notMatches?.entries?.length);
+ * ```
+ */
+export async function getPersonNotAMatches(
+	sdk: FamilySearchSDK,
+	personId: string
+): Promise<NotAMatchResponse | null> {
+	try {
+		const response = await sdk.get<NotAMatchResponse>(
+			`/platform/tree/persons/${personId}/not-a-match`
+		);
+		return response.data || null;
+	} catch (error) {
+		sdk.logger.error(
+			`[FamilySearch SDK] Failed to get not-a-match declarations for ${personId}:`,
+			error
+		);
+		return null;
+	}
+}
+
+/**
+ * Update not-a-match declarations for a person
+ *
+ * Creates or updates "not-a-match" declarations in batch.
+ * This declares that multiple persons are NOT the same individual.
+ *
+ * @param sdk - SDK instance
+ * @param personId - Person ID
+ * @param notAMatchIds - Array of person IDs that are not matches
+ * @returns Update response or null
+ *
+ * @example
+ * ```typescript
+ * await updatePersonNotAMatches(sdk, 'PPPP-PPP', ['AAAA-AAA', 'BBBB-BBB']);
+ * console.log('Not-a-match declarations updated');
+ * ```
+ */
+export async function updatePersonNotAMatches(
+	sdk: FamilySearchSDK,
+	personId: string,
+	notAMatchIds: string[]
+): Promise<NotAMatchResponse | null> {
+	try {
+		// Build persons array for GedcomX format
+		const input = {
+			persons: notAMatchIds.map((id) => ({ id })),
+		};
+
+		const response = await sdk.post<NotAMatchResponse>(
+			`/platform/tree/persons/${personId}/not-a-match`,
+			input
+		);
+		return response.data || null;
+	} catch (error) {
+		sdk.logger.error(
+			`[FamilySearch SDK] Failed to update not-a-match declarations for ${personId}:`,
+			error
+		);
+		return null;
+	}
+}
+
+/**
+ * Delete all not-a-match declarations for a person
+ *
+ * Removes all "not-a-match" declarations for a specific person in batch.
+ *
+ * @param sdk - SDK instance
+ * @param personId - Person ID
+ * @returns Delete response
+ * @throws Error if deletion fails
+ *
+ * @example
+ * ```typescript
+ * await deletePersonNotAMatches(sdk, 'PPPP-PPP');
+ * console.log('All not-a-match declarations removed');
+ * ```
+ */
+export async function deletePersonNotAMatches(
+	sdk: FamilySearchSDK,
+	personId: string
+): Promise<DeleteResponse> {
+	try {
+		const response = await sdk.delete<DeleteResponse>(
+			`/platform/tree/persons/${personId}/not-a-match`
+		);
+		return {
+			statusCode: response.statusCode,
+			statusText: response.statusText,
+		};
+	} catch (error) {
+		sdk.logger.error(
+			`[FamilySearch SDK] Failed to delete all not-a-match declarations for ${personId}:`,
+			error
+		);
+		throw error;
+	}
+}
+
+/**
+ * Delete a specific not-a-match declaration
+ *
+ * Removes a single "not-a-match" declaration by its ID.
+ *
+ * @param sdk - SDK instance
+ * @param personId - Person ID
+ * @param notAMatchId - Not-a-match declaration ID to remove
+ * @returns Delete response
+ * @throws Error if deletion fails
+ *
+ * @example
+ * ```typescript
+ * await deletePersonNotAMatch(sdk, 'PPPP-PPP', 'NMID-123');
+ * console.log('Not-a-match declaration removed');
+ * ```
+ */
+export async function deletePersonNotAMatch(
+	sdk: FamilySearchSDK,
+	personId: string,
+	notAMatchId: string
+): Promise<DeleteResponse> {
+	try {
+		const response = await sdk.delete<DeleteResponse>(
+			`/platform/tree/persons/${personId}/not-a-match/${notAMatchId}`
+		);
+		return {
+			statusCode: response.statusCode,
+			statusText: response.statusText,
+		};
+	} catch (error) {
+		sdk.logger.error(
+			`[FamilySearch SDK] Failed to delete not-a-match declaration ${notAMatchId} for ${personId}:`,
+			error
+		);
+		throw error;
 	}
 }

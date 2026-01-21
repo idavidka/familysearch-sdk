@@ -1,6 +1,6 @@
 /**
  * FamilySearch Tree API
- * 
+ *
  * Exports all tree-related API functions:
  * - Persons (CRUD operations)
  * - Relationships (couple and child-parent, change history, order management)
@@ -70,15 +70,10 @@ export {
 } from "./relationships";
 
 // Pedigrees API
-export {
-	getAncestry,
-	getDescendancy,
-} from "./pedigrees";
+export { getAncestry, getDescendancy } from "./pedigrees";
 
 // Search API
-export {
-	searchPersons,
-} from "./search";
+export { searchPersons } from "./search";
 
 // Matches API
 export {
@@ -89,6 +84,10 @@ export {
 	createNotAMatchDeclaration,
 	deleteNotAMatchDeclaration,
 	deleteAllNotAMatchDeclarations,
+	getPersonNotAMatches,
+	updatePersonNotAMatches,
+	deletePersonNotAMatches,
+	deletePersonNotAMatch,
 } from "./matches";
 
 // Sources API
@@ -130,11 +129,7 @@ export {
 } from "./source-attachments";
 
 // Person Merges API
-export {
-	getPersonMergeAnalysis,
-	canMergePersons,
-	mergePerson,
-} from "./merges";
+export { getPersonMergeAnalysis, canMergePersons, mergePerson } from "./merges";
 
 // Preferred Relationships API
 export {
@@ -168,14 +163,10 @@ export {
 } from "./source-box";
 
 // Agent API
-export {
-	getAgent,
-} from "./agent";
+export { getAgent } from "./agent";
 
 // Pending Modifications API
-export {
-	getPendingModifications,
-} from "./pending-modifications";
+export { getPendingModifications } from "./pending-modifications";
 
 // Groups (Community Trees) API
 export {
@@ -187,13 +178,7 @@ export {
 } from "./groups";
 
 // Tree Changes API
-export {
-	getTreeChanges,
-} from "./tree-changes";
+export { getTreeChanges } from "./tree-changes";
 
 // Trees API
-export {
-	getTree,
-	deleteTree,
-	createTree,
-} from "./trees";
+export { getTree, deleteTree, createTree } from "./trees";
