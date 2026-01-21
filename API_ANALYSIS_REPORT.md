@@ -1,6 +1,6 @@
 # FamilySearch SDK API Analysis Report
 
-**Generated:** 2026-01-21T10:42:48.093Z
+**Generated:** 2026-01-21T10:47:40.972Z
 
 ---
 
@@ -9,15 +9,15 @@
 | Metric | Count | Percentage |
 |--------|-------|------------|
 | **Total Endpoints** | 204 | 100% |
-| ✅ **Implemented** | 126 | 62% |
-| ❌ **Missing** | 66 | 32% |
+| ✅ **Implemented** | 134 | 66% |
+| ❌ **Missing** | 58 | 28% |
 | 🚫 **Not Applicable** | 12 | 6% |
 
-**Applicable Coverage:** 126/192 (66%)
+**Applicable Coverage:** 134/192 (70%)
 
 ---
 
-## ✅ Implemented Endpoints (126)
+## ✅ Implemented Endpoints (134)
 
 ### checkplaceischild
 
@@ -116,6 +116,13 @@
 - **Method:** POST
 - **Function:** `createSourceDescription()`
 - **Description:** Create a source description.
+
+### createsourcefolder
+
+- **Title:** Create Source Folder
+- **Method:** POST
+- **Function:** `createSourceFolder()`
+- **Description:** Create a user-defined collection.
 
 ### delete
 
@@ -304,6 +311,20 @@ and if the reason supplied is too long, the request may fail as a bad request.
 - **Method:** DELETE
 - **Function:** `deleteSourceDescription()`
 - **Description:** Delete a source description.
+
+### deletesourcedescriptionsfromcollections
+
+- **Title:** Delete Source Descriptions From Collections
+- **Method:** DELETE
+- **Function:** `removeSourcesFromCollection()`
+- **Description:** Remove one or more source descriptions from all user-defined collections owned by a specific user.
+
+### deleteuserdefinedcollection
+
+- **Title:** Delete User Defined Collection
+- **Method:** DELETE
+- **Function:** `deleteUserDefinedCollection()`
+- **Description:** Delete a user-defined collection.  The Source Folder resource defines the interface for a source folder. This resource is used to delete a source folder. The default source folder is the folder without a name. If a folder isn't specified when a source is attached, the source will be put in the default folder.
 
 ### getaccesstoken
 
@@ -725,6 +746,13 @@ and if the reason supplied is too long, the request may fail as a bad request.
 - **Function:** `getSourceDescription()`
 - **Description:** Read a source description. The Source Description resource gets a user's source description.
 
+### readsourcefolders
+
+- **Title:** Read Source Folders
+- **Method:** GET
+- **Function:** `getSourceFolders()`
+- **Description:** Read the collections defined by the current user.
+
 ### readtree
 
 - **Title:** Read Tree
@@ -732,12 +760,26 @@ and if the reason supplied is too long, the request may fail as a bad request.
 - **Function:** `getTree()`
 - **Description:** Read a CET specified by the tree Id (tid) in the path.
 
+### readuserdefinedcollection
+
+- **Title:** Read User Defined Collection
+- **Method:** GET
+- **Function:** `getUserDefinedCollection()`
+- **Description:** Get a user-defined collection.  The Source Folder resource defines the interface for a source folder. This resource is used to read a source folder. The default source folder is the folder without a name. If a folder isn't specified when a source is attached, the source will be put in the default folder.
+
 ### readuserhistory
 
 - **Title:** Read User History
 - **Method:** GET
 - **Function:** `getUserHistory()`
 - **Description:** Read a user's history.
+
+### readusersourcefolders
+
+- **Title:** Read User Source Folders
+- **Method:** GET
+- **Function:** `getUserSourceFolders()`
+- **Description:** Read the set of collections that belong to a specific user.
 
 ### restorechange
 
@@ -900,6 +942,20 @@ and if the reason supplied is too long, the request may fail as a bad request.
 - **Function:** `updateSourceDescription()`
 - **Description:** Update a Source Description.
 
+### updatesourcedescriptionstocollection
+
+- **Title:** Update Source Descriptions To Collection
+- **Method:** POST
+- **Function:** `addSourcesToCollection()`
+- **Description:** Add or move a set of source descriptions to this list of source descriptions in a user-defined collection.
+
+### updateuserdefinedcollection
+
+- **Title:** Update User Defined Collection
+- **Method:** POST
+- **Function:** `updateUserDefinedCollection()`
+- **Description:** Update a user-defined collection.  The Source Folder resource defines the interface for a source folder. This resource is used to update a source folder. The default source folder is the folder without a name. If a folder isn't specified when a source is attached, the source will be put in the default folder.
+
 ### updateuserhistory
 
 - **Title:** Update User History
@@ -909,7 +965,7 @@ and if the reason supplied is too long, the request may fail as a bad request.
 
 ---
 
-## ❌ Missing Endpoints (66)
+## ❌ Missing Endpoints (58)
 
 These endpoints need to be implemented. Implementation templates are provided below.
 
@@ -1176,41 +1232,6 @@ export async function createrelationshipgedcomx(
 		return response.data;
 	} catch (error) {
 		sdk["logger"].error("[FamilySearch SDK] Failed to createrelationshipgedcomx:", error);
-		throw error;
-	}
-}
-
-```
-
----
-
-### createsourcefolder
-
-- **Title:** Create Source Folder
-- **Method:** POST
-- **URL:** `https://apibeta.familysearch.org/platform/sources/collections`
-- **Description:** Create a user-defined collection.
-
-**Response Codes:** 201, 400
-
-**Implementation Template:**
-
-```typescript
-/**
- * Create Source Folder
- *
- * Create a user-defined collection.
- *
- * @returns Promise with response data
- */
-export async function createsourcefolder(
-	sdk: FamilySearchSDK
-): Promise<any> {
-	try {
-		const response = await sdk.post<any>(`/platform/sources/collections`, data);
-		return response.data;
-	} catch (error) {
-		sdk["logger"].error("[FamilySearch SDK] Failed to createsourcefolder:", error);
 		throw error;
 	}
 }
@@ -1556,47 +1577,6 @@ export async function deletememorypersona(
 
 ---
 
-### deletesourcedescriptionsfromcollections
-
-- **Title:** Delete Source Descriptions From Collections
-- **Method:** DELETE
-- **URL:** `https://apibeta.familysearch.org/platform/sources/{uid}/collections/descriptions`
-- **Description:** Remove one or more source descriptions from all user-defined collections owned by a specific user.
-
-**Path Parameters:**
-
-- `uid` (string) - required
-
-**Response Codes:** 204, 400
-
-**Implementation Template:**
-
-```typescript
-/**
- * Delete Source Descriptions From Collections
- *
- * Remove one or more source descriptions from all user-defined collections owned by a specific user.
- *
- * @param uid - uid
- * @returns Promise with response data
- */
-export async function deletesourcedescriptionsfromcollections(
-	sdk: FamilySearchSDK,
-	uid: string
-): Promise<any> {
-	try {
-		const response = await sdk.delete<any>(`/platform/sources/${uid}/collections/descriptions`);
-		return response.data;
-	} catch (error) {
-		sdk["logger"].error("[FamilySearch SDK] Failed to deletesourcedescriptionsfromcollections:", error);
-		throw error;
-	}
-}
-
-```
-
----
-
 ### deletetree
 
 - **Title:** Delete Tree
@@ -1674,47 +1654,6 @@ export async function deletetreepersonreference(
 		return response.data;
 	} catch (error) {
 		sdk["logger"].error("[FamilySearch SDK] Failed to deletetreepersonreference:", error);
-		throw error;
-	}
-}
-
-```
-
----
-
-### deleteuserdefinedcollection
-
-- **Title:** Delete User Defined Collection
-- **Method:** DELETE
-- **URL:** `https://apibeta.familysearch.org/platform/sources/collections/{udcid}`
-- **Description:** Delete a user-defined collection.  The Source Folder resource defines the interface for a source folder. This resource is used to delete a source folder. The default source folder is the folder without a name. If a folder isn't specified when a source is attached, the source will be put in the default folder.
-
-**Path Parameters:**
-
-- `udcid` (string) - required
-
-**Response Codes:** 204, 400, 404
-
-**Implementation Template:**
-
-```typescript
-/**
- * Delete User Defined Collection
- *
- * Delete a user-defined collection.  The Source Folder resource defines the interface for a source folder. This resource is used to delete a source folder. The default source folder is the folder without a name. If a folder isn't specified when a source is attached, the source will be put in the default folder.
- *
- * @param udcid - udcid
- * @returns Promise with response data
- */
-export async function deleteuserdefinedcollection(
-	sdk: FamilySearchSDK,
-	udcid: string
-): Promise<any> {
-	try {
-		const response = await sdk.delete<any>(`/platform/sources/collections/${udcid}`);
-		return response.data;
-	} catch (error) {
-		sdk["logger"].error("[FamilySearch SDK] Failed to deleteuserdefinedcollection:", error);
 		throw error;
 	}
 }
@@ -2371,41 +2310,6 @@ export async function getsourcedescriptions(
 
 ---
 
-### readsourcefolders
-
-- **Title:** Read Source Folders
-- **Method:** GET
-- **URL:** `https://apibeta.familysearch.org/platform/sources/collections`
-- **Description:** Read the collections defined by the current user.
-
-**Response Codes:** 307
-
-**Implementation Template:**
-
-```typescript
-/**
- * Read Source Folders
- *
- * Read the collections defined by the current user.
- *
- * @returns Promise with response data
- */
-export async function getsourcefolders(
-	sdk: FamilySearchSDK
-): Promise<any> {
-	try {
-		const response = await sdk.get<any>(`/platform/sources/collections`);
-		return response.data;
-	} catch (error) {
-		sdk["logger"].error("[FamilySearch SDK] Failed to getsourcefolders:", error);
-		throw error;
-	}
-}
-
-```
-
----
-
 ### readsourcereferences
 
 - **Title:** Read Source References
@@ -2564,47 +2468,6 @@ export async function gettreepersonmatches(
 
 ---
 
-### readuserdefinedcollection
-
-- **Title:** Read User Defined Collection
-- **Method:** GET
-- **URL:** `https://apibeta.familysearch.org/platform/sources/collections/{udcid}`
-- **Description:** Get a user-defined collection.  The Source Folder resource defines the interface for a source folder. This resource is used to read a source folder. The default source folder is the folder without a name. If a folder isn't specified when a source is attached, the source will be put in the default folder.
-
-**Path Parameters:**
-
-- `udcid` (string) - required
-
-**Response Codes:** 200, 404
-
-**Implementation Template:**
-
-```typescript
-/**
- * Read User Defined Collection
- *
- * Get a user-defined collection.  The Source Folder resource defines the interface for a source folder. This resource is used to read a source folder. The default source folder is the folder without a name. If a folder isn't specified when a source is attached, the source will be put in the default folder.
- *
- * @param udcid - udcid
- * @returns Promise with response data
- */
-export async function getuserdefinedcollection(
-	sdk: FamilySearchSDK,
-	udcid: string
-): Promise<any> {
-	try {
-		const response = await sdk.get<any>(`/platform/sources/collections/${udcid}`);
-		return response.data;
-	} catch (error) {
-		sdk["logger"].error("[FamilySearch SDK] Failed to getuserdefinedcollection:", error);
-		throw error;
-	}
-}
-
-```
-
----
-
 ### readuserdefinedcollectionsourcedescriptions
 
 - **Title:** Read User Defined Collection Descriptions
@@ -2720,47 +2583,6 @@ export async function getusersourcedescriptions(
 		return response.data;
 	} catch (error) {
 		sdk["logger"].error("[FamilySearch SDK] Failed to getusersourcedescriptions:", error);
-		throw error;
-	}
-}
-
-```
-
----
-
-### readusersourcefolders
-
-- **Title:** Read User Source Folders
-- **Method:** GET
-- **URL:** `https://apibeta.familysearch.org/platform/sources/{uid}/collections`
-- **Description:** Read the set of collections that belong to a specific user.
-
-**Path Parameters:**
-
-- `uid` (string) - required
-
-**Response Codes:** 200, 400
-
-**Implementation Template:**
-
-```typescript
-/**
- * Read User Source Folders
- *
- * Read the set of collections that belong to a specific user.
- *
- * @param uid - uid
- * @returns Promise with response data
- */
-export async function getusersourcefolders(
-	sdk: FamilySearchSDK,
-	uid: string
-): Promise<any> {
-	try {
-		const response = await sdk.get<any>(`/platform/sources/${uid}/collections`);
-		return response.data;
-	} catch (error) {
-		sdk["logger"].error("[FamilySearch SDK] Failed to getusersourcefolders:", error);
 		throw error;
 	}
 }
@@ -3454,47 +3276,6 @@ export async function updatepartneraccount(
 
 ---
 
-### updatesourcedescriptionstocollection
-
-- **Title:** Update Source Descriptions To Collection
-- **Method:** POST
-- **URL:** `https://apibeta.familysearch.org/platform/sources/collections/{udcid}/descriptions`
-- **Description:** Add or move a set of source descriptions to this list of source descriptions in a user-defined collection.
-
-**Path Parameters:**
-
-- `udcid` (string) - required
-
-**Response Codes:** 204, 404
-
-**Implementation Template:**
-
-```typescript
-/**
- * Update Source Descriptions To Collection
- *
- * Add or move a set of source descriptions to this list of source descriptions in a user-defined collection.
- *
- * @param udcid - udcid
- * @returns Promise with response data
- */
-export async function updatesourcedescriptionstocollection(
-	sdk: FamilySearchSDK,
-	udcid: string
-): Promise<any> {
-	try {
-		const response = await sdk.post<any>(`/platform/sources/collections/${udcid}/descriptions`, data);
-		return response.data;
-	} catch (error) {
-		sdk["logger"].error("[FamilySearch SDK] Failed to updatesourcedescriptionstocollection:", error);
-		throw error;
-	}
-}
-
-```
-
----
-
 ### updatetree
 
 - **Title:** Update Tree
@@ -3528,47 +3309,6 @@ export async function updatetree(
 		return response.data;
 	} catch (error) {
 		sdk["logger"].error("[FamilySearch SDK] Failed to updatetree:", error);
-		throw error;
-	}
-}
-
-```
-
----
-
-### updateuserdefinedcollection
-
-- **Title:** Update User Defined Collection
-- **Method:** POST
-- **URL:** `https://apibeta.familysearch.org/platform/sources/collections/{udcid}`
-- **Description:** Update a user-defined collection.  The Source Folder resource defines the interface for a source folder. This resource is used to update a source folder. The default source folder is the folder without a name. If a folder isn't specified when a source is attached, the source will be put in the default folder.
-
-**Path Parameters:**
-
-- `udcid` (string) - required
-
-**Response Codes:** 204, 400, 404
-
-**Implementation Template:**
-
-```typescript
-/**
- * Update User Defined Collection
- *
- * Update a user-defined collection.  The Source Folder resource defines the interface for a source folder. This resource is used to update a source folder. The default source folder is the folder without a name. If a folder isn't specified when a source is attached, the source will be put in the default folder.
- *
- * @param udcid - udcid
- * @returns Promise with response data
- */
-export async function updateuserdefinedcollection(
-	sdk: FamilySearchSDK,
-	udcid: string
-): Promise<any> {
-	try {
-		const response = await sdk.post<any>(`/platform/sources/collections/${udcid}`, data);
-		return response.data;
-	} catch (error) {
-		sdk["logger"].error("[FamilySearch SDK] Failed to updateuserdefinedcollection:", error);
 		throw error;
 	}
 }

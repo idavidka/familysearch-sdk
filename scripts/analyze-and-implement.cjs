@@ -264,6 +264,17 @@ function checkImplementation(endpointName) {
 	attachsource: "attachSource",
 	detachsource: "detachSource",
 	updatesourceattachment: "updateSourceAttachment",
+	
+	// Source Box (Collections & Folders)
+	readusersourcefolders: "getUserSourceFolders",
+	readsourcefolders: "getSourceFolders",
+	createsourcefolder: "createSourceFolder",
+	readuserdefinedcollection: "getUserDefinedCollection",
+	updateuserdefinedcollection: "updateUserDefinedCollection",
+	deleteuserdefinedcollection: "deleteUserDefinedCollection",
+	readcollectionsourcedescriptions: "getCollectionSourceDescriptions",
+	updatesourcedescriptionstocollection: "addSourcesToCollection",
+	deletesourcedescriptionsfromcollections: "removeSourcesFromCollection",
 
 	// Places
 	standardizedate: "normalizeDate",
