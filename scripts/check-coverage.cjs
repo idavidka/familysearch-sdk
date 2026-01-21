@@ -113,13 +113,14 @@ const endpointToFunction = (endpoint) => {
 		createchildandparentsrelationship: "createChildAndParentsRelationship",
 		updatechildandparentsrelationship: "updateChildAndParentsRelationship",
 		deletechildandparentsrelationship: "deleteChildAndParentsRelationship",
-		restorechildandparentsrelationship:
-			"restoreChildAndParentsRelationship",
 		readcouplerelationship: "getCoupleRelationship",
 		createcouplerelationship: "createCoupleRelationship",
 		updatecouplerelationship: "updateCoupleRelationship",
 		deletecouplerelationship: "deleteCoupleRelationship",
-		restorecouplerelationship: "restoreCoupleRelationship",
+		updatechildandparentsrelationshipparentsorder: "setParentOrder",
+		updatecouplerelationshipspousesorder: "setSpouseOrder",
+		restorechildandparentsrelationshipchange: "restoreChange",
+		restorecouplerelationshipchange: "restoreChange",
 
 		// Sources
 		readsourcedescription: "getSourceDescription",
@@ -127,6 +128,11 @@ const endpointToFunction = (endpoint) => {
 		updatesourcedescription: "updateSourceDescription",
 		deletesourcedescription: "deleteSourceDescription",
 		readsourcedescriptionchanges: "getSourceDescriptionChanges",
+		readuserdefinedcollectionsourcedescriptions:
+			"getCollectionSourceDescriptions",
+		deletesourcedescriptionsfromcollections:
+			"removeSourcesFromCollection",
+		updatesourcedescriptionstocollection: "addSourcesToCollection",
 		attachsource: "attachSource",
 		detachsource: "detachSource",
 		updatesourceattachment: "updateSourceAttachment",
