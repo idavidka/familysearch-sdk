@@ -25,11 +25,11 @@ import type {
  *
  * @example
  * ```typescript
- * const source = await getGenealogySourceDescription(sdk, 'TREE-123', 'SRC-456');
+ * const source = await readGenealogySourceDescription(sdk, 'TREE-123', 'SRC-456');
  * console.log('Source title:', source?.sourceDescriptions?.[0]?.titles?.[0]?.value);
  * ```
  */
-export async function getGenealogySourceDescription(
+export async function readGenealogySourceDescription(
 	sdk: FamilySearchSDK,
 	treeId: string,
 	sourceId: string
@@ -41,7 +41,7 @@ export async function getGenealogySourceDescription(
 		return response.data || null;
 	} catch (error) {
 		sdk.logger.error(
-			`[FamilySearch SDK] Failed to get genealogy source ${sourceId} in tree ${treeId}:`,
+			`[FamilySearch SDK] Failed to read genealogy source ${sourceId} in tree ${treeId}:`,
 			error
 		);
 		return null;

@@ -9,8 +9,8 @@
 
 // Tree operations
 export {
-	getGenealogyTree,
-	getGenealogyTrees,
+	readGenealogyTree,
+	readGenealogyTrees,
 	createGenealogyTree,
 	updateGenealogyTree,
 	deleteGenealogyTree,
@@ -18,8 +18,8 @@ export {
 
 // Person operations
 export {
-	getGenealogyPerson,
-	getGenealogyPersons,
+	readGenealogyPerson,
+	readGenealogyPersons,
 	createGenealogyPerson,
 	updateGenealogyPerson,
 	deleteGenealogyPerson,
@@ -34,7 +34,7 @@ export {
 
 // Source operations
 export {
-	getGenealogySourceDescription,
+	readGenealogySourceDescription,
 	createGenealogySourceDescription,
 	updateGenealogySourceDescription,
 	deleteGenealogySourceDescription,
@@ -43,7 +43,7 @@ export {
 // Other operations
 export {
 	deleteGenealogyConclusion,
-	getGenealogyBulkMatch,
-	getGenealogyPersonMatches,
-	getGenealogyNote,
+	readGenealogyBulkMatch,
+	readGenealogyPersonMatches,
+	readGenealogyNote,
 } from "./other";

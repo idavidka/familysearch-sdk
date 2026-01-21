@@ -59,11 +59,11 @@ export async function deleteGenealogyConclusion(
  *
  * @example
  * ```typescript
- * const matches = await getGenealogyBulkMatch(sdk, 'TREE-123');
+ * const matches = await readGenealogyBulkMatch(sdk, 'TREE-123');
  * console.log('Found', matches?.entries?.length, 'potential matches');
  * ```
  */
-export async function getGenealogyBulkMatch(
+export async function readGenealogyBulkMatch(
 	sdk: FamilySearchSDK,
 	treeId: string
 ): Promise<GenealogyBulkMatchResponse | null> {
@@ -74,7 +74,7 @@ export async function getGenealogyBulkMatch(
 		return response.data || null;
 	} catch (error) {
 		sdk.logger.error(
-			`[FamilySearch SDK] Failed to get genealogy bulk match for tree ${treeId}:`,
+			`[FamilySearch SDK] Failed to read genealogy bulk match for tree ${treeId}:`,
 			error
 		);
 		return null;
@@ -93,11 +93,11 @@ export async function getGenealogyBulkMatch(
  *
  * @example
  * ```typescript
- * const matches = await getGenealogyPersonMatches(sdk, 'TREE-123', 'PERSON-456');
+ * const matches = await readGenealogyPersonMatches(sdk, 'TREE-123', 'PERSON-456');
  * console.log('Found', matches?.entries?.length, 'matches for person');
  * ```
  */
-export async function getGenealogyPersonMatches(
+export async function readGenealogyPersonMatches(
 	sdk: FamilySearchSDK,
 	treeId: string,
 	personId: string
@@ -109,7 +109,7 @@ export async function getGenealogyPersonMatches(
 		return response.data || null;
 	} catch (error) {
 		sdk.logger.error(
-			`[FamilySearch SDK] Failed to get genealogy person matches for ${personId} in tree ${treeId}:`,
+			`[FamilySearch SDK] Failed to read genealogy person matches for ${personId} in tree ${treeId}:`,
 			error
 		);
 		return null;
@@ -128,11 +128,11 @@ export async function getGenealogyPersonMatches(
  *
  * @example
  * ```typescript
- * const note = await getGenealogyNote(sdk, 'TREE-123', 'NOTE-456');
+ * const note = await readGenealogyNote(sdk, 'TREE-123', 'NOTE-456');
  * console.log('Note text:', note?.notes?.[0]?.text);
  * ```
  */
-export async function getGenealogyNote(
+export async function readGenealogyNote(
 	sdk: FamilySearchSDK,
 	treeId: string,
 	noteId: string
@@ -144,7 +144,7 @@ export async function getGenealogyNote(
 		return response.data || null;
 	} catch (error) {
 		sdk.logger.error(
-			`[FamilySearch SDK] Failed to get genealogy note ${noteId} in tree ${treeId}:`,
+			`[FamilySearch SDK] Failed to read genealogy note ${noteId} in tree ${treeId}:`,
 			error
 		);
 		return null;

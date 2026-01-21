@@ -26,11 +26,11 @@ import type {
  *
  * @example
  * ```typescript
- * const person = await getGenealogyPerson(sdk, 'TREE-123', 'PERSON-456');
+ * const person = await readGenealogyPerson(sdk, 'TREE-123', 'PERSON-456');
  * console.log('Person name:', person?.persons?.[0]?.display?.name);
  * ```
  */
-export async function getGenealogyPerson(
+export async function readGenealogyPerson(
 	sdk: FamilySearchSDK,
 	treeId: string,
 	personId: string
@@ -42,7 +42,7 @@ export async function getGenealogyPerson(
 		return response.data || null;
 	} catch (error) {
 		sdk.logger.error(
-			`[FamilySearch SDK] Failed to get genealogy person ${personId} in tree ${treeId}:`,
+			`[FamilySearch SDK] Failed to read genealogy person ${personId} in tree ${treeId}:`,
 			error
 		);
 		return null;
@@ -60,11 +60,11 @@ export async function getGenealogyPerson(
  *
  * @example
  * ```typescript
- * const persons = await getGenealogyPersons(sdk, 'TREE-123');
+ * const persons = await readGenealogyPersons(sdk, 'TREE-123');
  * console.log('Tree has', persons?.persons?.length, 'persons');
  * ```
  */
-export async function getGenealogyPersons(
+export async function readGenealogyPersons(
 	sdk: FamilySearchSDK,
 	treeId: string
 ): Promise<GenealogyPersonsResponse | null> {
@@ -75,7 +75,7 @@ export async function getGenealogyPersons(
 		return response.data || null;
 	} catch (error) {
 		sdk.logger.error(
-			`[FamilySearch SDK] Failed to get genealogy persons for tree ${treeId}:`,
+			`[FamilySearch SDK] Failed to read genealogy persons for tree ${treeId}:`,
 			error
 		);
 		return null;

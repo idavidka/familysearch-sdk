@@ -28,11 +28,11 @@ import type {
  *
  * @example
  * ```typescript
- * const tree = await getGenealogyTree(sdk, 'TREE-123');
+ * const tree = await readGenealogyTree(sdk, 'TREE-123');
  * console.log('Tree name:', tree?.trees?.[0]?.title);
  * ```
  */
-export async function getGenealogyTree(
+export async function readGenealogyTree(
 	sdk: FamilySearchSDK,
 	treeId: string
 ): Promise<GenealogyTreeResponse | null> {
@@ -43,7 +43,7 @@ export async function getGenealogyTree(
 		return response.data || null;
 	} catch (error) {
 		sdk.logger.error(
-			`[FamilySearch SDK] Failed to get genealogy tree ${treeId}:`,
+			`[FamilySearch SDK] Failed to read genealogy tree ${treeId}:`,
 			error
 		);
 		return null;
@@ -60,11 +60,11 @@ export async function getGenealogyTree(
  *
  * @example
  * ```typescript
- * const trees = await getGenealogyTrees(sdk);
+ * const trees = await readGenealogyTrees(sdk);
  * console.log('User has', trees?.trees?.length, 'research trees');
  * ```
  */
-export async function getGenealogyTrees(
+export async function readGenealogyTrees(
 	sdk: FamilySearchSDK
 ): Promise<GenealogyTreesResponse | null> {
 	try {
@@ -74,7 +74,7 @@ export async function getGenealogyTrees(
 		return response.data || null;
 	} catch (error) {
 		sdk.logger.error(
-			`[FamilySearch SDK] Failed to get genealogy trees:`,
+			`[FamilySearch SDK] Failed to read genealogy trees:`,
 			error
 		);
 		return null;
