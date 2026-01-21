@@ -1208,6 +1208,14 @@ export interface PersonParentsResponse {
 }
 
 /**
+ * Person children response (all children)
+ */
+export interface PersonChildrenResponse {
+	persons?: PersonData[];
+	childAndParentsRelationships?: RelationshipDetails[];
+}
+
+/**
  * Person spouses response (all spouses)
  */
 export interface PersonSpousesResponse {

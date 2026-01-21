@@ -20,6 +20,7 @@ import type {
 	PersonSourcesResponse,
 	PersonFamiliesResponse,
 	PersonParentsResponse,
+	PersonChildrenResponse,
 	PersonSpousesResponse,
 	PersonWithRelationships,
 	UpdatePersonResponse,
@@ -576,6 +577,41 @@ export async function updatePersonPortraits(
 			error
 		);
 		throw error;
+	}
+}
+
+/**
+ * Get person children
+ *
+ * Retrieves a list of all children for a person.
+ * Returns persons with their child relationships.
+ *
+ * @param sdk - SDK instance
+ * @param personId - Person ID
+ * @returns Children with relationships
+ * @throws Error if request fails
+ *
+ * @example
+ * ```typescript
+ * const children = await getPersonChildren(sdk, "PPPP-PPP");
+ * console.log("Children:", children);
+ * ```
+ */
+export async function getPersonChildren(
+	sdk: FamilySearchSDK,
+	personId: string
+): Promise<PersonChildrenResponse | null> {
+	try {
+		const response = await sdk.get<PersonChildrenResponse>(
+			`/platform/tree/persons/${personId}/children`
+		);
+		return response.data || null;
+	} catch (error) {
+		sdk.logger.error(
+			`[FamilySearch SDK] Failed to get children for ${personId}:`,
+			error
+		);
+		return null;
 	}
 }
 

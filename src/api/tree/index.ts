@@ -31,6 +31,7 @@ export {
 	getPersonChangeHistory,
 	getPersonFamilies,
 	getPersonParents,
+	getPersonChildren,
 	getPersonSpouses,
 	updatePersonPortraits,
 	deletePersonPortrait,
