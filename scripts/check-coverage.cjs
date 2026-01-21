@@ -137,6 +137,12 @@ const endpointToFunction = (endpoint) => {
 		creatediscussion: "createDiscussion",
 		updatediscussion: "updateDiscussion",
 		deletediscussion: "deleteDiscussion",
+		readcomments: "getDiscussionComments",
+		updatecomments: "addDiscussionComment",
+		deletecomment: "deleteDiscussionComment",
+		creatememorycomments: "createMemoryComment",
+		readmemorycomments: "getMemoryComments",
+		deletememorycomment: "deleteMemoryComment",
 
 		// Vocabularies & Standards
 		readvocabulary: "getVocabulary",
@@ -161,46 +167,117 @@ const endpointToFunction = (endpoint) => {
 	const toCamelCase = (str) => {
 		// Common word patterns in FamilySearch API (longest words first to match greedily)
 		const patterns = [
-			'relationship', 'relationships', 'description', 'descriptions', 'genealogies', 'genealogy',
-			'modifications', 'collection', 'collections', 'discussion', 'discussions',
-			'children', 'families', 'parents', 'spouses', 'sources', 'portraits',
-			'notes', 'memories', 'matches', 'personas', 'attributes', 'headers',
-			'changes', 'persons', 'person', 'source', 'tree', 'match', 'memory', 'portrait', 'note', 'comment',
-			'spouse', 'parent', 'child', 'couple', 'reference', 'conclusion',
-			'change', 'history', 'merge', 'restore', 'artifact', 'coverage',
-			'folder', 'group', 'user', 'defined', 'current',
-			'allow', 'perform', 'search', 'research', 'attribute', 'related',
-			'pending', 'preferred', 'order', 'gedcomx', 'bulk', 'not', 'and',
-			'head', 'from', 'to', 'by', 'example', 'a', 'the', 'with', 'for', 'of', 'in'
+			"relationship",
+			"tree",
+			"comments",
+			"relationships",
+			"description",
+			"descriptions",
+			"genealogies",
+			"genealogy",
+			"modifications",
+			"collection",
+			"collections",
+			"discussion",
+			"discussions",
+			"children",
+			"families",
+			"parents",
+			"spouses",
+			"sources",
+			"portraits",
+			"notes",
+			"memories",
+			"matches",
+			"personas",
+			"attributes",
+			"headers",
+			"changes",
+			"persons",
+			"person",
+			"source",
+			"tree",
+			"match",
+			"memory",
+			"portrait",
+			"note",
+			"comment",
+			"spouse",
+			"parent",
+			"child",
+			"couple",
+			"reference",
+			"conclusion",
+			"change",
+			"history",
+			"merge",
+			"restore",
+			"artifact",
+			"coverage",
+			"folder",
+			"group",
+			"user",
+			"defined",
+			"current",
+			"allow",
+			"perform",
+			"search",
+			"research",
+			"attribute",
+			"related",
+			"pending",
+			"preferred",
+			"order",
+			"gedcomx",
+			"bulk",
+			"not",
+			"and",
+			"head",
+			"from",
+			"to",
+			"by",
+			"example",
+			"a",
+			"the",
+			"with",
+			"for",
+			"of",
+			"in",
 		];
-		
+
 		// Create regex pattern - sort by length descending for greedy matching
 		const sortedPatterns = patterns.sort((a, b) => b.length - a.length);
-		const pattern = new RegExp(`(${sortedPatterns.join('|')})`, 'gi');
-		
+		const pattern = new RegExp(`(${sortedPatterns.join("|")})`, "gi");
+
 		// Split by word boundaries and capitalize each word
-		let result = '';
+		let result = "";
 		let lastIndex = 0;
 		let match;
-		
+
 		const regex = new RegExp(pattern);
 		while ((match = regex.exec(str)) !== null) {
 			// Add any characters before the match (shouldn't happen in clean input)
 			if (match.index > lastIndex) {
 				const between = str.substring(lastIndex, match.index);
-				result += between.charAt(0).toUpperCase() + between.slice(1).toLowerCase();
+				result +=
+					between.charAt(0).toUpperCase() +
+					between.slice(1).toLowerCase();
 			}
 			// Capitalize the matched word
-			result += match[0].charAt(0).toUpperCase() + match[0].slice(1).toLowerCase();
+			result +=
+				match[0].charAt(0).toUpperCase() +
+				match[0].slice(1).toLowerCase();
 			lastIndex = regex.lastIndex;
 		}
-		
+
 		// Add any remaining characters
 		if (lastIndex < str.length) {
 			const remaining = str.substring(lastIndex);
-			result += remaining.charAt(0).toUpperCase() + remaining.slice(1).toLowerCase();
+			result +=
+				remaining.charAt(0).toUpperCase() +
+				remaining.slice(1).toLowerCase();
 		}
-		
+
 		return result;
 	};
 

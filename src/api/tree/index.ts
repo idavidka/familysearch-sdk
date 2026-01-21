@@ -181,3 +181,9 @@ export {
 export {
 	getTreeChanges,
 } from "./tree-changes";
+
+// Trees API
+export {
+	deleteTree,
+	createTree,
+} from "./trees";
