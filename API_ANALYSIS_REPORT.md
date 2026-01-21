@@ -1,6 +1,6 @@
 # FamilySearch SDK API Analysis Report
 
-**Generated:** 2026-01-21T10:16:00.068Z
+**Generated:** 2026-01-21T10:22:00.872Z
 
 ---
 
@@ -9,15 +9,15 @@
 | Metric | Count | Percentage |
 |--------|-------|------------|
 | **Total Endpoints** | 204 | 100% |
-| ✅ **Implemented** | 106 | 52% |
-| ❌ **Missing** | 86 | 42% |
+| ✅ **Implemented** | 108 | 53% |
+| ❌ **Missing** | 84 | 41% |
 | 🚫 **Not Applicable** | 12 | 6% |
 
-**Applicable Coverage:** 106/192 (55%)
+**Applicable Coverage:** 108/192 (56%)
 
 ---
 
-## ✅ Implemented Endpoints (106)
+## ✅ Implemented Endpoints (108)
 
 ### createchildandparentsrelationshipnote
 
@@ -388,6 +388,20 @@ and if the reason supplied is too long, the request may fail as a bad request.
 - **Method:** GET
 - **Function:** `getAncestry()`
 - **Description:** Read a person and the person's ancestors for the specified number of generations
+
+### readchildandparentrelationship
+
+- **Title:** Read Child and Parents Change History
+- **Method:** GET
+- **Function:** `getChildAndParentsRelationshipChangeHistory()`
+- **Description:** Read the history of a child and parents relationship
+
+### readchildandparentrelationshipnote
+
+- **Title:** Read Child and Parents Relationship Note
+- **Method:** GET
+- **Function:** `getChildAndParentsRelationshipNote()`
+- **Description:** Read a specific note (nid) on a child-and-parents relationship (caprid).
 
 ### readcouplerelationship
 
@@ -769,7 +783,7 @@ and if the reason supplied is too long, the request may fail as a bad request.
 
 ---
 
-## ❌ Missing Endpoints (86)
+## ❌ Missing Endpoints (84)
 
 These endpoints need to be implemented. Implementation templates are provided below.
 
@@ -1825,91 +1839,6 @@ export async function performpersonmatchesbyexample(
 		return response.data;
 	} catch (error) {
 		sdk["logger"].error("[FamilySearch SDK] Failed to performpersonmatchesbyexample:", error);
-		throw error;
-	}
-}
-
-```
-
----
-
-### readchildandparentrelationship
-
-- **Title:** Read Child and Parents Change History
-- **Method:** GET
-- **URL:** `https://apibeta.familysearch.org/platform/tree/child-and-parents-relationships/{caprid}/changes`
-- **Description:** Read the history of a child and parents relationship
-
-**Path Parameters:**
-
-- `caprid` (string) - required
-
-**Response Codes:** 200, 204, 429
-
-**Implementation Template:**
-
-```typescript
-/**
- * Read Child and Parents Change History
- *
- * Read the history of a child and parents relationship
- *
- * @param caprid - caprid
- * @returns Promise with response data
- */
-export async function getchildandparentrelationship(
-	sdk: FamilySearchSDK,
-	caprid: string
-): Promise<any> {
-	try {
-		const response = await sdk.get<any>(`/platform/tree/child-and-parents-relationships/${caprid}/changes`);
-		return response.data;
-	} catch (error) {
-		sdk["logger"].error("[FamilySearch SDK] Failed to getchildandparentrelationship:", error);
-		throw error;
-	}
-}
-
-```
-
----
-
-### readchildandparentrelationshipnote
-
-- **Title:** Read Child and Parents Relationship Note
-- **Method:** GET
-- **URL:** `https://apibeta.familysearch.org/platform/tree/child-and-parents-relationships/{caprid}/notes/{nid}`
-- **Description:** Read a specific note (nid) on a child-and-parents relationship (caprid).
-
-**Path Parameters:**
-
-- `caprid` (string) - required
-- `nid` (string) - required
-
-**Response Codes:** 200, 404, 429
-
-**Implementation Template:**
-
-```typescript
-/**
- * Read Child and Parents Relationship Note
- *
- * Read a specific note (nid) on a child-and-parents relationship (caprid).
- *
- * @param caprid - caprid
- * @param nid - nid
- * @returns Promise with response data
- */
-export async function getchildandparentrelationshipnote(
-	sdk: FamilySearchSDK,
-	caprid: string,
-	nid: string
-): Promise<any> {
-	try {
-		const response = await sdk.get<any>(`/platform/tree/child-and-parents-relationships/${caprid}/notes/${nid}`);
-		return response.data;
-	} catch (error) {
-		sdk["logger"].error("[FamilySearch SDK] Failed to getchildandparentrelationshipnote:", error);
 		throw error;
 	}
 }

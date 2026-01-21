@@ -199,11 +199,13 @@ function checkImplementation(endpointName) {
 	restorerelationship: "restoreRelationship",
 	restorechange: "restoreChange",
 	readchildandparentsrelationship: "getChildAndParentsRelationship",
+	readchildandparentrelationship: "getChildAndParentsRelationshipChangeHistory",
 	createchildandparentsrelationship: "createChildAndParentsRelationship",
 	updatechildandparentsrelationship: "updateChildAndParentsRelationship",
 	deletechildandparentsrelationship: "deleteChildAndParentsRelationship",
 	restorechildandparentsrelationship:
 		"restoreChildAndParentsRelationship",
+	readchildandparentrelationshipnote: "getChildAndParentsRelationshipNote",
 	readchildandparentsrelationshipnote: "getChildAndParentsRelationshipNote",
 	readchildandparentsrelationshipnotes: "getChildAndParentsRelationshipNotes",
 	createchildandparentsrelationshipnote: "createChildAndParentsRelationshipNote",
