@@ -654,3 +654,123 @@ export async function deletePersonPortrait(
 		throw error;
 	}
 }
+
+/**
+ * Delete person discussion reference
+ *
+ * Removes a reference to a discussion from a person's record.
+ * This doesn't delete the discussion itself, only the reference to it.
+ *
+ * @param sdk - SDK instance
+ * @param personId - Person ID
+ * @param discussionReferenceId - Discussion reference ID to remove
+ * @returns Delete response with status
+ * @throws Error if deletion fails
+ *
+ * @example
+ * ```typescript
+ * await deletePersonDiscussionReference(sdk, "PPPP-PPP", "DREF-123");
+ * console.log("Discussion reference removed");
+ * ```
+ */
+export async function deletePersonDiscussionReference(
+	sdk: FamilySearchSDK,
+	personId: string,
+	discussionReferenceId: string
+): Promise<DeleteResponse> {
+	try {
+		const response = await sdk.delete<DeleteResponse>(
+			`/platform/tree/persons/${personId}/discussion-references/${discussionReferenceId}`
+		);
+		return {
+			statusCode: response.statusCode,
+			statusText: response.statusText,
+		};
+	} catch (error) {
+		sdk.logger.error(
+			`[FamilySearch SDK] Failed to delete discussion reference ${discussionReferenceId} for ${personId}:`,
+			error
+		);
+		throw error;
+	}
+}
+
+/**
+ * Delete person memories persona reference
+ *
+ * Removes a reference to a memory persona from a person's record.
+ * This disconnects the person from a memory but doesn't delete the memory itself.
+ *
+ * @param sdk - SDK instance
+ * @param personId - Person ID
+ * @param memoryReferenceId - Memory reference ID (Evidence Reference ID) to remove
+ * @returns Delete response with status
+ * @throws Error if deletion fails
+ *
+ * @example
+ * ```typescript
+ * await deletePersonMemoriesPersonaReference(sdk, "PPPP-PPP", "ERID-456");
+ * console.log("Memory reference removed");
+ * ```
+ */
+export async function deletePersonMemoriesPersonaReference(
+	sdk: FamilySearchSDK,
+	personId: string,
+	memoryReferenceId: string
+): Promise<DeleteResponse> {
+	try {
+		const response = await sdk.delete<DeleteResponse>(
+			`/platform/tree/persons/${personId}/memory-references/${memoryReferenceId}`
+		);
+		return {
+			statusCode: response.statusCode,
+			statusText: response.statusText,
+		};
+	} catch (error) {
+		sdk.logger.error(
+			`[FamilySearch SDK] Failed to delete memory reference ${memoryReferenceId} for ${personId}:`,
+			error
+		);
+		throw error;
+	}
+}
+
+/**
+ * Delete person source reference
+ *
+ * Removes a source reference from a person's record.
+ * This detaches the source but doesn't delete the source itself.
+ *
+ * @param sdk - SDK instance
+ * @param personId - Person ID
+ * @param sourceReferenceId - Source reference ID to remove
+ * @returns Delete response with status
+ * @throws Error if deletion fails
+ *
+ * @example
+ * ```typescript
+ * await deletePersonSourceReference(sdk, "PPPP-PPP", "SRID-789");
+ * console.log("Source reference removed");
+ * ```
+ */
+export async function deletePersonSourceReference(
+	sdk: FamilySearchSDK,
+	personId: string,
+	sourceReferenceId: string
+): Promise<DeleteResponse> {
+	try {
+		const response = await sdk.delete<DeleteResponse>(
+			`/platform/tree/persons/${personId}/source-references/${sourceReferenceId}`
+		);
+		return {
+			statusCode: response.statusCode,
+			statusText: response.statusText,
+		};
+	} catch (error) {
+		sdk.logger.error(
+			`[FamilySearch SDK] Failed to delete source reference ${sourceReferenceId} for ${personId}:`,
+			error
+		);
+		throw error;
+	}
+}

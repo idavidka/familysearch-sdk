@@ -35,6 +35,9 @@ export {
 	getPersonSpouses,
 	updatePersonPortraits,
 	deletePersonPortrait,
+	deletePersonDiscussionReference,
+	deletePersonMemoriesPersonaReference,
+	deletePersonSourceReference,
 } from "./persons";
 
 // Relationships API
