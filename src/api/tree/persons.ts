@@ -815,4 +815,51 @@ export async function deleteTreePersonReference(
 	}
 }
 
+/**
+ * Create a memory for a person
+ *
+ * Creates a memory (photo, document, story, or obituary) and attaches it to a person.
+ * The memory can be uploaded as multipart/form-data or referenced by URL.
+ *
+ * **Note**: This endpoint typically requires multipart/form-data upload with the actual file.
+ * For simple memory references, consider using the Memories API directly.
+ *
+ * @param sdk - SDK instance
+ * @param personId - Person ID to attach the memory to
+ * @param memoryData - Memory data including file or URL reference
+ * @returns Created memory response
+ * @throws Error if creation fails
+ *
+ * @example
+ * ```typescript
+ * // Create memory with URL reference
+ * const memory = await createPersonMemory(sdk, "PPPP-PPP", {
+ *   sourceDescriptions: [{
+ *     about: "https://example.com/photo.jpg",
+ *     titles: [{ value: "Family Photo" }],
+ *     citations: [{ value: "Family archives, 1950" }]
+ *   }]
+ * });
+ * console.log("Memory created:", memory);
+ * ```
+ */
+export async function createPersonMemory(
+	sdk: FamilySearchSDK,
+	personId: string,
+	memoryData: unknown
+): Promise<unknown> {
+	try {
+		const response = await sdk.post<unknown>(
+			`/platform/tree/persons/${personId}/memories`,
+			memoryData
+		);
+		return response.data;
+	} catch (error) {
+		sdk.logger.error(
+			`[FamilySearch SDK] Failed to create memory for ${personId}:`,
+			error
+		);
+		throw error;
+	}
+}
 

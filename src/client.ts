@@ -317,6 +317,19 @@ export class FamilySearchSDK {
 		return this.request<T>(url, { ...options, method: "DELETE" });
 	}
 
+	/**
+	 * OPTIONS request
+	 * 
+	 * Used to check endpoint capabilities and availability.
+	 * Returns response headers that indicate allowed methods, warnings, etc.
+	 */
+	async options(
+		url: string,
+		requestOptions: RequestInit = {}
+	): Promise<FamilySearchApiResponse<void>> {
+		return this.request<void>(url, { ...requestOptions, method: "OPTIONS" });
+	}
+
 	// ====================================
 	// User API
 	// ====================================

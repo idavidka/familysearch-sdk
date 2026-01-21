@@ -39,6 +39,7 @@ export {
 	deletePersonMemoriesPersonaReference,
 	deletePersonSourceReference,
 	deleteTreePersonReference,
+	createPersonMemory,
 } from "./persons";
 
 // Relationships API
@@ -90,6 +91,7 @@ export {
 	deletePersonNotAMatches,
 	deletePersonNotAMatch,
 	readTreeMatches,
+	performPersonMatchesByExample,
 } from "./matches";
 
 // Sources API
@@ -133,6 +135,7 @@ export {
 // Person Merges API
 export {
 	readPersonMergeAnalysis,
+	allowPersonMerge,
 	canMergePersons,
 	mergePerson,
 } from "./merges";
@@ -187,4 +190,4 @@ export {
 export { readTreeChanges } from "./tree-changes";
 
 // Trees API
-export { readTree, deleteTree, createTree } from "./trees";
+export { readTree, deleteTree, createTree, readResearchTreePersons } from "./trees";

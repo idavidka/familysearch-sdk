@@ -492,3 +492,72 @@ export async function deletePersonNotAMatch(
 		throw error;
 	}
 }
+
+/**
+ * Find person matches by example (GEDCOM X)
+ *
+ * Searches for matching persons in the FamilySearch tree using a GEDCOM X document.
+ * This is particularly useful for matching a person from an external tree to persons
+ * in the FamilySearch tree.
+ *
+ * The GEDCOM X document must contain:
+ * - A primary person with an ID
+ * - A main source description pointing to the primary person
+ * - Optionally: parents, spouses, children with relationships
+ *
+ * Each match result includes a confidence score indicating match likelihood.
+ *
+ * @param sdk - SDK instance
+ * @param gedcomxData - GEDCOM X document describing the person to match
+ * @returns Match results with confidence scores
+ * @throws Error if request fails
+ *
+ * @example
+ * ```typescript
+ * const matches = await performPersonMatchesByExample(sdk, {
+ *   persons: [{
+ *     id: "primaryPerson",
+ *     names: [{
+ *       nameForms: [{
+ *         fullText: "John Smith",
+ *         parts: [
+ *           { type: "http://gedcomx.org/Given", value: "John" },
+ *           { type: "http://gedcomx.org/Surname", value: "Smith" }
+ *         ]
+ *       }]
+ *     }],
+ *     gender: { type: "http://gedcomx.org/Male" },
+ *     facts: [{
+ *       type: "http://gedcomx.org/Birth",
+ *       date: { original: "1850" },
+ *       place: { original: "London, England" }
+ *     }]
+ *   }],
+ *   sourceDescriptions: [{
+ *     about: "#primaryPerson"
+ *   }]
+ * });
+ * 
+ * matches?.entries?.forEach(entry => {
+ *   console.log("Match:", entry.person?.display?.name, "Confidence:", entry.confidence);
+ * });
+ * ```
+ */
+export async function performPersonMatchesByExample(
+	sdk: FamilySearchSDK,
+	gedcomxData: unknown
+): Promise<unknown> {
+	try {
+		const response = await sdk.post<unknown>(
+			`/platform/tree/matches`,
+			gedcomxData
+		);
+		return response.data;
+	} catch (error) {
+		sdk.logger.error(
+			`[FamilySearch SDK] Failed to perform person matches by example:`,
+			error
+		);
+		throw error;
+	}
+}
