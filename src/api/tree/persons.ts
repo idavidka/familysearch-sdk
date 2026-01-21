@@ -30,13 +30,13 @@ import type {
 } from "../../types";
 
 /**
- * Get person by ID
+ * Read person by ID
  *
  * @param sdk - SDK instance
  * @param personId - Person ID
  * @returns Person data or null
  */
-export async function getPerson(
+export async function readPerson(
 	sdk: FamilySearchSDK,
 	personId: string
 ): Promise<FamilySearchPerson | null> {
@@ -49,7 +49,7 @@ export async function getPerson(
 		return person || null;
 	} catch (error) {
 		sdk.logger.error(
-			`[FamilySearch SDK] Failed to get person ${personId}:`,
+			`[FamilySearch SDK] Failed to read person ${personId}:`,
 			error
 		);
 		return null;
@@ -57,14 +57,14 @@ export async function getPerson(
 }
 
 /**
- * Get person with full details including relationships
+ * Read person with full details including relationships
  *
  * @param sdk - SDK instance
  * @param personId - Person ID
  * @param options - Query options
  * @returns Person with relationships or null
  */
-export async function getPersonWithDetails(
+export async function readPersonWithDetails(
 	sdk: FamilySearchSDK,
 	personId: string,
 	options: { sourceDescriptions?: boolean } = {}
@@ -79,7 +79,7 @@ export async function getPersonWithDetails(
 		return (response.data as PersonWithRelationships) || null;
 	} catch (error) {
 		sdk.logger.error(
-			`[FamilySearch SDK] Failed to get person details ${personId}:`,
+			`[FamilySearch SDK] Failed to read person details ${personId}:`,
 			error
 		);
 		return null;
@@ -258,13 +258,13 @@ export async function restorePerson(
 }
 
 /**
- * Get notes for a person
+ * Read notes for a person
  *
  * @param sdk - SDK instance
  * @param personId - Person ID
  * @returns Person notes or null
  */
-export async function getPersonNotes(
+export async function readPersonNotes(
 	sdk: FamilySearchSDK,
 	personId: string
 ): Promise<PersonNotesResponse | null> {
@@ -275,7 +275,7 @@ export async function getPersonNotes(
 		return response.data || null;
 	} catch (error) {
 		sdk.logger.error(
-			`[FamilySearch SDK] Failed to get notes for ${personId}:`,
+			`[FamilySearch SDK] Failed to read notes for ${personId}:`,
 			error
 		);
 		return null;
@@ -283,13 +283,13 @@ export async function getPersonNotes(
 }
 
 /**
- * Get memories for a person
+ * Read memories for a person
  *
  * @param sdk - SDK instance
  * @param personId - Person ID
  * @returns Person memories or null
  */
-export async function getPersonMemories(
+export async function readPersonMemories(
 	sdk: FamilySearchSDK,
 	personId: string
 ): Promise<PersonMemoriesResponse | null> {
@@ -300,7 +300,7 @@ export async function getPersonMemories(
 		return response.data || null;
 	} catch (error) {
 		sdk.logger.error(
-			`[FamilySearch SDK] Failed to get memories for ${personId}:`,
+			`[FamilySearch SDK] Failed to read memories for ${personId}:`,
 			error
 		);
 		return null;
@@ -308,13 +308,13 @@ export async function getPersonMemories(
 }
 
 /**
- * Get sources for a person
+ * Read sources for a person
  *
  * @param sdk - SDK instance
  * @param personId - Person ID
  * @returns Person sources or null
  */
-export async function getPersonSources(
+export async function readPersonSources(
 	sdk: FamilySearchSDK,
 	personId: string
 ): Promise<PersonSourcesResponse | null> {
@@ -325,7 +325,7 @@ export async function getPersonSources(
 		return response.data || null;
 	} catch (error) {
 		sdk.logger.error(
-			`[FamilySearch SDK] Failed to get sources for ${personId}:`,
+			`[FamilySearch SDK] Failed to read sources for ${personId}:`,
 			error
 		);
 		return null;
@@ -333,13 +333,13 @@ export async function getPersonSources(
 }
 
 /**
- * Get discussions for a person
+ * Read discussions for a person
  *
  * @param sdk - SDK instance
  * @param personId - Person ID
  * @returns Person discussions or null
  */
-export async function getPersonDiscussions(
+export async function readPersonDiscussions(
 	sdk: FamilySearchSDK,
 	personId: string
 ): Promise<PersonDiscussionsResponse | null> {
@@ -350,7 +350,7 @@ export async function getPersonDiscussions(
 		return response.data || null;
 	} catch (error) {
 		sdk.logger.error(
-			`[FamilySearch SDK] Failed to get discussions for ${personId}:`,
+			`[FamilySearch SDK] Failed to read discussions for ${personId}:`,
 			error
 		);
 		return null;
@@ -358,13 +358,13 @@ export async function getPersonDiscussions(
 }
 
 /**
- * Get portraits (photos) for a person
+ * Read portraits (photos) for a person
  *
  * @param sdk - SDK instance
  * @param personId - Person ID
  * @returns Person portraits or null
  */
-export async function getPersonPortraits(
+export async function readPersonPortraits(
 	sdk: FamilySearchSDK,
 	personId: string
 ): Promise<PersonPortraitsResponse | null> {
@@ -375,7 +375,7 @@ export async function getPersonPortraits(
 		return response.data || null;
 	} catch (error) {
 		sdk.logger.error(
-			`[FamilySearch SDK] Failed to get portraits for ${personId}:`,
+			`[FamilySearch SDK] Failed to read portraits for ${personId}:`,
 			error
 		);
 		return null;
@@ -383,13 +383,13 @@ export async function getPersonPortraits(
 }
 
 /**
- * Get change history for a person
+ * Read change history for a person
  *
  * @param sdk - SDK instance
  * @param personId - Person ID
  * @returns Person change history or null
  */
-export async function getPersonChangeHistory(
+export async function readPersonChangeHistory(
 	sdk: FamilySearchSDK,
 	personId: string
 ): Promise<PersonChangeHistoryResponse | null> {
@@ -400,7 +400,7 @@ export async function getPersonChangeHistory(
 		return response.data || null;
 	} catch (error) {
 		sdk.logger.error(
-			`[FamilySearch SDK] Failed to get change history for ${personId}:`,
+			`[FamilySearch SDK] Failed to read change history for ${personId}:`,
 			error
 		);
 		return null;
@@ -408,7 +408,7 @@ export async function getPersonChangeHistory(
 }
 
 /**
- * Get person families (all relationships person belongs to)
+ * Read person families (all relationships person belongs to)
  *
  * Returns all family relationships for a person, including:
  * - Child-and-parents relationships (families where person is a child)
@@ -423,7 +423,7 @@ export async function getPersonChangeHistory(
  *
  * @example
  * ```typescript
- * const families = await getPersonFamilies(sdk, "PPPP-PPP");
+ * const families = await readPersonFamilies(sdk, "PPPP-PPP");
  * if (families) {
  *   console.log("Child-parent families:", families.childAndParentsRelationships?.length);
  *   console.log("Couple families:", families.relationships?.length);
@@ -431,7 +431,7 @@ export async function getPersonChangeHistory(
  * }
  * ```
  */
-export async function getPersonFamilies(
+export async function readPersonFamilies(
 	sdk: FamilySearchSDK,
 	personId: string
 ): Promise<PersonFamiliesResponse | null> {
@@ -442,7 +442,7 @@ export async function getPersonFamilies(
 		return response.data || null;
 	} catch (error) {
 		sdk.logger.error(
-			`[FamilySearch SDK] Failed to get families for ${personId}:`,
+			`[FamilySearch SDK] Failed to read families for ${personId}:`,
 			error
 		);
 		return null;
@@ -450,7 +450,7 @@ export async function getPersonFamilies(
 }
 
 /**
- * Get person parents
+ * Read person parents
  *
  * Returns the parents of a person through child-and-parents relationships.
  * This is a convenience endpoint that provides direct access to parent data
@@ -462,7 +462,7 @@ export async function getPersonFamilies(
  *
  * @example
  * ```typescript
- * const parents = await getPersonParents(sdk, "PPPP-PPP");
+ * const parents = await readPersonParents(sdk, "PPPP-PPP");
  * if (parents?.persons) {
  *   parents.persons.forEach(parent => {
  *     console.log("Parent:", parent.display?.name);
@@ -470,7 +470,7 @@ export async function getPersonFamilies(
  * }
  * ```
  */
-export async function getPersonParents(
+export async function readPersonParents(
 	sdk: FamilySearchSDK,
 	personId: string
 ): Promise<PersonParentsResponse | null> {
@@ -481,7 +481,7 @@ export async function getPersonParents(
 		return response.data || null;
 	} catch (error) {
 		sdk.logger.error(
-			`[FamilySearch SDK] Failed to get parents for ${personId}:`,
+			`[FamilySearch SDK] Failed to read parents for ${personId}:`,
 			error
 		);
 		return null;
@@ -489,7 +489,7 @@ export async function getPersonParents(
 }
 
 /**
- * Get person spouses
+ * Read person spouses
  *
  * Returns all spouses/partners of a person through couple relationships.
  * This is a convenience endpoint that provides direct access to spouse data
@@ -501,7 +501,7 @@ export async function getPersonParents(
  *
  * @example
  * ```typescript
- * const spouses = await getPersonSpouses(sdk, "PPPP-PPP");
+ * const spouses = await readPersonSpouses(sdk, "PPPP-PPP");
  * if (spouses?.persons) {
  *   spouses.persons.forEach(spouse => {
  *     console.log("Spouse:", spouse.display?.name);
@@ -509,7 +509,7 @@ export async function getPersonParents(
  * }
  * ```
  */
-export async function getPersonSpouses(
+export async function readPersonSpouses(
 	sdk: FamilySearchSDK,
 	personId: string
 ): Promise<PersonSpousesResponse | null> {
@@ -520,7 +520,7 @@ export async function getPersonSpouses(
 		return response.data || null;
 	} catch (error) {
 		sdk.logger.error(
-			`[FamilySearch SDK] Failed to get spouses for ${personId}:`,
+			`[FamilySearch SDK] Failed to read spouses for ${personId}:`,
 			error
 		);
 		return null;
@@ -593,11 +593,11 @@ export async function updatePersonPortraits(
  *
  * @example
  * ```typescript
- * const children = await getPersonChildren(sdk, "PPPP-PPP");
+ * const children = await readPersonChildren(sdk, "PPPP-PPP");
  * console.log("Children:", children);
  * ```
  */
-export async function getPersonChildren(
+export async function readPersonChildren(
 	sdk: FamilySearchSDK,
 	personId: string
 ): Promise<PersonChildrenResponse | null> {
@@ -608,7 +608,7 @@ export async function getPersonChildren(
 		return response.data || null;
 	} catch (error) {
 		sdk.logger.error(
-			`[FamilySearch SDK] Failed to get children for ${personId}:`,
+			`[FamilySearch SDK] Failed to read children for ${personId}:`,
 			error
 		);
 		return null;
@@ -815,79 +815,4 @@ export async function deleteTreePersonReference(
 	}
 }
 
-/**
- * Get Research Tree Persons
- *
- * Retrieves the list of person IDs in a CET (Collaborative Extracted Tree).
- * The list is returned as a feed of entry elements where each entry contains a person ID.
- *
- * @param sdk - SDK instance
- * @param treeId - The ID of the tree from which person IDs are to be retrieved
- * @param options - Optional pagination and view parameters
- * @param options.count - Maximum number of person IDs to return (minimum 100, default 100)
- * @param options.from - Page token for pagination (omit for first page)
- * @param options.view - Type of data to return (default "identifiers", currently only supported value)
- * @returns Research tree persons feed or null if tree is empty
- * @throws Error if request fails
- *
- * @see https://www.familysearch.org/developers/docs/api/tree/Read_Research_Tree_Persons_usecase
- *
- * @example
- * ```typescript
- * // Get first page of person IDs
- * const firstPage = await getResearchTreePersons(sdk, "TREE-123");
- *
- * // Get specific count
- * const limited = await getResearchTreePersons(sdk, "TREE-123", { count: 200 });
- *
- * // Paginate through results
- * const nextPage = await getResearchTreePersons(sdk, "TREE-123", {
- *   from: "next-page-token"
- * });
- * ```
- */
-export async function getResearchTreePersons(
-	sdk: FamilySearchSDK,
-	treeId: string,
-	options?: {
-		count?: number;
-		from?: string;
-		view?: string;
-	}
-): Promise<unknown | null> {
-	try {
-		const params = new URLSearchParams();
 
-		if (options?.count !== undefined) {
-			params.append("count", String(options.count));
-		}
-
-		if (options?.from) {
-			params.append("from", options.from);
-		}
-
-		if (options?.view) {
-			params.append("view", options.view);
-		}
-
-		const queryString = params.toString();
-		const url = `/platform/trees/${treeId}/persons${
-			queryString ? `?${queryString}` : ""
-		}`;
-
-		const response = await sdk.get<unknown>(url);
-
-		// Returns 204 No Content if tree has no person IDs
-		if (response.statusCode === 204) {
-			return null;
-		}
-
-		return response.data || null;
-	} catch (error) {
-		sdk.logger.error(
-			`[FamilySearch SDK] Failed to read research tree persons for tree ${treeId}:`,
-			error
-		);
-		throw error;
-	}
-}

@@ -11,18 +11,12 @@
  * - Configurable logging
  */
 
-import { getPersonNotes as getPersonNotesAPI } from "./api/tree/notes";
+import { readPersonNotes as readPersonNotesAPI } from "./api/tree/notes";
+import { readAncestry, readDescendancy } from "./api/tree/pedigrees";
+import { readPerson, readPersonWithDetails } from "./api/tree/persons";
 import {
-	getAncestry as getAncestryAPI,
-	getDescendancy as getDescendancyAPI,
-} from "./api/tree/pedigrees";
-import {
-	getPerson as getPersonAPI,
-	getPersonWithDetails as getPersonWithDetailsAPI,
-} from "./api/tree/persons";
-import {
-	getCoupleRelationship as getCoupleRelationshipAPI,
-	getChildAndParentsRelationship as getChildAndParentsRelationshipAPI,
+	readCoupleRelationship,
+	readChildAndParentsRelationship,
 } from "./api/tree/relationships";
 import {
 	createErrorFromResponse,
@@ -357,7 +351,7 @@ export class FamilySearchSDK {
 	 * @deprecated Use `getPerson` from `@treeviz/familysearch-sdk/api/tree/persons` instead
 	 */
 	async getPerson(personId: string): Promise<FamilySearchPerson | null> {
-		return getPersonAPI(this, personId);
+		return readPerson(this, personId);
 	}
 
 	/**
@@ -369,7 +363,7 @@ export class FamilySearchSDK {
 		personId: string,
 		options: { sourceDescriptions?: boolean } = {}
 	) {
-		return getPersonWithDetailsAPI(this, personId, options);
+		return readPersonWithDetails(this, personId, options);
 	}
 
 	/**
@@ -380,7 +374,7 @@ export class FamilySearchSDK {
 	async getPersonNotes(
 		personId: string
 	): Promise<PersonNotesResponse | null> {
-		return getPersonNotesAPI(this, personId);
+		return readPersonNotesAPI(this, personId);
 	}
 
 	/**
@@ -794,7 +788,7 @@ export class FamilySearchSDK {
 	 * @deprecated Use `getCoupleRelationship` from `@treeviz/familysearch-sdk/api/tree/relationships` instead
 	 */
 	async getCoupleRelationship(relationshipId: string) {
-		return getCoupleRelationshipAPI(this, relationshipId);
+		return readCoupleRelationship(this, relationshipId);
 	}
 
 	/**
@@ -803,7 +797,7 @@ export class FamilySearchSDK {
 	 * @deprecated Use `getChildAndParentsRelationship` from `@treeviz/familysearch-sdk/api/tree/relationships` instead
 	 */
 	async getChildAndParentsRelationship(relationshipId: string) {
-		return getChildAndParentsRelationshipAPI(this, relationshipId);
+		return readChildAndParentsRelationship(this, relationshipId);
 	}
 
 	/**
@@ -815,7 +809,7 @@ export class FamilySearchSDK {
 		personId: string,
 		generations: number = 4
 	): Promise<PedigreeResponse | null> {
-		return getAncestryAPI(this, personId, generations);
+		return readAncestry(this, personId, generations);
 	}
 
 	/**
@@ -827,7 +821,7 @@ export class FamilySearchSDK {
 		personId: string,
 		generations: number = 2
 	): Promise<PedigreeResponse | null> {
-		return getDescendancyAPI(this, personId, generations);
+		return readDescendancy(this, personId, generations);
 	}
 
 	// ====================================

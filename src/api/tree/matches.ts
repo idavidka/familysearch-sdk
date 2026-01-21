@@ -17,13 +17,13 @@ import type {
 } from "../../types";
 
 /**
- * Get record matches for a person
+ * Read record matches for a person
  *
  * @param sdk - SDK instance
  * @param personId - Person ID
  * @returns Matches data or null
  */
-export async function getPersonMatches(
+export async function readPersonMatches(
 	sdk: FamilySearchSDK,
 	personId: string
 ): Promise<MatchesResponse | null> {
@@ -34,7 +34,7 @@ export async function getPersonMatches(
 		return response.data || null;
 	} catch (error) {
 		sdk.logger.error(
-			`[FamilySearch SDK] Failed to get matches for ${personId}:`,
+			`[FamilySearch SDK] Failed to read matches for ${personId}:`,
 			error
 		);
 		return null;
@@ -42,13 +42,13 @@ export async function getPersonMatches(
 }
 
 /**
- * Get non-matches for a person
+ * Read non-matches for a person
  *
  * @param sdk - SDK instance
  * @param personId - Person ID
  * @returns Non-matches data or null
  */
-export async function getPersonNonMatches(
+export async function readPersonNonMatches(
 	sdk: FamilySearchSDK,
 	personId: string
 ): Promise<MatchesResponse | null> {
@@ -59,7 +59,7 @@ export async function getPersonNonMatches(
 		return response.data || null;
 	} catch (error) {
 		sdk.logger.error(
-			`[FamilySearch SDK] Failed to get non-matches for ${personId}:`,
+			`[FamilySearch SDK] Failed to read non-matches for ${personId}:`,
 			error
 		);
 		return null;
@@ -125,13 +125,13 @@ export async function updateMatchResolution(
  *
  * @example
  * ```typescript
- * const notMatches = await getNotAMatchDeclarations(sdk, "PPPP-PPP");
+ * const notMatches = await readNotAMatchDeclarations(sdk, "PPPP-PPP");
  * if (notMatches?.persons) {
  *   console.log("Not-a-match persons:", notMatches.persons.length);
  * }
  * ```
  */
-export async function getNotAMatchDeclarations(
+export async function readNotAMatchDeclarations(
 	sdk: FamilySearchSDK,
 	personId: string
 ): Promise<NotAMatchResponse | null> {
@@ -291,16 +291,16 @@ export async function deleteAllNotAMatchDeclarations(
  * @example
  * ```typescript
  * // Get all matches for a tree
- * const matches = await getTreeMatches(sdk, "TREE-ID");
+ * const matches = await readTreeMatches(sdk, "TREE-ID");
  *
  * // Get matches with filtering
- * const filtered = await getTreeMatches(sdk, "TREE-ID", {
+ * const filtered = await readTreeMatches(sdk, "TREE-ID", {
  *   status: "pending",
  *   collection: "census"
  * });
  * ```
  */
-export async function getTreeMatches(
+export async function readTreeMatches(
 	sdk: FamilySearchSDK,
 	treeId: string,
 	options?: {
@@ -352,11 +352,11 @@ export async function getTreeMatches(
  *
  * @example
  * ```typescript
- * const notMatches = await getPersonNotAMatches(sdk, 'PPPP-PPP');
+ * const notMatches = await readPersonNotAMatches(sdk, 'PPPP-PPP');
  * console.log('Not-a-match declarations:', notMatches?.entries?.length);
  * ```
  */
-export async function getPersonNotAMatches(
+export async function readPersonNotAMatches(
 	sdk: FamilySearchSDK,
 	personId: string
 ): Promise<NotAMatchResponse | null> {

@@ -17,105 +17,104 @@
 
 // Persons API
 export {
-	getPerson,
-	getPersonWithDetails,
+	readPerson,
+	readPersonWithDetails,
 	createPerson,
 	updatePerson,
 	deletePerson,
 	restorePerson,
-	getPersonNotes,
-	getPersonMemories,
-	getPersonSources,
-	getPersonDiscussions,
-	getPersonPortraits,
-	getPersonChangeHistory,
-	getPersonFamilies,
-	getPersonParents,
-	getPersonChildren,
-	getPersonSpouses,
+	readPersonNotes,
+	readPersonMemories,
+	readPersonSources,
+	readPersonDiscussions,
+	readPersonPortraits,
+	readPersonChangeHistory,
+	readPersonFamilies,
+	readPersonParents,
+	readPersonChildren,
+	readPersonSpouses,
 	updatePersonPortraits,
 	deletePersonPortrait,
 	deletePersonDiscussionReference,
 	deletePersonMemoriesPersonaReference,
 	deletePersonSourceReference,
 	deleteTreePersonReference,
-	getResearchTreePersons,
 } from "./persons";
 
 // Relationships API
 export {
-	getCoupleRelationship,
+	readCoupleRelationship,
 	createCoupleRelationship,
 	updateCoupleRelationship,
 	deleteCoupleRelationship,
-	getChildAndParentsRelationship,
+	readChildAndParentsRelationship,
 	createChildAndParentsRelationship,
 	updateChildAndParentsRelationship,
 	deleteChildAndParentsRelationship,
-	getCoupleRelationshipChangeHistory,
-	getChildAndParentsRelationshipChangeHistory,
+	readCoupleRelationshipChangeHistory,
+	readChildAndParentsRelationshipChangeHistory,
 	restoreChange,
 	restoreChildAndParentsRelationship,
 	restoreCoupleRelationship,
 	setParentOrder,
 	setSpouseOrder,
-	getCoupleRelationshipSourceReferences,
-	getCoupleRelationshipSources,
-	getChildAndParentsRelationshipSourceReferences,
-	getChildAndParentsRelationshipSources,
+	readCoupleRelationshipSourceReferences,
+	readCoupleRelationshipSources,
+	readChildAndParentsRelationshipSourceReferences,
+	readChildAndParentsRelationshipSources,
 	createCoupleRelationshipSourceReference,
 	createChildAndParentsRelationshipSourceReference,
 	deleteCoupleRelationshipSourceReference,
 	deleteChildAndParentsRelationshipSourceReference,
 	deleteChildAndParentsRelationshipParent,
-	getChildAndParentRelationshipNote,
+	readChildAndParentRelationshipNote,
 } from "./relationships";
 
 // Pedigrees API
-export { getAncestry, getDescendancy } from "./pedigrees";
+export { readAncestry, readDescendancy } from "./pedigrees";
 
 // Search API
 export { searchPersons } from "./search";
 
 // Matches API
 export {
-	getPersonMatches,
-	getPersonNonMatches,
+	readPersonMatches,
+	readPersonNonMatches,
 	updateMatchResolution,
-	getNotAMatchDeclarations,
+	readNotAMatchDeclarations,
 	createNotAMatchDeclaration,
 	deleteNotAMatchDeclaration,
 	deleteAllNotAMatchDeclarations,
-	getPersonNotAMatches,
+	readPersonNotAMatches,
 	updatePersonNotAMatches,
 	deletePersonNotAMatches,
 	deletePersonNotAMatch,
-	getTreePersonMatches,
+	readTreeMatches,
 } from "./matches";
 
 // Sources API
 export {
-	getSourceDescriptions,
-	getSourceDescription,
+	readSourceDescriptions,
+	readSourceDescription,
 	createSourceDescription,
 	updateSourceDescription,
 	deleteSourceDescription,
-	getSourceDescriptionChanges,
+	readSourceDescriptionChanges,
 } from "./sources";
 
 // Notes API
 export {
-	getPersonNote,
+	readPersonNote,
 	createPersonNote,
 	updatePersonNote,
 	deletePersonNote,
-	getCoupleRelationshipNotes,
-	getCoupleRelationshipNote,
+	readCoupleRelationshipNotes,
+	readCoupleRelationshipNote,
 	createCoupleRelationshipNote,
 	updateCoupleRelationshipNote,
 	deleteCoupleRelationshipNote,
-	getChildAndParentsRelationshipNotes,
-	getChildAndParentsRelationshipNote,
+	readChildAndParentsRelationshipNotes,
+	readChildAndParentsRelationshipNote,
 	createChildAndParentsRelationshipNote,
 	updateChildAndParentsRelationshipNote,
 	deleteChildAndParentsRelationshipNote,
@@ -132,14 +131,18 @@ export {
 } from "./source-attachments";
 
 // Person Merges API
-export { getPersonMergeAnalysis, canMergePersons, mergePerson } from "./merges";
+export {
+	readPersonMergeAnalysis,
+	canMergePersons,
+	mergePerson,
+} from "./merges";
 
 // Preferred Relationships API
 export {
-	getPreferredParentRelationship,
+	readPreferredParentRelationship,
 	setPreferredParentRelationship,
 	deletePreferredParentRelationship,
-	getPreferredSpouseRelationship,
+	readPreferredSpouseRelationship,
 	setPreferredSpouseRelationship,
 	deletePreferredSpouseRelationship,
 } from "./preferences";
@@ -153,14 +156,14 @@ export {
 
 // Source Box API (Collections and Folders)
 export {
-	getUserSourceFolders,
-	getSourceFolders,
+	readUserSourceFolders,
+	readSourceFolders,
 	createSourceFolder,
-	getUserDefinedCollection,
+	readUserDefinedCollection,
 	updateUserDefinedCollection,
 	deleteUserDefinedCollection,
-	getCollectionSourceDescriptions,
-	getUserSourceDescriptions,
+	readCollectionSourceDescriptions,
+	readUserSourceDescriptions,
 	addSourcesToCollection,
 	removeSourcesFromCollection,
 } from "./source-box";
@@ -169,7 +172,7 @@ export {
 export { readAgent } from "./agent";
 
 // Pending Modifications API
-export { getPendingModifications } from "./pending-modifications";
+export { readPendingModifications } from "./pending-modifications";
 
 // Groups (Community Trees) API
 export {
@@ -181,7 +184,7 @@ export {
 } from "./groups";
 
 // Tree Changes API
-export { getTreeChanges } from "./tree-changes";
+export { readTreeChanges } from "./tree-changes";
 
 // Trees API
-export { getTree, deleteTree, createTree } from "./trees";
+export { readTree, deleteTree, createTree } from "./trees";

@@ -22,7 +22,7 @@ import type {
  * @param sdk - SDK instance
  * @returns Source descriptions or null
  */
-export async function getSourceDescriptions(
+export async function readSourceDescriptions(
 	sdk: FamilySearchSDK
 ): Promise<SourceDescriptionsResponse | null> {
 	try {
@@ -45,7 +45,7 @@ export async function getSourceDescriptions(
  * @param sourceId - Source description ID
  * @returns Source description or null
  */
-export async function getSourceDescription(
+export async function readSourceDescription(
 	sdk: FamilySearchSDK,
 	sourceId: string
 ): Promise<SourceDescriptionResponse | null> {
@@ -207,13 +207,13 @@ export async function deleteSourceDescription(
  * @example
  * ```typescript
  * const timestamp = Date.now() - (7 * 24 * 60 * 60 * 1000); // 7 days ago
- * const changes = await getSourceDescriptionChanges(sdk, ['SRC-1', 'SRC-2'], timestamp);
+ * const changes = await readSourceDescriptionChanges(sdk, ['SRC-1', 'SRC-2'], timestamp);
  * if (changes) {
  *   console.log('Changed sources:', changes.sourceDescriptions?.length);
  * }
  * ```
  */
-export async function getSourceDescriptionChanges(
+export async function readSourceDescriptionChanges(
 	sdk: FamilySearchSDK,
 	sourceIds: string[],
 	since: number

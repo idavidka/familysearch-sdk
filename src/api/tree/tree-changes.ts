@@ -21,11 +21,11 @@ import type { TreeChangesResponse } from "../../types/tree";
  *
  * @example
  * ```typescript
- * const changes = await getTreeChanges(sdk, { count: 50 });
+ * const changes = await readTreeChanges(sdk, { count: 50 });
  * console.log('Recent changes:', changes?.entries?.length);
  * ```
  */
-export async function getTreeChanges(
+export async function readTreeChanges(
 	sdk: FamilySearchSDK,
 	options?: {
 		count?: number;

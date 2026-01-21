@@ -830,10 +830,14 @@ export interface NotAMatchResponse {
  * Not-a-match declaration input
  */
 export interface NotAMatchInput {
-	/** Person ID to declare as not-a-match */
-	person: string;
+	/** Person ID to declare as not-a-match (single person mode) */
+	person?: string;
 	/** Optional reason for the declaration */
 	reason?: string;
+	/** Batch mode: Array of not-a-match entries */
+	entries?: Array<{
+		person?: { id?: string };
+	}>;
 }
 
 // ====================================

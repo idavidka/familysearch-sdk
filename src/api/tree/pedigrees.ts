@@ -19,10 +19,10 @@ import type { PedigreeResponse } from "../../types";
  *
  * @example
  * ```typescript
- * const ancestry = await getAncestry(sdk, 'KWQS-BBQ', 5);
+ * const ancestry = await readAncestry(sdk, 'KWQS-BBQ', 5);
  * ```
  */
-export async function getAncestry(
+export async function readAncestry(
 	sdk: FamilySearchSDK,
 	personId: string,
 	generations: number = 4
@@ -51,10 +51,10 @@ export async function getAncestry(
  *
  * @example
  * ```typescript
- * const descendants = await getDescendancy(sdk, 'KWQS-BBQ', 3);
+ * const descendants = await readDescendancy(sdk, 'KWQS-BBQ', 3);
  * ```
  */
-export async function getDescendancy(
+export async function readDescendancy(
 	sdk: FamilySearchSDK,
 	personId: string,
 	generations: number = 2

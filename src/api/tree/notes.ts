@@ -15,13 +15,13 @@ import type {
 } from "../../types";
 
 /**
- * Get all notes for a person
+ * Read all notes for a person
  *
  * @param sdk - SDK instance
  * @param personId - Person ID
  * @returns Person notes or null
  */
-export async function getPersonNotes(
+export async function readPersonNotes(
 	sdk: FamilySearchSDK,
 	personId: string
 ): Promise<PersonNotesResponse | null> {
@@ -47,7 +47,7 @@ export async function getPersonNotes(
  * @param noteId - Note ID
  * @returns Note or null
  */
-export async function getPersonNote(
+export async function readPersonNote(
 	sdk: FamilySearchSDK,
 	personId: string,
 	noteId: string
@@ -225,7 +225,7 @@ export async function deletePersonNote(
  * @param relationshipId - Couple relationship ID
  * @returns Couple relationship notes or null
  */
-export async function getCoupleRelationshipNotes(
+export async function readCoupleRelationshipNotes(
 	sdk: FamilySearchSDK,
 	relationshipId: string
 ): Promise<PersonNotesResponse | null> {
@@ -251,7 +251,7 @@ export async function getCoupleRelationshipNotes(
  * @param noteId - Note ID
  * @returns Note or null
  */
-export async function getCoupleRelationshipNote(
+export async function readCoupleRelationshipNote(
 	sdk: FamilySearchSDK,
 	relationshipId: string,
 	noteId: string
@@ -421,7 +421,7 @@ export async function deleteCoupleRelationshipNote(
  * @param relationshipId - Child-and-parents relationship ID
  * @returns Relationship notes or null
  */
-export async function getChildAndParentsRelationshipNotes(
+export async function readChildAndParentsRelationshipNotes(
 	sdk: FamilySearchSDK,
 	relationshipId: string
 ): Promise<PersonNotesResponse | null> {
@@ -447,7 +447,7 @@ export async function getChildAndParentsRelationshipNotes(
  * @param noteId - Note ID
  * @returns Note or null
  */
-export async function getChildAndParentsRelationshipNote(
+export async function readChildAndParentsRelationshipNote(
 	sdk: FamilySearchSDK,
 	relationshipId: string,
 	noteId: string

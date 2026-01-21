@@ -28,13 +28,13 @@ import type {
  *
  * @example
  * ```typescript
- * const preferred = await getPreferredParentRelationship(sdk, "cis.user.MMMM.MMMM", "PPPP-PPP");
+ * const preferred = await readPreferredParentRelationship(sdk, "cis.user.MMMM.MMMM", "PPPP-PPP");
  * if (preferred?.childAndParentsRelationships?.[0]) {
  *   console.log("Preferred parents:", preferred.childAndParentsRelationships[0]);
  * }
  * ```
  */
-export async function getPreferredParentRelationship(
+export async function readPreferredParentRelationship(
 	sdk: FamilySearchSDK,
 	userId: string,
 	personId: string
@@ -155,13 +155,13 @@ export async function deletePreferredParentRelationship(
  *
  * @example
  * ```typescript
- * const preferred = await getPreferredSpouseRelationship(sdk, "cis.user.MMMM.MMMM", "PPPP-PPP");
+ * const preferred = await readPreferredSpouseRelationship(sdk, "cis.user.MMMM.MMMM", "PPPP-PPP");
  * if (preferred?.relationships?.[0]) {
  *   console.log("Preferred spouse:", preferred.relationships[0]);
  * }
  * ```
  */
-export async function getPreferredSpouseRelationship(
+export async function readPreferredSpouseRelationship(
 	sdk: FamilySearchSDK,
 	userId: string,
 	personId: string

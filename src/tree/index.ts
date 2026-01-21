@@ -7,6 +7,6 @@
 export {
 	fetchPedigree,
 	getCurrentUser,
-	getPersonWithDetails,
+	readPersonWithDetails,
 	fetchMultiplePersons,
 } from "./pedigree";

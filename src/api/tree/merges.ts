@@ -25,11 +25,11 @@ import type {
  *
  * @example
  * ```typescript
- * const analysis = await getPersonMergeAnalysis(sdk, 'KWQS-BBQ', 'KWQS-BBC');
+ * const analysis = await readPersonMergeAnalysis(sdk, 'KWQS-BBQ', 'KWQS-BBC');
  * console.log('Conflicts:', analysis.conflicts);
  * ```
  */
-export async function getPersonMergeAnalysis(
+export async function readPersonMergeAnalysis(
 	sdk: FamilySearchSDK,
 	survivorId: string,
 	duplicateId: string

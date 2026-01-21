@@ -19,11 +19,11 @@ import type { FamilySearchSDK } from "../../client";
  *
  * @example
  * ```typescript
- * const tree = await getTree(sdk, 'TREE-123');
+ * const tree = await readTree(sdk, 'TREE-123');
  * console.log('Tree name:', tree?.name);
  * ```
  */
-export async function getTree(
+export async function readTree(
 	sdk: FamilySearchSDK,
 	tid: string
 ): Promise<unknown> {

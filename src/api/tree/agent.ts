@@ -16,27 +16,27 @@ import type { AgentResponse } from "../../types";
  * who has contributed to the FamilySearch system.
  *
  * @param sdk - SDK instance
- * @param agentId - Agent ID
+ * @param uid - User ID of the agent
  * @returns Agent information or null
  *
  * @example
  * ```typescript
- * const agent = await readAgent(sdk, 'AGENT-ID');
+ * const agent = await readAgent(sdk, 'USER-ID');
  * console.log('Agent name:', agent?.agents?.[0]?.names?.[0]?.value);
  * ```
  */
 export async function readAgent(
 	sdk: FamilySearchSDK,
-	agentId: string
+	uid: string
 ): Promise<AgentResponse | null> {
 	try {
 		const response = await sdk.get<AgentResponse>(
-			`/platform/agents/${agentId}`
+			`/platform/users/agents/${uid}`
 		);
 		return response.data || null;
 	} catch (error) {
 		sdk.logger.error(
-			`[FamilySearch SDK] Failed to get agent ${agentId}:`,
+			`[FamilySearch SDK] Failed to get agent ${uid}:`,
 			error
 		);
 		return null;

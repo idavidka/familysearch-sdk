@@ -34,7 +34,7 @@ import type {
  * @param relationshipId - Relationship ID
  * @returns Relationship details or null
  */
-export async function getCoupleRelationship(
+export async function readCoupleRelationship(
 	sdk: FamilySearchSDK,
 	relationshipId: string
 ): Promise<RelationshipDetails | null> {
@@ -199,7 +199,7 @@ export async function deleteCoupleRelationship(
  * @param relationshipId - Relationship ID
  * @returns Relationship details or null
  */
-export async function getChildAndParentsRelationship(
+export async function readChildAndParentsRelationship(
 	sdk: FamilySearchSDK,
 	relationshipId: string
 ): Promise<RelationshipDetails | null> {
@@ -383,7 +383,7 @@ export async function deleteChildAndParentsRelationship(
  *
  * @example
  * ```typescript
- * const history = await getCoupleRelationshipChangeHistory(sdk, "PPPP-PPP");
+ * const history = await readCoupleRelationshipChangeHistory(sdk, "PPPP-PPP");
  * if (history?.entries) {
  *   history.entries.forEach(entry => {
  *     console.log(`${entry.title}: ${entry.updated}`);
@@ -391,7 +391,7 @@ export async function deleteChildAndParentsRelationship(
  * }
  * ```
  */
-export async function getCoupleRelationshipChangeHistory(
+export async function readCoupleRelationshipChangeHistory(
 	sdk: FamilySearchSDK,
 	relationshipId: string
 ): Promise<CoupleRelationshipChangeHistoryResponse | null> {
@@ -421,7 +421,7 @@ export async function getCoupleRelationshipChangeHistory(
  *
  * @example
  * ```typescript
- * const history = await getChildAndParentsRelationshipChangeHistory(sdk, "PPPP-PPP");
+ * const history = await readChildAndParentsRelationshipChangeHistory(sdk, "PPPP-PPP");
  * if (history?.entries) {
  *   history.entries.forEach(entry => {
  *     console.log(`${entry.title}: ${entry.updated}`);
@@ -429,7 +429,7 @@ export async function getCoupleRelationshipChangeHistory(
  * }
  * ```
  */
-export async function getChildAndParentsRelationshipChangeHistory(
+export async function readChildAndParentsRelationshipChangeHistory(
 	sdk: FamilySearchSDK,
 	relationshipId: string
 ): Promise<ChildAndParentsRelationshipChangeHistoryResponse | null> {
@@ -615,11 +615,11 @@ export async function setSpouseOrder(
  *
  * @example
  * ```typescript
- * const sources = await getCoupleRelationshipSourceReferences(sdk, "XXXX-YYY");
+ * const sources = await readCoupleRelationshipSourceReferences(sdk, "XXXX-YYY");
  * console.log(sources?.relationships?.[0]?.sources);
  * ```
  */
-export async function getCoupleRelationshipSourceReferences(
+export async function readCoupleRelationshipSourceReferences(
 	sdk: FamilySearchSDK,
 	relationshipId: string
 ): Promise<RelationshipSourceReferencesResponse | null> {
@@ -648,11 +648,11 @@ export async function getCoupleRelationshipSourceReferences(
  *
  * @example
  * ```typescript
- * const sources = await getCoupleRelationshipSources(sdk, "XXXX-YYY");
+ * const sources = await readCoupleRelationshipSources(sdk, "XXXX-YYY");
  * console.log(sources?.sourceDescriptions);
  * ```
  */
-export async function getCoupleRelationshipSources(
+export async function readCoupleRelationshipSources(
 	sdk: FamilySearchSDK,
 	relationshipId: string
 ): Promise<RelationshipSourcesResponse | null> {
@@ -679,11 +679,11 @@ export async function getCoupleRelationshipSources(
  *
  * @example
  * ```typescript
- * const sources = await getChildAndParentsRelationshipSourceReferences(sdk, "XXXX-YYY");
+ * const sources = await readChildAndParentsRelationshipSourceReferences(sdk, "XXXX-YYY");
  * console.log(sources?.childAndParentsRelationships?.[0]?.sources);
  * ```
  */
-export async function getChildAndParentsRelationshipSourceReferences(
+export async function readChildAndParentsRelationshipSourceReferences(
 	sdk: FamilySearchSDK,
 	relationshipId: string
 ): Promise<RelationshipSourceReferencesResponse | null> {
@@ -712,11 +712,11 @@ export async function getChildAndParentsRelationshipSourceReferences(
  *
  * @example
  * ```typescript
- * const sources = await getChildAndParentsRelationshipSources(sdk, "XXXX-YYY");
+ * const sources = await readChildAndParentsRelationshipSources(sdk, "XXXX-YYY");
  * console.log(sources?.sourceDescriptions);
  * ```
  */
-export async function getChildAndParentsRelationshipSources(
+export async function readChildAndParentsRelationshipSources(
 	sdk: FamilySearchSDK,
 	relationshipId: string
 ): Promise<RelationshipSourcesResponse | null> {
@@ -1101,7 +1101,7 @@ export async function restoreCoupleRelationship(
  *
  * @example
  * ```typescript
- * const note = await getChildAndParentRelationshipNote(
+ * const note = await readChildAndParentRelationshipNote(
  *   sdk,
  *   "PPPP-PPP-CAPR",
  *   "NOTE-123"
@@ -1112,7 +1112,7 @@ export async function restoreCoupleRelationship(
  * }
  * ```
  */
-export async function getChildAndParentRelationshipNote(
+export async function readChildAndParentRelationshipNote(
 	sdk: FamilySearchSDK,
 	relationshipId: string,
 	noteId: string

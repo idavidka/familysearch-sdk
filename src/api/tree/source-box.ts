@@ -31,11 +31,11 @@ import type {
  *
  * @example
  * ```typescript
- * const folders = await getUserSourceFolders(sdk);
+ * const folders = await readUserSourceFolders(sdk);
  * console.log('Folders:', folders?.collections?.length);
  * ```
  */
-export async function getUserSourceFolders(
+export async function readUserSourceFolders(
 	sdk: FamilySearchSDK
 ): Promise<UserSourceFoldersResponse | null> {
 	try {
@@ -62,10 +62,10 @@ export async function getUserSourceFolders(
  *
  * @example
  * ```typescript
- * const folders = await getSourceFolders(sdk);
+ * const folders = await readSourceFolders(sdk);
  * ```
  */
-export async function getSourceFolders(
+export async function readSourceFolders(
 	sdk: FamilySearchSDK
 ): Promise<SourceFoldersResponse | null> {
 	try {
@@ -139,11 +139,11 @@ export async function createSourceFolder(
  *
  * @example
  * ```typescript
- * const collection = await getUserDefinedCollection(sdk, 'COLL-ID');
+ * const collection = await readUserDefinedCollection(sdk, 'COLL-ID');
  * console.log('Sources:', collection?.collections?.[0]?.count);
  * ```
  */
-export async function getUserDefinedCollection(
+export async function readUserDefinedCollection(
 	sdk: FamilySearchSDK,
 	collectionId: string
 ): Promise<UserDefinedCollectionResponse | null> {
@@ -258,11 +258,11 @@ export async function deleteUserDefinedCollection(
  *
  * @example
  * ```typescript
- * const sources = await getCollectionSourceDescriptions(sdk, 'COLL-ID');
+ * const sources = await readCollectionSourceDescriptions(sdk, 'COLL-ID');
  * console.log('Sources in collection:', sources?.sourceDescriptions?.length);
  * ```
  */
-export async function getCollectionSourceDescriptions(
+export async function readCollectionSourceDescriptions(
 	sdk: FamilySearchSDK,
 	collectionId: string
 ): Promise<CollectionSourceDescriptionsResponse | null> {
@@ -379,11 +379,11 @@ export async function removeSourcesFromCollection(
  *
  * @example
  * ```typescript
- * const sources = await getUserSourceDescriptions(sdk, 'current');
+ * const sources = await readUserSourceDescriptions(sdk, 'current');
  * console.log('User sources:', sources?.sourceDescriptions?.length);
  * ```
  */
-export async function getUserSourceDescriptions(
+export async function readUserSourceDescriptions(
 	sdk: FamilySearchSDK,
 	userId: string = "current",
 	start: number = 0,

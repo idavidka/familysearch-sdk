@@ -20,11 +20,11 @@ import type { PendingModificationsResponse } from "../../types";
  *
  * @example
  * ```typescript
- * const pending = await getPendingModifications(sdk);
+ * const pending = await readPendingModifications(sdk);
  * console.log('Pending changes:', pending?.entries?.length);
  * ```
  */
-export async function getPendingModifications(
+export async function readPendingModifications(
 	sdk: FamilySearchSDK
 ): Promise<PendingModificationsResponse | null> {
 	try {

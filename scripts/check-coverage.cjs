@@ -111,7 +111,7 @@ const endpointToFunction = (endpoint) => {
 		restorerelationship: "restoreRelationship",
 		readchildandparentsrelationship: "readChildAndParentsRelationship",
 		readchildandparentrelationship:
-			"getChildAndParentsRelationshipChangeHistory",
+			"readChildAndParentsRelationshipChangeHistory",
 		createchildandparentsrelationship: "createChildAndParentsRelationship",
 		updatechildandparentsrelationship: "updateChildAndParentsRelationship",
 		deletechildandparentsrelationship: "deleteChildAndParentsRelationship",
@@ -308,7 +308,7 @@ const endpointToFunction = (endpoint) => {
 	// Generic patterns - improved camelCase conversion
 	if (name.startsWith("read")) {
 		const remainder = name.substring(4);
-		return "get" + toCamelCase(remainder);
+		return "read" + toCamelCase(remainder);
 	}
 	if (name.startsWith("create")) {
 		const remainder = name.substring(6);
