@@ -1,6 +1,6 @@
 # FamilySearch SDK API Analysis Report
 
-**Generated:** 2026-01-21T10:39:07.126Z
+**Generated:** 2026-01-21T10:42:48.093Z
 
 ---
 
@@ -9,15 +9,15 @@
 | Metric | Count | Percentage |
 |--------|-------|------------|
 | **Total Endpoints** | 204 | 100% |
-| ✅ **Implemented** | 122 | 60% |
-| ❌ **Missing** | 70 | 34% |
+| ✅ **Implemented** | 126 | 62% |
+| ❌ **Missing** | 66 | 32% |
 | 🚫 **Not Applicable** | 12 | 6% |
 
-**Applicable Coverage:** 122/192 (64%)
+**Applicable Coverage:** 126/192 (66%)
 
 ---
 
-## ✅ Implemented Endpoints (122)
+## ✅ Implemented Endpoints (126)
 
 ### checkplaceischild
 
@@ -81,6 +81,13 @@
 - **Method:** POST
 - **Function:** `createMemories()`
 - **Description:** Create a memory.
+
+### createnamesegments
+
+- **Title:** Compose Full Name
+- **Method:** POST
+- **Function:** `createNameSegments()`
+- **Description:** Compose a full name from its parts.
 
 ### createperson
 
@@ -459,6 +466,13 @@ and if the reason supplied is too long, the request may fail as a bad request.
 - **Function:** `getCoupleRelationshipSources()`
 - **Description:** Read all sources associated with a couple relationship.
 
+### readcurrenttree
+
+- **Title:** Read Current Tree Id
+- **Method:** GET
+- **Function:** `getCurrentTree()`
+- **Description:** Retrieve the id of the current tree.
+
 ### readcurrenttreeperson
 
 - **Title:** Read Current User Tree Person
@@ -718,6 +732,13 @@ and if the reason supplied is too long, the request may fail as a bad request.
 - **Function:** `getTree()`
 - **Description:** Read a CET specified by the tree Id (tid) in the path.
 
+### readuserhistory
+
+- **Title:** Read User History
+- **Method:** GET
+- **Function:** `getUserHistory()`
+- **Description:** Read a user's history.
+
 ### restorechange
 
 - **Title:** Restore Change
@@ -879,9 +900,16 @@ and if the reason supplied is too long, the request may fail as a bad request.
 - **Function:** `updateSourceDescription()`
 - **Description:** Update a Source Description.
 
+### updateuserhistory
+
+- **Title:** Update User History
+- **Method:** POST
+- **Function:** `updateUserHistory()`
+- **Description:** Update a user's history. Only one Person at a time may be added to the history list.
+
 ---
 
-## ❌ Missing Endpoints (70)
+## ❌ Missing Endpoints (66)
 
 These endpoints need to be implemented. Implementation templates are provided below.
 
@@ -1078,41 +1106,6 @@ export async function creatememorypersona(
 		return response.data;
 	} catch (error) {
 		sdk["logger"].error("[FamilySearch SDK] Failed to creatememorypersona:", error);
-		throw error;
-	}
-}
-
-```
-
----
-
-### createnamesegments
-
-- **Title:** Compose Full Name
-- **Method:** POST
-- **URL:** `https://apibeta.familysearch.org/platform/names/segments`
-- **Description:** Compose a full name from its parts.
-
-**Response Codes:** 200, 400
-
-**Implementation Template:**
-
-```typescript
-/**
- * Compose Full Name
- *
- * Compose a full name from its parts.
- *
- * @returns Promise with response data
- */
-export async function createnamesegments(
-	sdk: FamilySearchSDK
-): Promise<any> {
-	try {
-		const response = await sdk.post<any>(`/platform/names/segments`, data);
-		return response.data;
-	} catch (error) {
-		sdk["logger"].error("[FamilySearch SDK] Failed to createnamesegments:", error);
 		throw error;
 	}
 }
@@ -1855,41 +1848,6 @@ export async function performpersonmatchesbyexample(
 		return response.data;
 	} catch (error) {
 		sdk["logger"].error("[FamilySearch SDK] Failed to performpersonmatchesbyexample:", error);
-		throw error;
-	}
-}
-
-```
-
----
-
-### readcurrenttree
-
-- **Title:** Read Current Tree Id
-- **Method:** GET
-- **URL:** `https://apibeta.familysearch.org/platform/trees/current`
-- **Description:** Retrieve the id of the current tree.
-
-**Response Codes:** 200, 429
-
-**Implementation Template:**
-
-```typescript
-/**
- * Read Current Tree Id
- *
- * Retrieve the id of the current tree.
- *
- * @returns Promise with response data
- */
-export async function getcurrenttree(
-	sdk: FamilySearchSDK
-): Promise<any> {
-	try {
-		const response = await sdk.get<any>(`/platform/trees/current`);
-		return response.data;
-	} catch (error) {
-		sdk["logger"].error("[FamilySearch SDK] Failed to getcurrenttree:", error);
 		throw error;
 	}
 }
@@ -2680,47 +2638,6 @@ export async function getuserdefinedcollectionsourcedescriptions(
 		return response.data;
 	} catch (error) {
 		sdk["logger"].error("[FamilySearch SDK] Failed to getuserdefinedcollectionsourcedescriptions:", error);
-		throw error;
-	}
-}
-
-```
-
----
-
-### readuserhistory
-
-- **Title:** Read User History
-- **Method:** GET
-- **URL:** `https://apibeta.familysearch.org/platform/users/{uid}/history`
-- **Description:** Read a user's history.
-
-**Path Parameters:**
-
-- `uid` (string) - required
-
-**Response Codes:** 200, 429
-
-**Implementation Template:**
-
-```typescript
-/**
- * Read User History
- *
- * Read a user's history.
- *
- * @param uid - uid
- * @returns Promise with response data
- */
-export async function getuserhistory(
-	sdk: FamilySearchSDK,
-	uid: string
-): Promise<any> {
-	try {
-		const response = await sdk.get<any>(`/platform/users/${uid}/history`);
-		return response.data;
-	} catch (error) {
-		sdk["logger"].error("[FamilySearch SDK] Failed to getuserhistory:", error);
 		throw error;
 	}
 }
@@ -3652,47 +3569,6 @@ export async function updateuserdefinedcollection(
 		return response.data;
 	} catch (error) {
 		sdk["logger"].error("[FamilySearch SDK] Failed to updateuserdefinedcollection:", error);
-		throw error;
-	}
-}
-
-```
-
----
-
-### updateuserhistory
-
-- **Title:** Update User History
-- **Method:** POST
-- **URL:** `https://apibeta.familysearch.org/platform/users/{uid}/history`
-- **Description:** Update a user's history. Only one Person at a time may be added to the history list.
-
-**Path Parameters:**
-
-- `uid` (string) - required
-
-**Response Codes:** 201, 400, 429
-
-**Implementation Template:**
-
-```typescript
-/**
- * Update User History
- *
- * Update a user's history. Only one Person at a time may be added to the history list.
- *
- * @param uid - uid
- * @returns Promise with response data
- */
-export async function updateuserhistory(
-	sdk: FamilySearchSDK,
-	uid: string
-): Promise<any> {
-	try {
-		const response = await sdk.post<any>(`/platform/users/${uid}/history`, data);
-		return response.data;
-	} catch (error) {
-		sdk["logger"].error("[FamilySearch SDK] Failed to updateuserhistory:", error);
 		throw error;
 	}
 }

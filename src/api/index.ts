@@ -16,6 +16,9 @@
 // Tree API
 export * from "./tree";
 
+// Trees API (Tree Management)
+export * from "./trees";
+
 // Memories API
 export * from "./memories";
 

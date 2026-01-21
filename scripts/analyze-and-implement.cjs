@@ -155,9 +155,14 @@ function checkImplementation(endpointName) {
 	readcurrenttreeperson: "getCurrentUser",
 	readcurrentuser: "getCurrentUser",
 	readagent: "getAgent",
-	readpartnereligibility: "checkPartnerEligibility",		// Person APIs
-		readperson: "getPerson",
-		readpersons: "getPersons",
+	readpartnereligibility: "checkPartnerEligibility",
+	readuserhistory: "getUserHistory",
+	updateuserhistory: "updateUserHistory",
+	deleteuser: "deleteUserAccount",
+
+	// Person APIs
+	readperson: "getPerson",
+	readpersons: "getPersons",
 		createperson: "createPerson",
 		updateperson: "updatePerson",
 		deleteperson: "deletePerson",
@@ -290,14 +295,16 @@ function checkImplementation(endpointName) {
 	deletediscussion: "deleteDiscussion",
 	readcomments: "getDiscussionComments",
 
-		// Vocabularies & Standards
-		readvocabulary: "getVocabulary",
-		readvocabularies: "getVocabularies",
-		readname: "getNameType",
-		readnames: "getNameTypes",
-	};
-
-	if (mappings[name]) {
+	// Vocabularies & Standards
+	readvocabulary: "getVocabulary",
+	readvocabularies: "getVocabularies",
+	readname: "getNameType",
+	readnames: "getNameTypes",
+	createnamesegments: "createNameSegments",
+	
+	// Trees (Tree Management)
+	readcurrenttree: "getCurrentTree",
+};	if (mappings[name]) {
 		return { implemented: true, function: mappings[name] };
 	}
 
