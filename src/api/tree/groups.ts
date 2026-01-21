@@ -1,15 +1,19 @@
 import type { FamilySearchSDK } from "../../client";
-import type { GroupResponse, GroupsResponse, CreateGroupInput } from "../../types/tree";
+import type {
+	GroupResponse,
+	GroupsResponse,
+	CreateGroupInput,
+} from "../../types/tree";
 
 /**
  * Read a specific group (community tree)
- * 
+ *
  * Returns details for a specific community tree group.
- * 
+ *
  * @param sdk - SDK instance
  * @param groupId - Group identifier
  * @returns Group details or null
- * 
+ *
  * @example
  * ```typescript
  * const group = await getGroup(sdk, 'GROUP-123');
@@ -26,7 +30,7 @@ export async function getGroup(
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to get group ${groupId}:`,
 			error
 		);
@@ -36,12 +40,12 @@ export async function getGroup(
 
 /**
  * Get all groups (community trees) for the current user
- * 
+ *
  * Returns all community tree groups the authenticated user has access to.
- * 
+ *
  * @param sdk - SDK instance
  * @returns List of groups or null
- * 
+ *
  * @example
  * ```typescript
  * const groups = await getGroups(sdk);
@@ -52,28 +56,23 @@ export async function getGroups(
 	sdk: FamilySearchSDK
 ): Promise<GroupsResponse | null> {
 	try {
-		const response = await sdk.get<GroupsResponse>(
-			`/platform/tree/groups`
-		);
+		const response = await sdk.get<GroupsResponse>(`/platform/tree/groups`);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
-			`[FamilySearch SDK] Failed to get groups:`,
-			error
-		);
+		sdk.logger.error(`[FamilySearch SDK] Failed to get groups:`, error);
 		return null;
 	}
 }
 
 /**
  * Create a new group (community tree)
- * 
+ *
  * Creates a new community tree group with the specified details.
- * 
+ *
  * @param sdk - SDK instance
  * @param input - Group creation data
  * @returns Created group or null
- * 
+ *
  * @example
  * ```typescript
  * const group = await createGroup(sdk, {
@@ -93,24 +92,21 @@ export async function createGroup(
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
-			`[FamilySearch SDK] Failed to create group:`,
-			error
-		);
+		sdk.logger.error(`[FamilySearch SDK] Failed to create group:`, error);
 		return null;
 	}
 }
 
 /**
  * Update an existing group (community tree)
- * 
+ *
  * Updates details for an existing community tree group.
- * 
+ *
  * @param sdk - SDK instance
  * @param groupId - Group identifier
  * @param input - Updated group data
  * @returns Updated group or null
- * 
+ *
  * @example
  * ```typescript
  * const updated = await updateGroup(sdk, 'GROUP-123', {
@@ -130,7 +126,7 @@ export async function updateGroup(
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to update group ${groupId}:`,
 			error
 		);
@@ -140,13 +136,13 @@ export async function updateGroup(
 
 /**
  * Delete a group (community tree)
- * 
+ *
  * Deletes an existing community tree group.
- * 
+ *
  * @param sdk - SDK instance
  * @param groupId - Group identifier
  * @returns Success status
- * 
+ *
  * @example
  * ```typescript
  * const success = await deleteGroup(sdk, 'GROUP-123');
@@ -161,7 +157,7 @@ export async function deleteGroup(
 		await sdk.delete(`/platform/tree/groups/${groupId}`);
 		return true;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to delete group ${groupId}:`,
 			error
 		);

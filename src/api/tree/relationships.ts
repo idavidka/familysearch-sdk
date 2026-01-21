@@ -44,7 +44,7 @@ export async function getCoupleRelationship(
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to get couple relationship ${relationshipId}:`,
 			error
 		);
@@ -101,7 +101,7 @@ export async function createCoupleRelationship(
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			"[FamilySearch SDK] Failed to create couple relationship:",
 			error
 		);
@@ -148,7 +148,7 @@ export async function updateCoupleRelationship(
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to update couple relationship ${relationshipId}:`,
 			error
 		);
@@ -184,7 +184,7 @@ export async function deleteCoupleRelationship(
 			statusText: response.statusText,
 		};
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to delete couple relationship ${relationshipId}:`,
 			error
 		);
@@ -209,7 +209,7 @@ export async function getChildAndParentsRelationship(
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to get child-and-parents relationship ${relationshipId}:`,
 			error
 		);
@@ -274,7 +274,7 @@ export async function createChildAndParentsRelationship(
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			"[FamilySearch SDK] Failed to create child-and-parents relationship:",
 			error
 		);
@@ -327,7 +327,7 @@ export async function updateChildAndParentsRelationship(
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to update child-and-parents relationship ${relationshipId}:`,
 			error
 		);
@@ -363,7 +363,7 @@ export async function deleteChildAndParentsRelationship(
 			statusText: response.statusText,
 		};
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to delete child-and-parents relationship ${relationshipId}:`,
 			error
 		);
@@ -401,7 +401,7 @@ export async function getCoupleRelationshipChangeHistory(
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to get couple relationship change history for ${relationshipId}:`,
 			error
 		);
@@ -440,7 +440,7 @@ export async function getChildAndParentsRelationshipChangeHistory(
 			);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to get child-and-parents relationship change history for ${relationshipId}:`,
 			error
 		);
@@ -488,7 +488,7 @@ export async function restoreChange(
 		);
 		return response.data || { entries: [] };
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to restore change ${changeId}:`,
 			error
 		);
@@ -543,7 +543,7 @@ export async function setParentOrder(
 		);
 		return response.data || { childAndParentsRelationships: [] };
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to set parent order for ${relationshipId}:`,
 			error
 		);
@@ -598,7 +598,7 @@ export async function setSpouseOrder(
 		);
 		return response.data || { relationships: [] };
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to set spouse order for ${relationshipId}:`,
 			error
 		);
@@ -629,7 +629,7 @@ export async function getCoupleRelationshipSourceReferences(
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to get couple relationship source references for ${relationshipId}:`,
 			error
 		);
@@ -662,7 +662,7 @@ export async function getCoupleRelationshipSources(
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to get couple relationship sources for ${relationshipId}:`,
 			error
 		);
@@ -693,7 +693,7 @@ export async function getChildAndParentsRelationshipSourceReferences(
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to get child-and-parents relationship source references for ${relationshipId}:`,
 			error
 		);
@@ -726,7 +726,7 @@ export async function getChildAndParentsRelationshipSources(
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to get child-and-parents relationship sources for ${relationshipId}:`,
 			error
 		);
@@ -778,7 +778,7 @@ export async function createCoupleRelationshipSourceReference(
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to create couple relationship source reference for ${relationshipId}:`,
 			error
 		);
@@ -830,7 +830,7 @@ export async function createChildAndParentsRelationshipSourceReference(
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to create child-and-parents relationship source reference for ${relationshipId}:`,
 			error
 		);
@@ -878,7 +878,7 @@ export async function deleteCoupleRelationshipSourceReference(
 			statusText: response.statusText,
 		};
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to delete couple relationship source reference ${sourceId} for ${relationshipId}:`,
 			error
 		);
@@ -926,7 +926,7 @@ export async function deleteChildAndParentsRelationshipSourceReference(
 			statusText: response.statusText,
 		};
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to delete child-and-parents relationship source reference ${sourceId} for ${relationshipId}:`,
 			error
 		);
@@ -975,7 +975,7 @@ export async function deleteChildAndParentsRelationshipParent(
 			statusText: response.statusText,
 		};
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to delete child-and-parents relationship parent from ${role}:`,
 			error
 		);

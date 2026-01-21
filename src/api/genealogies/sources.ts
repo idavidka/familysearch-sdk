@@ -1,8 +1,8 @@
 /**
  * FamilySearch Genealogies API - Sources Module
- * 
+ *
  * Handles source description management within research trees (genealogies).
- * 
+ *
  * @see https://developers.familysearch.org/main/reference/readgenealogiessourcedescription
  */
 
@@ -15,14 +15,14 @@ import type {
 
 /**
  * Read a source description in a genealogy tree
- * 
+ *
  * Returns details for a source description within a research tree.
- * 
+ *
  * @param sdk - SDK instance
  * @param treeId - Tree identifier
  * @param sourceId - Source description identifier
  * @returns Source description or null
- * 
+ *
  * @example
  * ```typescript
  * const source = await getGenealogySourceDescription(sdk, 'TREE-123', 'SRC-456');
@@ -40,7 +40,7 @@ export async function getGenealogySourceDescription(
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to get genealogy source ${sourceId} in tree ${treeId}:`,
 			error
 		);
@@ -50,14 +50,14 @@ export async function getGenealogySourceDescription(
 
 /**
  * Create a new source description in a genealogy tree
- * 
+ *
  * Adds a new source description to a research tree.
- * 
+ *
  * @param sdk - SDK instance
  * @param treeId - Tree identifier
  * @param input - Source description creation data
  * @returns Created source description or null
- * 
+ *
  * @example
  * ```typescript
  * const source = await createGenealogySourceDescription(sdk, 'TREE-123', {
@@ -78,7 +78,7 @@ export async function createGenealogySourceDescription(
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to create genealogy source in tree ${treeId}:`,
 			error
 		);
@@ -88,15 +88,15 @@ export async function createGenealogySourceDescription(
 
 /**
  * Update an existing source description in a genealogy tree
- * 
+ *
  * Updates details for a source description within a research tree.
- * 
+ *
  * @param sdk - SDK instance
  * @param treeId - Tree identifier
  * @param sourceId - Source description identifier
  * @param input - Updated source description data
  * @returns Updated source description or null
- * 
+ *
  * @example
  * ```typescript
  * const updated = await updateGenealogySourceDescription(sdk, 'TREE-123', 'SRC-456', {
@@ -117,7 +117,7 @@ export async function updateGenealogySourceDescription(
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to update genealogy source ${sourceId} in tree ${treeId}:`,
 			error
 		);
@@ -127,14 +127,14 @@ export async function updateGenealogySourceDescription(
 
 /**
  * Delete a source description from a genealogy tree
- * 
+ *
  * Removes a source description from a research tree.
- * 
+ *
  * @param sdk - SDK instance
  * @param treeId - Tree identifier
  * @param sourceId - Source description identifier
  * @returns Success status
- * 
+ *
  * @example
  * ```typescript
  * const success = await deleteGenealogySourceDescription(sdk, 'TREE-123', 'SRC-456');
@@ -152,7 +152,7 @@ export async function deleteGenealogySourceDescription(
 		);
 		return true;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to delete genealogy source ${sourceId} in tree ${treeId}:`,
 			error
 		);

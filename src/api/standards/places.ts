@@ -1,8 +1,8 @@
 /**
  * FamilySearch Places API
- * 
+ *
  * Handles place search and standardization.
- * 
+ *
  * @see https://developers.familysearch.org/main/reference/searchplaces
  */
 
@@ -22,26 +22,35 @@ import type {
 
 /**
  * Search for places
- * 
+ *
+ * Searches for places by name with optional pagination support.
+ *
  * @param sdk - SDK instance
  * @param query - Search query (place name)
  * @param count - Number of results (default: 20)
+ * @param start - Starting index for pagination (default: 0)
  * @returns Place search results or null
- * 
+ *
  * @example
  * ```typescript
+ * // Basic search
  * const places = await searchPlaces(sdk, 'London, England', 10);
+ *
+ * // With pagination
+ * const nextPage = await searchPlaces(sdk, 'London, England', 10, 10);
  * ```
  */
 export async function searchPlaces(
 	sdk: FamilySearchSDK,
 	query: string,
-	count: number = 20
+	count: number = 20,
+	start: number = 0
 ): Promise<PlaceSearchResponse | null> {
 	try {
 		const params = new URLSearchParams({
 			q: query,
 			count: count.toString(),
+			start: start.toString(),
 		});
 
 		const response = await sdk.get<PlaceSearchResponse>(
@@ -49,7 +58,7 @@ export async function searchPlaces(
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to search places for "${query}":`,
 			error
 		);
@@ -59,7 +68,7 @@ export async function searchPlaces(
 
 /**
  * Get place details by ID
- * 
+ *
  * @param sdk - SDK instance
  * @param placeId - Place ID
  * @returns Place details or null
@@ -74,7 +83,7 @@ export async function getPlaceDetails(
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to get place details for ${placeId}:`,
 			error
 		);
@@ -84,14 +93,14 @@ export async function getPlaceDetails(
 
 /**
  * Get child places of a place
- * 
+ *
  * Returns all places that are children of the specified place
  * (e.g., counties within a state, cities within a country).
- * 
+ *
  * @param sdk - SDK instance
  * @param placeId - Parent place ID
  * @returns Child places or null
- * 
+ *
  * @example
  * ```typescript
  * const children = await getPlaceChildren(sdk, '12345');
@@ -108,7 +117,7 @@ export async function getPlaceChildren(
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to get children for place ${placeId}:`,
 			error
 		);
@@ -118,33 +127,33 @@ export async function getPlaceChildren(
 
 /**
  * Get place descriptions
- * 
+ *
  * Returns source descriptions for places, which contain metadata
  * about place resources.
- * 
+ *
  * @param sdk - SDK instance
- * @param placeIds - Array of place IDs
+ * @param descriptionIds - Array of place description IDs
  * @returns Place descriptions or null
- * 
+ *
  * @example
  * ```typescript
- * const descriptions = await getPlaceDescriptions(sdk, ['12345', '67890']);
+ * const descriptions = await getPlaceDescriptions(sdk, ['DESC-123', 'DESC-456']);
  * ```
  */
 export async function getPlaceDescriptions(
 	sdk: FamilySearchSDK,
-	placeIds: string[]
+	descriptionIds: string[]
 ): Promise<PlaceDescriptionsResponse | null> {
 	try {
 		const params = new URLSearchParams();
-		placeIds.forEach(id => params.append('places', id));
-		
+		descriptionIds.forEach((id) => params.append("pdids", id));
+
 		const response = await sdk.get<PlaceDescriptionsResponse>(
 			`/platform/places/description?${params.toString()}`
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to get place descriptions:`,
 			error
 		);
@@ -154,13 +163,13 @@ export async function getPlaceDescriptions(
 
 /**
  * Get single place description
- * 
+ *
  * Returns the source description for a specific place.
- * 
+ *
  * @param sdk - SDK instance
  * @param descriptionId - Place description ID
  * @returns Place description or null
- * 
+ *
  * @example
  * ```typescript
  * const description = await getPlaceDescription(sdk, 'DESC-ID');
@@ -176,7 +185,7 @@ export async function getPlaceDescription(
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to get place description ${descriptionId}:`,
 			error
 		);
@@ -186,12 +195,12 @@ export async function getPlaceDescription(
 
 /**
  * Get place types vocabulary
- * 
+ *
  * Returns the vocabulary of available place types (e.g., City, County, State).
- * 
+ *
  * @param sdk - SDK instance
  * @returns Place types or null
- * 
+ *
  * @example
  * ```typescript
  * const types = await getPlaceTypes(sdk);
@@ -207,7 +216,7 @@ export async function getPlaceTypes(
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to get place types:`,
 			error
 		);
@@ -217,13 +226,13 @@ export async function getPlaceTypes(
 
 /**
  * Get single place type
- * 
+ *
  * Returns details for a specific place type.
- * 
+ *
  * @param sdk - SDK instance
  * @param typeId - Place type ID
  * @returns Place type or null
- * 
+ *
  * @example
  * ```typescript
  * const type = await getPlaceType(sdk, 'City');
@@ -239,7 +248,7 @@ export async function getPlaceType(
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to get place type ${typeId}:`,
 			error
 		);
@@ -249,13 +258,13 @@ export async function getPlaceType(
 
 /**
  * Get place type groups
- * 
+ *
  * Returns groupings of place types (e.g., administrative divisions,
  * geographic features).
- * 
+ *
  * @param sdk - SDK instance
  * @returns Place type groups or null
- * 
+ *
  * @example
  * ```typescript
  * const groups = await getPlaceTypeGroups(sdk);
@@ -270,7 +279,7 @@ export async function getPlaceTypeGroups(
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to get place type groups:`,
 			error
 		);
@@ -280,13 +289,13 @@ export async function getPlaceTypeGroups(
 
 /**
  * Get single place type group
- * 
+ *
  * Returns details for a specific place type group by ID.
- * 
+ *
  * @param sdk - SDK instance
  * @param groupId - Place type group ID
  * @returns Place type group or null
- * 
+ *
  * @example
  * ```typescript
  * const group = await getPlaceTypeGroup(sdk, 'city-like');
@@ -302,7 +311,7 @@ export async function getPlaceTypeGroup(
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to get place type group ${groupId}:`,
 			error
 		);
@@ -312,37 +321,42 @@ export async function getPlaceTypeGroup(
 
 /**
  * Search for parent places
- * 
- * Searches for places that could be parents of the given place.
- * 
+ *
+ * Searches for places that contain the given text string and their parents.
+ * Filter results based on the parent IDs parameter if provided.
+ *
  * @param sdk - SDK instance
- * @param placeId - Child place ID
- * @param query - Optional search query to filter results
+ * @param searchValue - The search value (place name text to search for)
+ * @param parentIds - Optional comma-separated list of parent place IDs to limit results
  * @returns Parent places or null
- * 
+ *
  * @example
  * ```typescript
- * const parents = await searchParentPlaces(sdk, '12345', 'England');
+ * // Search for places containing "Provo"
+ * const results = await searchParentPlaces(sdk, 'Provo');
+ *
+ * // Search with parent filter
+ * const filtered = await searchParentPlaces(sdk, 'London', '1,33,56');
  * ```
  */
 export async function searchParentPlaces(
 	sdk: FamilySearchSDK,
-	placeId: string,
-	query?: string
+	searchValue: string,
+	parentIds?: string
 ): Promise<ParentPlacesResponse | null> {
 	try {
-		const params = new URLSearchParams({ place: placeId });
-		if (query) {
-			params.append('q', query);
+		const params = new URLSearchParams({ value: searchValue });
+		if (parentIds) {
+			params.append("pids", parentIds);
 		}
-		
+
 		const response = await sdk.get<ParentPlacesResponse>(
-			`/platform/places/parent-search?${params.toString()}`
+			`/platform/places/parents?${params.toString()}`
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
-			`[FamilySearch SDK] Failed to search parent places for ${placeId}:`,
+		sdk.logger.error(
+			`[FamilySearch SDK] Failed to search parent places for "${searchValue}":`,
 			error
 		);
 		return null;
@@ -351,14 +365,14 @@ export async function searchParentPlaces(
 
 /**
  * Check if place is child of another place
- * 
+ *
  * Verifies whether a place is a child (sub-jurisdiction) of another place.
- * 
+ *
  * @param sdk - SDK instance
  * @param childId - Child place ID
  * @param parentId - Parent place ID
  * @returns Result indicating if child relationship exists or null
- * 
+ *
  * @example
  * ```typescript
  * const isChild = await checkPlaceIsChild(sdk, 'london-id', 'england-id');
@@ -378,7 +392,7 @@ export async function checkPlaceIsChild(
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to check if ${childId} is child of ${parentId}:`,
 			error
 		);

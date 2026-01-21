@@ -558,7 +558,7 @@ function generateImplementation(endpoint) {
 
 	code += `\t\treturn response.data;\n`;
 	code += `\t} catch (error) {\n`;
-	code += `\t\tsdk["logger"].error("[FamilySearch SDK] Failed to ${functionName}:", error);\n`;
+	code += `\t\tsdk.logger.error("[FamilySearch SDK] Failed to ${functionName}:", error);\n`;
 	code += `\t\tthrow error;\n`;
 	code += `\t}\n`;
 	code += `}\n`;

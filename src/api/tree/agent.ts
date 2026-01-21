@@ -1,8 +1,8 @@
 /**
  * FamilySearch Agent API
- * 
+ *
  * Handles agent (contributor/organization) information.
- * 
+ *
  * @see https://developers.familysearch.org/main/reference/readagent
  */
 
@@ -11,14 +11,14 @@ import type { AgentResponse } from "../../types";
 
 /**
  * Read agent information
- * 
+ *
  * Returns information about an agent (contributor or organization)
  * who has contributed to the FamilySearch system.
- * 
+ *
  * @param sdk - SDK instance
  * @param agentId - Agent ID
  * @returns Agent information or null
- * 
+ *
  * @example
  * ```typescript
  * const agent = await getAgent(sdk, 'AGENT-ID');
@@ -35,7 +35,7 @@ export async function getAgent(
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to get agent ${agentId}:`,
 			error
 		);

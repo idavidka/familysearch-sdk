@@ -1,9 +1,9 @@
 /**
  * FamilySearch Vocabulary API
- * 
+ *
  * Handles vocabulary concepts, terms, translations, and definitions.
  * Used for controlled vocabularies in FamilySearch (e.g., relationship types, fact types).
- * 
+ *
  * @see https://developers.familysearch.org/main/reference/readvocabconceptssearch
  */
 
@@ -19,14 +19,14 @@ import type {
 
 /**
  * Search vocabulary concepts
- * 
+ *
  * Searches for vocabulary concepts by query string.
- * 
+ *
  * @param sdk - SDK instance
  * @param query - Search query
  * @param options - Optional search parameters
  * @returns Search results or null
- * 
+ *
  * @example
  * ```typescript
  * const results = await searchVocabConcepts(sdk, 'marriage', { lang: 'en' });
@@ -51,7 +51,7 @@ export async function searchVocabConcepts(
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to search vocab concepts:`,
 			error
 		);
@@ -61,13 +61,13 @@ export async function searchVocabConcepts(
 
 /**
  * Read a vocabulary term
- * 
+ *
  * Returns details for a specific vocabulary term.
- * 
+ *
  * @param sdk - SDK instance
  * @param termId - Term identifier
  * @returns Term details or null
- * 
+ *
  * @example
  * ```typescript
  * const term = await getVocabTerm(sdk, 'Marriage');
@@ -84,7 +84,7 @@ export async function getVocabTerm(
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to get vocab term ${termId}:`,
 			error
 		);
@@ -94,14 +94,14 @@ export async function getVocabTerm(
 
 /**
  * Read vocabulary term translation
- * 
+ *
  * Returns translation for a vocabulary term in a specific language.
- * 
+ *
  * @param sdk - SDK instance
  * @param termId - Term identifier
  * @param lang - Language code (e.g., 'en', 'es', 'de')
  * @returns Term translation or null
- * 
+ *
  * @example
  * ```typescript
  * const translation = await getVocabTermTranslation(sdk, 'Marriage', 'es');
@@ -119,7 +119,7 @@ export async function getVocabTermTranslation(
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to get vocab term translation for ${termId} in ${lang}:`,
 			error
 		);
@@ -129,13 +129,13 @@ export async function getVocabTermTranslation(
 
 /**
  * Read vocabulary concept (v2)
- * 
+ *
  * Returns details for a specific vocabulary concept (version 2 API).
- * 
+ *
  * @param sdk - SDK instance
  * @param conceptId - Concept identifier
  * @returns Concept details or null
- * 
+ *
  * @example
  * ```typescript
  * const concept = await getVocabConcept(sdk, 'http://gedcomx.org/Marriage');
@@ -152,7 +152,7 @@ export async function getVocabConcept(
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to get vocab concept ${conceptId}:`,
 			error
 		);
@@ -162,14 +162,14 @@ export async function getVocabConcept(
 
 /**
  * Read vocabulary concept definition
- * 
+ *
  * Returns the definition for a vocabulary concept.
- * 
+ *
  * @param sdk - SDK instance
  * @param conceptId - Concept identifier
  * @param lang - Optional language code
  * @returns Concept definition or null
- * 
+ *
  * @example
  * ```typescript
  * const definition = await getVocabConceptDefinition(sdk, 'http://gedcomx.org/Marriage', 'en');
@@ -189,7 +189,7 @@ export async function getVocabConceptDefinition(
 		const response = await sdk.get<VocabConceptDefinitionResponse>(url);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to get vocab concept definition for ${conceptId}:`,
 			error
 		);
@@ -199,12 +199,12 @@ export async function getVocabConceptDefinition(
 
 /**
  * Read vocabulary list
- * 
+ *
  * Returns a list of vocabulary schemes/lists.
- * 
+ *
  * @param sdk - SDK instance
  * @returns List of vocabulary schemes or null
- * 
+ *
  * @example
  * ```typescript
  * const lists = await getVocabList(sdk);
@@ -215,15 +215,11 @@ export async function getVocabList(
 	sdk: FamilySearchSDK
 ): Promise<VocabListResponse | null> {
 	try {
-		const response = await sdk.get<VocabListResponse>(
-			`/platform/vocab/list`
-		);
+		const response =
+			await sdk.get<VocabListResponse>(`/platform/vocab/list`);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
-			`[FamilySearch SDK] Failed to get vocab list:`,
-			error
-		);
+		sdk.logger.error(`[FamilySearch SDK] Failed to get vocab list:`, error);
 		return null;
 	}
 }

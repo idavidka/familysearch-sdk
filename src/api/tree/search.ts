@@ -1,8 +1,8 @@
 /**
  * FamilySearch Search API
- * 
+ *
  * Handles person search functionality in the FamilySearch Family Tree.
- * 
+ *
  * @see https://developers.familysearch.org/main/reference/searchpersons
  */
 
@@ -11,11 +11,11 @@ import type { PersonSearchResult } from "../../types";
 
 /**
  * Search for persons in FamilySearch
- * 
+ *
  * @param sdk - SDK instance
  * @param query - Search query parameters
  * @returns Search results or null
- * 
+ *
  * @example
  * ```typescript
  * const results = await searchPersons(sdk, {
@@ -58,18 +58,17 @@ export async function searchPersons(
 		if (query.spouseName) params.append("spouseName", query.spouseName);
 		if (query.fatherName) params.append("fatherName", query.fatherName);
 		if (query.motherName) params.append("motherName", query.motherName);
-		if (query.start !== undefined) params.append("start", query.start.toString());
-		if (query.count !== undefined) params.append("count", query.count.toString());
+		if (query.start !== undefined)
+			params.append("start", query.start.toString());
+		if (query.count !== undefined)
+			params.append("count", query.count.toString());
 
 		const response = await sdk.get<PersonSearchResult>(
 			`/platform/tree/search?${params.toString()}`
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
-			"[FamilySearch SDK] Failed to search persons:",
-			error
-		);
+		sdk.logger.error("[FamilySearch SDK] Failed to search persons:", error);
 		return null;
 	}
 }

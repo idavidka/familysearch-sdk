@@ -1,8 +1,8 @@
 /**
  * FamilySearch User API
- * 
+ *
  * Handles user profile and authentication.
- * 
+ *
  * @see https://developers.familysearch.org/main/reference/readcurrentuser
  */
 
@@ -19,7 +19,7 @@ import type {
 
 /**
  * Get current user information
- * 
+ *
  * @param sdk - SDK instance
  * @returns Current user data or null
  */
@@ -32,7 +32,7 @@ export async function getCurrentUser(
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			"[FamilySearch SDK] Failed to get current user:",
 			error
 		);
@@ -42,15 +42,15 @@ export async function getCurrentUser(
 
 /**
  * Create partner account
- * 
+ *
  * Creates a partner account for a user. Partner accounts have special
  * privileges for FamilySearch partner organizations.
- * 
+ *
  * @param sdk - SDK instance
  * @param input - Partner account details
  * @returns Created account response
  * @throws Error if creation fails
- * 
+ *
  * @example
  * ```typescript
  * const account = await createPartnerAccount(sdk, {
@@ -74,7 +74,7 @@ export async function createPartnerAccount(
 		);
 		return response.data || { users: [] };
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to create partner account:`,
 			error
 		);
@@ -84,15 +84,15 @@ export async function createPartnerAccount(
 
 /**
  * Update partner account
- * 
+ *
  * Updates an existing partner account's information.
- * 
+ *
  * @param sdk - SDK instance
  * @param userId - User ID
  * @param input - Updated account details
  * @returns Updated account response
  * @throws Error if update fails
- * 
+ *
  * @example
  * ```typescript
  * await updatePartnerAccount(sdk, 'USER-ID', {
@@ -115,7 +115,7 @@ export async function updatePartnerAccount(
 		);
 		return response.data || { users: [] };
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to update partner account for ${userId}:`,
 			error
 		);
@@ -125,13 +125,13 @@ export async function updatePartnerAccount(
 
 /**
  * Check partner eligibility
- * 
+ *
  * Checks if a user is eligible to become a partner account.
- * 
+ *
  * @param sdk - SDK instance
  * @param userId - User ID to check
  * @returns Eligibility status or null
- * 
+ *
  * @example
  * ```typescript
  * const eligibility = await checkPartnerEligibility(sdk, 'USER-ID');
@@ -150,7 +150,7 @@ export async function checkPartnerEligibility(
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to check partner eligibility for ${userId}:`,
 			error
 		);
@@ -160,13 +160,13 @@ export async function checkPartnerEligibility(
 
 /**
  * Get user history
- * 
+ *
  * Returns the user's recently viewed persons and other activity history.
- * 
+ *
  * @param sdk - SDK instance
  * @param userId - User ID (or 'current' for current user)
  * @returns User history or null
- * 
+ *
  * @example
  * ```typescript
  * const history = await getUserHistory(sdk, 'current');
@@ -175,7 +175,7 @@ export async function checkPartnerEligibility(
  */
 export async function getUserHistory(
 	sdk: FamilySearchSDK,
-	userId: string = 'current'
+	userId: string = "current"
 ): Promise<UserHistoryResponse | null> {
 	try {
 		const response = await sdk.get<UserHistoryResponse>(
@@ -183,7 +183,7 @@ export async function getUserHistory(
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to get user history for ${userId}:`,
 			error
 		);
@@ -193,15 +193,15 @@ export async function getUserHistory(
 
 /**
  * Update user history
- * 
+ *
  * Adds or updates entries in the user's history (e.g., recently viewed persons).
- * 
+ *
  * @param sdk - SDK instance
  * @param userId - User ID (or 'current' for current user)
  * @param input - History entries to add/update
  * @returns Updated history response
  * @throws Error if update fails
- * 
+ *
  * @example
  * ```typescript
  * await updateUserHistory(sdk, 'current', {
@@ -218,7 +218,7 @@ export async function getUserHistory(
  */
 export async function updateUserHistory(
 	sdk: FamilySearchSDK,
-	userId: string = 'current',
+	userId: string = "current",
 	input: UserHistoryEntryInput
 ): Promise<UserHistoryResponse> {
 	try {
@@ -228,7 +228,7 @@ export async function updateUserHistory(
 		);
 		return response.data || { entries: [] };
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to update user history for ${userId}:`,
 			error
 		);
@@ -238,15 +238,15 @@ export async function updateUserHistory(
 
 /**
  * Delete user account
- * 
+ *
  * Permanently deletes a user account. This is a destructive operation
  * and cannot be undone.
- * 
+ *
  * @param sdk - SDK instance
  * @param userId - User ID to delete
  * @returns Delete confirmation
  * @throws Error if deletion fails
- * 
+ *
  * @example
  * ```typescript
  * await deleteUserAccount(sdk, 'USER-ID');
@@ -258,15 +258,13 @@ export async function deleteUserAccount(
 	userId: string
 ): Promise<DeleteUserResponse> {
 	try {
-		const response = await sdk.delete<void>(
-			`/platform/users/${userId}`
-		);
+		const response = await sdk.delete<void>(`/platform/users/${userId}`);
 		return {
 			statusCode: response.statusCode,
 			statusText: response.statusText,
 		};
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to delete user account ${userId}:`,
 			error
 		);

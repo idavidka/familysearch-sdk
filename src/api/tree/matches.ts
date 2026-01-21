@@ -1,8 +1,8 @@
 /**
  * FamilySearch Matches API
- * 
+ *
  * Handles record matches, record hints, and potential duplicates.
- * 
+ *
  * @see https://developers.familysearch.org/main/reference/readpersonmatches
  */
 
@@ -18,7 +18,7 @@ import type {
 
 /**
  * Get record matches for a person
- * 
+ *
  * @param sdk - SDK instance
  * @param personId - Person ID
  * @returns Matches data or null
@@ -33,7 +33,7 @@ export async function getPersonMatches(
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to get matches for ${personId}:`,
 			error
 		);
@@ -43,7 +43,7 @@ export async function getPersonMatches(
 
 /**
  * Get non-matches for a person
- * 
+ *
  * @param sdk - SDK instance
  * @param personId - Person ID
  * @returns Non-matches data or null
@@ -58,7 +58,7 @@ export async function getPersonNonMatches(
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to get non-matches for ${personId}:`,
 			error
 		);
@@ -68,24 +68,24 @@ export async function getPersonNonMatches(
 
 /**
  * Update match resolution (accept/reject/dismiss)
- * 
+ *
  * Resolves a record match by accepting, rejecting, or dismissing it.
  * - **accepted**: Match is confirmed, data can be merged
  * - **rejected**: Match is incorrect (not-a-match declaration)
  * - **pending**: Reset to unresolved state
- * 
+ *
  * @param sdk - SDK instance
  * @param personId - Person ID
  * @param matchId - Match ID
  * @param status - Resolution status ("accepted", "rejected", or "pending")
  * @returns Match resolution response
  * @throws Error if resolution fails
- * 
+ *
  * @example
  * ```typescript
  * // Accept a match
  * await updateMatchResolution(sdk, "PPPP-PPP", "MMMM-MMM", "accepted");
- * 
+ *
  * // Reject a match (declare not-a-match)
  * await updateMatchResolution(sdk, "PPPP-PPP", "MMMM-MMM", "rejected");
  * ```
@@ -104,7 +104,7 @@ export async function updateMatchResolution(
 		);
 		return response.data || { entries: [] };
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to update match resolution for ${personId}/${matchId}:`,
 			error
 		);
@@ -114,15 +114,15 @@ export async function updateMatchResolution(
 
 /**
  * Get not-a-match declarations for a person
- * 
+ *
  * Returns all persons that have been explicitly declared as NOT matching
  * the specified person. This prevents these persons from appearing in
  * match suggestions.
- * 
+ *
  * @param sdk - SDK instance
  * @param personId - Person ID
  * @returns Not-a-match declarations or null
- * 
+ *
  * @example
  * ```typescript
  * const notMatches = await getNotAMatchDeclarations(sdk, "PPPP-PPP");
@@ -141,7 +141,7 @@ export async function getNotAMatchDeclarations(
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to get not-a-match declarations for ${personId}:`,
 			error
 		);
@@ -151,18 +151,18 @@ export async function getNotAMatchDeclarations(
 
 /**
  * Create a not-a-match declaration
- * 
+ *
  * Declares that two persons are NOT a match, preventing them from appearing
  * in each other's match suggestions. This is useful when the system suggests
  * incorrect matches.
- * 
+ *
  * @param sdk - SDK instance
  * @param personId - Person ID
  * @param notMatchPersonId - ID of person to declare as not-a-match
  * @param reason - Optional reason for the declaration
  * @returns Not-a-match response
  * @throws Error if declaration fails
- * 
+ *
  * @example
  * ```typescript
  * await createNotAMatchDeclaration(
@@ -190,7 +190,7 @@ export async function createNotAMatchDeclaration(
 		);
 		return response.data || { persons: [], entries: [] };
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to create not-a-match declaration for ${personId}:`,
 			error
 		);
@@ -200,16 +200,16 @@ export async function createNotAMatchDeclaration(
 
 /**
  * Delete a specific not-a-match declaration
- * 
+ *
  * Removes a single not-a-match declaration, allowing the persons to appear
  * in each other's match suggestions again.
- * 
+ *
  * @param sdk - SDK instance
  * @param personId - Person ID
  * @param declarationId - Not-a-match declaration ID
  * @returns Delete response with status
  * @throws Error if deletion fails
- * 
+ *
  * @example
  * ```typescript
  * await deleteNotAMatchDeclaration(sdk, "PPPP-PPP", "DDDD-DDD");
@@ -230,7 +230,7 @@ export async function deleteNotAMatchDeclaration(
 			statusText: response.statusText,
 		};
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to delete not-a-match declaration ${declarationId} for ${personId}:`,
 			error
 		);
@@ -240,15 +240,15 @@ export async function deleteNotAMatchDeclaration(
 
 /**
  * Delete all not-a-match declarations for a person (bulk delete)
- * 
+ *
  * Removes ALL not-a-match declarations for a person at once.
  * Use with caution as this cannot be undone.
- * 
+ *
  * @param sdk - SDK instance
  * @param personId - Person ID
  * @returns Delete response with status
  * @throws Error if deletion fails
- * 
+ *
  * @example
  * ```typescript
  * await deleteAllNotAMatchDeclarations(sdk, "PPPP-PPP");
@@ -268,7 +268,7 @@ export async function deleteAllNotAMatchDeclarations(
 			statusText: response.statusText,
 		};
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to delete all not-a-match declarations for ${personId}:`,
 			error
 		);

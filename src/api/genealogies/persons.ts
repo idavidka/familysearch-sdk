@@ -1,8 +1,8 @@
 /**
  * FamilySearch Genealogies API - Persons Module
- * 
+ *
  * Handles person management within research trees (genealogies).
- * 
+ *
  * @see https://developers.familysearch.org/main/reference/readgenealogiesperson
  */
 
@@ -16,14 +16,14 @@ import type {
 
 /**
  * Read a specific person in a genealogy
- * 
+ *
  * Returns details for a person within a research tree.
- * 
+ *
  * @param sdk - SDK instance
  * @param treeId - Tree identifier
  * @param personId - Person identifier
  * @returns Person details or null
- * 
+ *
  * @example
  * ```typescript
  * const person = await getGenealogyPerson(sdk, 'TREE-123', 'PERSON-456');
@@ -41,7 +41,7 @@ export async function getGenealogyPerson(
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to get genealogy person ${personId} in tree ${treeId}:`,
 			error
 		);
@@ -51,13 +51,13 @@ export async function getGenealogyPerson(
 
 /**
  * Get all persons in a genealogy tree
- * 
+ *
  * Returns all persons within a research tree.
- * 
+ *
  * @param sdk - SDK instance
  * @param treeId - Tree identifier
  * @returns List of persons or null
- * 
+ *
  * @example
  * ```typescript
  * const persons = await getGenealogyPersons(sdk, 'TREE-123');
@@ -74,7 +74,7 @@ export async function getGenealogyPersons(
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to get genealogy persons for tree ${treeId}:`,
 			error
 		);
@@ -84,14 +84,14 @@ export async function getGenealogyPersons(
 
 /**
  * Create a new person in a genealogy tree
- * 
+ *
  * Adds a new person to a research tree.
- * 
+ *
  * @param sdk - SDK instance
  * @param treeId - Tree identifier
  * @param input - Person creation data
  * @returns Created person or null
- * 
+ *
  * @example
  * ```typescript
  * const person = await createGenealogyPerson(sdk, 'TREE-123', {
@@ -112,7 +112,7 @@ export async function createGenealogyPerson(
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to create genealogy person in tree ${treeId}:`,
 			error
 		);
@@ -122,15 +122,15 @@ export async function createGenealogyPerson(
 
 /**
  * Update an existing person in a genealogy tree
- * 
+ *
  * Updates details for a person within a research tree.
- * 
+ *
  * @param sdk - SDK instance
  * @param treeId - Tree identifier
  * @param personId - Person identifier
  * @param input - Updated person data
  * @returns Updated person or null
- * 
+ *
  * @example
  * ```typescript
  * const updated = await updateGenealogyPerson(sdk, 'TREE-123', 'PERSON-456', {
@@ -151,7 +151,7 @@ export async function updateGenealogyPerson(
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to update genealogy person ${personId} in tree ${treeId}:`,
 			error
 		);
@@ -161,14 +161,14 @@ export async function updateGenealogyPerson(
 
 /**
  * Delete a person from a genealogy tree
- * 
+ *
  * Removes a person from a research tree.
- * 
+ *
  * @param sdk - SDK instance
  * @param treeId - Tree identifier
  * @param personId - Person identifier
  * @returns Success status
- * 
+ *
  * @example
  * ```typescript
  * const success = await deleteGenealogyPerson(sdk, 'TREE-123', 'PERSON-456');
@@ -186,7 +186,7 @@ export async function deleteGenealogyPerson(
 		);
 		return true;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to delete genealogy person ${personId} in tree ${treeId}:`,
 			error
 		);
@@ -196,14 +196,14 @@ export async function deleteGenealogyPerson(
 
 /**
  * Restore a deleted person in a genealogy tree
- * 
+ *
  * Restores a previously deleted person in a research tree.
- * 
+ *
  * @param sdk - SDK instance
  * @param treeId - Tree identifier
  * @param personId - Person identifier
  * @returns Restored person or null
- * 
+ *
  * @example
  * ```typescript
  * const restored = await restoreGenealogyPerson(sdk, 'TREE-123', 'PERSON-456');
@@ -221,7 +221,7 @@ export async function restoreGenealogyPerson(
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to restore genealogy person ${personId} in tree ${treeId}:`,
 			error
 		);

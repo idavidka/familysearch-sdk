@@ -1,8 +1,8 @@
 /**
  * FamilySearch Persons API
- * 
+ *
  * Handles CRUD operations for persons in the FamilySearch Family Tree.
- * 
+ *
  * @see https://developers.familysearch.org/main/reference/readperson
  */
 
@@ -30,7 +30,7 @@ import type {
 
 /**
  * Get person by ID
- * 
+ *
  * @param sdk - SDK instance
  * @param personId - Person ID
  * @returns Person data or null
@@ -47,7 +47,7 @@ export async function getPerson(
 		const person = response.data?.persons?.[0];
 		return person || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to get person ${personId}:`,
 			error
 		);
@@ -57,7 +57,7 @@ export async function getPerson(
 
 /**
  * Get person with full details including relationships
- * 
+ *
  * @param sdk - SDK instance
  * @param personId - Person ID
  * @param options - Query options
@@ -77,7 +77,7 @@ export async function getPersonWithDetails(
 		);
 		return (response.data as PersonWithRelationships) || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to get person details ${personId}:`,
 			error
 		);
@@ -87,11 +87,11 @@ export async function getPersonWithDetails(
 
 /**
  * Create a new person in the tree
- * 
+ *
  * @param sdk - SDK instance
  * @param person - Person data to create
  * @returns Created person data with ID
- * 
+ *
  * @example
  * ```typescript
  * const newPerson = await createPerson(sdk, {
@@ -131,22 +131,19 @@ export async function createPerson(
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
-			"[FamilySearch SDK] Failed to create person:",
-			error
-		);
+		sdk.logger.error("[FamilySearch SDK] Failed to create person:", error);
 		throw error;
 	}
 }
 
 /**
  * Update an existing person in the tree
- * 
+ *
  * @param sdk - SDK instance
  * @param personId - ID of the person to update
  * @param person - Updated person data
  * @returns Updated person data
- * 
+ *
  * @example
  * ```typescript
  * const updated = await updatePerson(sdk, 'KWQS-BBQ', {
@@ -177,7 +174,7 @@ export async function updatePerson(
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to update person ${personId}:`,
 			error
 		);
@@ -187,14 +184,14 @@ export async function updatePerson(
 
 /**
  * Delete a person from the tree
- * 
+ *
  * **Warning:** This is a destructive operation. The person will be marked as deleted.
- * 
+ *
  * @param sdk - SDK instance
  * @param personId - ID of the person to delete
  * @param reason - Optional reason for deletion
  * @returns Delete confirmation
- * 
+ *
  * @example
  * ```typescript
  * await deletePerson(sdk, 'KWQS-BBQ', 'Duplicate entry');
@@ -220,7 +217,7 @@ export async function deletePerson(
 			statusText: response.statusText,
 		};
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to delete person ${personId}:`,
 			error
 		);
@@ -230,11 +227,11 @@ export async function deletePerson(
 
 /**
  * Restore a deleted person
- * 
+ *
  * @param sdk - SDK instance
  * @param personId - ID of the person to restore
  * @returns Restored person data
- * 
+ *
  * @example
  * ```typescript
  * const restored = await restorePerson(sdk, 'KWQS-BBQ');
@@ -251,7 +248,7 @@ export async function restorePerson(
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to restore person ${personId}:`,
 			error
 		);
@@ -261,7 +258,7 @@ export async function restorePerson(
 
 /**
  * Get notes for a person
- * 
+ *
  * @param sdk - SDK instance
  * @param personId - Person ID
  * @returns Person notes or null
@@ -276,7 +273,7 @@ export async function getPersonNotes(
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to get notes for ${personId}:`,
 			error
 		);
@@ -286,7 +283,7 @@ export async function getPersonNotes(
 
 /**
  * Get memories for a person
- * 
+ *
  * @param sdk - SDK instance
  * @param personId - Person ID
  * @returns Person memories or null
@@ -301,7 +298,7 @@ export async function getPersonMemories(
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to get memories for ${personId}:`,
 			error
 		);
@@ -311,7 +308,7 @@ export async function getPersonMemories(
 
 /**
  * Get sources for a person
- * 
+ *
  * @param sdk - SDK instance
  * @param personId - Person ID
  * @returns Person sources or null
@@ -326,7 +323,7 @@ export async function getPersonSources(
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to get sources for ${personId}:`,
 			error
 		);
@@ -336,7 +333,7 @@ export async function getPersonSources(
 
 /**
  * Get discussions for a person
- * 
+ *
  * @param sdk - SDK instance
  * @param personId - Person ID
  * @returns Person discussions or null
@@ -351,7 +348,7 @@ export async function getPersonDiscussions(
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to get discussions for ${personId}:`,
 			error
 		);
@@ -361,7 +358,7 @@ export async function getPersonDiscussions(
 
 /**
  * Get portraits (photos) for a person
- * 
+ *
  * @param sdk - SDK instance
  * @param personId - Person ID
  * @returns Person portraits or null
@@ -376,7 +373,7 @@ export async function getPersonPortraits(
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to get portraits for ${personId}:`,
 			error
 		);
@@ -386,7 +383,7 @@ export async function getPersonPortraits(
 
 /**
  * Get change history for a person
- * 
+ *
  * @param sdk - SDK instance
  * @param personId - Person ID
  * @returns Person change history or null
@@ -401,7 +398,7 @@ export async function getPersonChangeHistory(
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to get change history for ${personId}:`,
 			error
 		);
@@ -411,18 +408,18 @@ export async function getPersonChangeHistory(
 
 /**
  * Get person families (all relationships person belongs to)
- * 
+ *
  * Returns all family relationships for a person, including:
  * - Child-and-parents relationships (families where person is a child)
  * - Couple relationships (families where person is a spouse/partner)
  * - Related persons (parents, spouses, children)
- * 
+ *
  * This is a convenience endpoint that aggregates relationship data.
- * 
+ *
  * @param sdk - SDK instance
  * @param personId - Person ID
  * @returns Person families with relationships and related persons, or null
- * 
+ *
  * @example
  * ```typescript
  * const families = await getPersonFamilies(sdk, "PPPP-PPP");
@@ -443,7 +440,7 @@ export async function getPersonFamilies(
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to get families for ${personId}:`,
 			error
 		);
@@ -453,15 +450,15 @@ export async function getPersonFamilies(
 
 /**
  * Get person parents
- * 
+ *
  * Returns the parents of a person through child-and-parents relationships.
  * This is a convenience endpoint that provides direct access to parent data
  * without manually traversing relationships.
- * 
+ *
  * @param sdk - SDK instance
  * @param personId - Person ID
  * @returns Parents and their relationships, or null
- * 
+ *
  * @example
  * ```typescript
  * const parents = await getPersonParents(sdk, "PPPP-PPP");
@@ -482,7 +479,7 @@ export async function getPersonParents(
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to get parents for ${personId}:`,
 			error
 		);
@@ -492,15 +489,15 @@ export async function getPersonParents(
 
 /**
  * Get person spouses
- * 
+ *
  * Returns all spouses/partners of a person through couple relationships.
  * This is a convenience endpoint that provides direct access to spouse data
  * without manually traversing relationships.
- * 
+ *
  * @param sdk - SDK instance
  * @param personId - Person ID
  * @returns Spouses and their relationships, or null
- * 
+ *
  * @example
  * ```typescript
  * const spouses = await getPersonSpouses(sdk, "PPPP-PPP");
@@ -521,7 +518,7 @@ export async function getPersonSpouses(
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to get spouses for ${personId}:`,
 			error
 		);
@@ -531,16 +528,16 @@ export async function getPersonSpouses(
 
 /**
  * Update person portraits (set preferred portrait)
- * 
+ *
  * Sets which memory/photo should be used as the person's preferred portrait.
  * The portrait appears on the person's profile and in family tree views.
- * 
+ *
  * @param sdk - SDK instance
  * @param personId - Person ID
  * @param memoryId - Memory ID to set as preferred portrait
  * @returns Update response
  * @throws Error if update fails
- * 
+ *
  * @example
  * ```typescript
  * // Set a memory as the person's preferred portrait
@@ -574,7 +571,7 @@ export async function updatePersonPortraits(
 		);
 		return response.data || { persons: [] };
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to update portraits for ${personId}:`,
 			error
 		);
@@ -584,16 +581,16 @@ export async function updatePersonPortraits(
 
 /**
  * Delete person portrait
- * 
+ *
  * Removes a specific portrait from a person's profile.
  * This doesn't delete the memory itself, only removes it as a portrait.
- * 
+ *
  * @param sdk - SDK instance
  * @param personId - Person ID
  * @param portraitId - Portrait/Memory ID to remove
  * @returns Delete response with status
  * @throws Error if deletion fails
- * 
+ *
  * @example
  * ```typescript
  * await deletePersonPortrait(sdk, "PPPP-PPP", "MMMM-MMM");
@@ -614,7 +611,7 @@ export async function deletePersonPortrait(
 			statusText: response.statusText,
 		};
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to delete portrait ${portraitId} for ${personId}:`,
 			error
 		);

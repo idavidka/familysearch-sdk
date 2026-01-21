@@ -1,8 +1,8 @@
 /**
  * FamilySearch Sources API
- * 
+ *
  * Handles source descriptions and source box operations.
- * 
+ *
  * @see https://developers.familysearch.org/main/reference/readsourcedescription
  */
 
@@ -18,7 +18,7 @@ import type {
 
 /**
  * Get source descriptions
- * 
+ *
  * @param sdk - SDK instance
  * @returns Source descriptions or null
  */
@@ -26,12 +26,11 @@ export async function getSourceDescriptions(
 	sdk: FamilySearchSDK
 ): Promise<SourceDescriptionsResponse | null> {
 	try {
-		const response = await sdk.get<SourceDescriptionsResponse>(
-			"/platform/sources"
-		);
+		const response =
+			await sdk.get<SourceDescriptionsResponse>("/platform/sources");
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			"[FamilySearch SDK] Failed to get source descriptions:",
 			error
 		);
@@ -41,7 +40,7 @@ export async function getSourceDescriptions(
 
 /**
  * Get a specific source description
- * 
+ *
  * @param sdk - SDK instance
  * @param sourceId - Source description ID
  * @returns Source description or null
@@ -56,7 +55,7 @@ export async function getSourceDescription(
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to get source description ${sourceId}:`,
 			error
 		);
@@ -66,15 +65,15 @@ export async function getSourceDescription(
 
 /**
  * Create a new source description
- * 
+ *
  * Creates a source description for a record, document, book, or other source.
  * This is typically the first step before attaching a source to persons or relationships.
- * 
+ *
  * @param sdk - SDK instance
  * @param sourceData - Source description data
  * @returns Created source description
  * @throws Error if creation fails
- * 
+ *
  * @example
  * ```typescript
  * const source = await createSourceDescription(sdk, {
@@ -100,7 +99,7 @@ export async function createSourceDescription(
 		);
 		return response.data || { sourceDescriptions: [] };
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			"[FamilySearch SDK] Failed to create source description:",
 			error
 		);
@@ -110,16 +109,16 @@ export async function createSourceDescription(
 
 /**
  * Update an existing source description
- * 
+ *
  * Updates metadata for an existing source description.
  * Only the fields provided will be updated.
- * 
+ *
  * @param sdk - SDK instance
  * @param sourceId - Source description ID
  * @param sourceData - Updated source description data
  * @returns Updated source description
  * @throws Error if update fails
- * 
+ *
  * @example
  * ```typescript
  * await updateSourceDescription(sdk, "MMMM-MMM", {
@@ -148,7 +147,7 @@ export async function updateSourceDescription(
 		);
 		return response.data || { sourceDescriptions: [] };
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to update source description ${sourceId}:`,
 			error
 		);
@@ -158,15 +157,15 @@ export async function updateSourceDescription(
 
 /**
  * Delete a source description
- * 
+ *
  * Permanently deletes a source description.
  * **Warning:** This will also remove all attachments of this source to persons and relationships.
- * 
+ *
  * @param sdk - SDK instance
  * @param sourceId - Source description ID
  * @returns Delete response with status
  * @throws Error if deletion fails
- * 
+ *
  * @example
  * ```typescript
  * await deleteSourceDescription(sdk, "MMMM-MMM");
@@ -186,7 +185,7 @@ export async function deleteSourceDescription(
 			statusText: response.statusText,
 		};
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to delete source description ${sourceId}:`,
 			error
 		);

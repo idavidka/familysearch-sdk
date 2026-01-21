@@ -1,8 +1,8 @@
 /**
  * FamilySearch Vocabularies API
- * 
+ *
  * Handles controlled vocabularies for fact types, genders, and other standardized values.
- * 
+ *
  * @see https://developers.familysearch.org/main/reference/readvocabularies
  */
 
@@ -15,7 +15,7 @@ import type {
 
 /**
  * Get all vocabularies
- * 
+ *
  * @param sdk - SDK instance
  * @returns Vocabularies response or null
  */
@@ -28,7 +28,7 @@ export async function getVocabularies(
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			"[FamilySearch SDK] Failed to get vocabularies:",
 			error
 		);
@@ -38,7 +38,7 @@ export async function getVocabularies(
 
 /**
  * Get concepts for a vocabulary
- * 
+ *
  * @param sdk - SDK instance
  * @param vocabularyId - Vocabulary ID (e.g., 'gender-types', 'fact-types')
  * @returns Vocabulary concepts or null
@@ -53,7 +53,7 @@ export async function getVocabularyConcepts(
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to get concepts for vocabulary ${vocabularyId}:`,
 			error
 		);
@@ -63,7 +63,7 @@ export async function getVocabularyConcepts(
 
 /**
  * Get a specific vocabulary concept
- * 
+ *
  * @param sdk - SDK instance
  * @param vocabularyId - Vocabulary ID
  * @param conceptId - Concept ID
@@ -80,7 +80,7 @@ export async function getVocabularyConcept(
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to get concept ${conceptId} from vocabulary ${vocabularyId}:`,
 			error
 		);

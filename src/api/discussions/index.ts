@@ -1,8 +1,8 @@
 /**
  * FamilySearch Discussions API
- * 
+ *
  * Handles discussions and comments on persons and relationships.
- * 
+ *
  * @see https://developers.familysearch.org/main/reference/creatediscussion
  */
 
@@ -18,7 +18,7 @@ import type {
 
 /**
  * Get a discussion by ID
- * 
+ *
  * @param sdk - SDK instance
  * @param discussionId - Discussion ID
  * @returns Discussion or null
@@ -33,7 +33,7 @@ export async function getDiscussion(
 		);
 		return response.data?.discussions?.[0] || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to get discussion ${discussionId}:`,
 			error
 		);
@@ -43,11 +43,11 @@ export async function getDiscussion(
 
 /**
  * Create a new discussion
- * 
+ *
  * @param sdk - SDK instance
  * @param discussion - Discussion input data
  * @returns Created discussion response
- * 
+ *
  * @example
  * ```typescript
  * const discussion = await createDiscussion(sdk, {
@@ -77,7 +77,7 @@ export async function createDiscussion(
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			"[FamilySearch SDK] Failed to create discussion:",
 			error
 		);
@@ -87,7 +87,7 @@ export async function createDiscussion(
 
 /**
  * Update a discussion
- * 
+ *
  * @param sdk - SDK instance
  * @param discussionId - Discussion ID
  * @param discussion - Updated discussion data
@@ -115,7 +115,7 @@ export async function updateDiscussion(
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to update discussion ${discussionId}:`,
 			error
 		);
@@ -125,7 +125,7 @@ export async function updateDiscussion(
 
 /**
  * Get comments for a discussion
- * 
+ *
  * @param sdk - SDK instance
  * @param discussionId - Discussion ID
  * @returns Discussion with comments or null
@@ -140,7 +140,7 @@ export async function getDiscussionComments(
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to get comments for discussion ${discussionId}:`,
 			error
 		);
@@ -150,12 +150,12 @@ export async function getDiscussionComments(
 
 /**
  * Add a comment to a discussion
- * 
+ *
  * @param sdk - SDK instance
  * @param discussionId - Discussion ID
  * @param comment - Comment input data
  * @returns Discussion with new comment
- * 
+ *
  * @example
  * ```typescript
  * const updated = await addDiscussionComment(sdk, 'DDDD-DDD', {
@@ -188,7 +188,7 @@ export async function addDiscussionComment(
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to add comment to discussion ${discussionId}:`,
 			error
 		);
@@ -198,7 +198,7 @@ export async function addDiscussionComment(
 
 /**
  * Delete a comment from a discussion
- * 
+ *
  * @param sdk - SDK instance
  * @param discussionId - Discussion ID
  * @param commentId - Comment ID
@@ -218,7 +218,7 @@ export async function deleteDiscussionComment(
 			statusText: response.statusText,
 		};
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to delete comment ${commentId} from discussion ${discussionId}:`,
 			error
 		);

@@ -1,8 +1,8 @@
 /**
  * FamilySearch Source Box API
- * 
+ *
  * Handles user source folders and collections for organizing sources.
- * 
+ *
  * @see https://developers.familysearch.org/main/reference/readusersourcefolders
  */
 
@@ -23,12 +23,12 @@ import type {
 
 /**
  * Get user's source folders
- * 
+ *
  * Returns all source folders (collections) owned by the current user.
- * 
+ *
  * @param sdk - SDK instance
  * @returns User source folders or null
- * 
+ *
  * @example
  * ```typescript
  * const folders = await getUserSourceFolders(sdk);
@@ -44,7 +44,7 @@ export async function getUserSourceFolders(
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to get user source folders:`,
 			error
 		);
@@ -54,12 +54,12 @@ export async function getUserSourceFolders(
 
 /**
  * Get source folders
- * 
+ *
  * Returns source folders with detailed information.
- * 
+ *
  * @param sdk - SDK instance
  * @returns Source folders or null
- * 
+ *
  * @example
  * ```typescript
  * const folders = await getSourceFolders(sdk);
@@ -74,7 +74,7 @@ export async function getSourceFolders(
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to get source folders:`,
 			error
 		);
@@ -84,15 +84,15 @@ export async function getSourceFolders(
 
 /**
  * Create a source folder
- * 
+ *
  * Creates a new folder (collection) for organizing sources.
- * 
+ *
  * @param sdk - SDK instance
  * @param title - Folder title
  * @param description - Optional folder description
  * @returns Created folder response
  * @throws Error if creation fails
- * 
+ *
  * @example
  * ```typescript
  * const folder = await createSourceFolder(sdk, 'My Research', 'Sources for Smith family');
@@ -120,7 +120,7 @@ export async function createSourceFolder(
 		);
 		return response.data || { collections: [] };
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to create source folder:`,
 			error
 		);
@@ -130,13 +130,13 @@ export async function createSourceFolder(
 
 /**
  * Get user-defined collection
- * 
+ *
  * Returns a specific user collection with its sources.
- * 
+ *
  * @param sdk - SDK instance
  * @param collectionId - Collection ID
  * @returns Collection details or null
- * 
+ *
  * @example
  * ```typescript
  * const collection = await getUserDefinedCollection(sdk, 'COLL-ID');
@@ -153,7 +153,7 @@ export async function getUserDefinedCollection(
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to get collection ${collectionId}:`,
 			error
 		);
@@ -163,16 +163,16 @@ export async function getUserDefinedCollection(
 
 /**
  * Update user-defined collection
- * 
+ *
  * Updates the title or description of a user collection.
- * 
+ *
  * @param sdk - SDK instance
  * @param collectionId - Collection ID
  * @param title - New title
  * @param description - New description
  * @returns Updated collection response
  * @throws Error if update fails
- * 
+ *
  * @example
  * ```typescript
  * await updateUserDefinedCollection(sdk, 'COLL-ID', 'Updated Title', 'New description');
@@ -201,7 +201,7 @@ export async function updateUserDefinedCollection(
 		);
 		return response.data || { collections: [] };
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to update collection ${collectionId}:`,
 			error
 		);
@@ -211,15 +211,15 @@ export async function updateUserDefinedCollection(
 
 /**
  * Delete user-defined collection
- * 
+ *
  * Deletes a user collection. Sources in the collection are not deleted,
  * only the collection itself.
- * 
+ *
  * @param sdk - SDK instance
  * @param collectionId - Collection ID to delete
  * @returns Delete response
  * @throws Error if deletion fails
- * 
+ *
  * @example
  * ```typescript
  * await deleteUserDefinedCollection(sdk, 'COLL-ID');
@@ -239,7 +239,7 @@ export async function deleteUserDefinedCollection(
 			statusText: response.statusText,
 		};
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to delete collection ${collectionId}:`,
 			error
 		);
@@ -249,13 +249,13 @@ export async function deleteUserDefinedCollection(
 
 /**
  * Get collection source descriptions
- * 
+ *
  * Returns all source descriptions in a collection.
- * 
+ *
  * @param sdk - SDK instance
  * @param collectionId - Collection ID
  * @returns Source descriptions or null
- * 
+ *
  * @example
  * ```typescript
  * const sources = await getCollectionSourceDescriptions(sdk, 'COLL-ID');
@@ -272,7 +272,7 @@ export async function getCollectionSourceDescriptions(
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to get source descriptions for collection ${collectionId}:`,
 			error
 		);
@@ -282,15 +282,15 @@ export async function getCollectionSourceDescriptions(
 
 /**
  * Add sources to collection
- * 
+ *
  * Adds one or more source descriptions to a collection.
- * 
+ *
  * @param sdk - SDK instance
  * @param collectionId - Collection ID
  * @param sourceIds - Array of source description IDs to add
  * @returns Update response
  * @throws Error if update fails
- * 
+ *
  * @example
  * ```typescript
  * await addSourcesToCollection(sdk, 'COLL-ID', ['SRC-1', 'SRC-2']);
@@ -304,7 +304,7 @@ export async function addSourcesToCollection(
 ): Promise<UpdateSourcesToCollectionResponse> {
 	try {
 		const input: UpdateSourcesToCollectionInput = {
-			sourceDescriptions: sourceIds.map(id => ({ id })),
+			sourceDescriptions: sourceIds.map((id) => ({ id })),
 		};
 
 		const response = await sdk.post<UpdateSourcesToCollectionResponse>(
@@ -313,7 +313,7 @@ export async function addSourcesToCollection(
 		);
 		return response.data || { collections: [] };
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to add sources to collection ${collectionId}:`,
 			error
 		);
@@ -323,16 +323,16 @@ export async function addSourcesToCollection(
 
 /**
  * Remove sources from collection
- * 
+ *
  * Removes one or more source descriptions from a collection.
  * The sources themselves are not deleted, only removed from the collection.
- * 
+ *
  * @param sdk - SDK instance
  * @param collectionId - Collection ID
  * @param sourceIds - Array of source description IDs to remove
  * @returns Delete response
  * @throws Error if deletion fails
- * 
+ *
  * @example
  * ```typescript
  * await removeSourcesFromCollection(sdk, 'COLL-ID', ['SRC-1', 'SRC-2']);
@@ -346,7 +346,7 @@ export async function removeSourcesFromCollection(
 ): Promise<DeleteResponse> {
 	try {
 		const params = new URLSearchParams();
-		sourceIds.forEach(id => params.append('sourceDescriptions', id));
+		sourceIds.forEach((id) => params.append("sourceDescriptions", id));
 
 		const response = await sdk.delete<void>(
 			`/platform/tree/collections/${collectionId}/source-descriptions?${params.toString()}`
@@ -356,7 +356,7 @@ export async function removeSourcesFromCollection(
 			statusText: response.statusText,
 		};
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to remove sources from collection ${collectionId}:`,
 			error
 		);

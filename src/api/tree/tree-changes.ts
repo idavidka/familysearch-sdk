@@ -1,8 +1,8 @@
 /**
  * FamilySearch Tree Changes API
- * 
+ *
  * Handles reading changes to the entire tree.
- * 
+ *
  * @see https://developers.familysearch.org/main/reference/readtreechanges
  */
 
@@ -11,14 +11,14 @@ import type { TreeChangesResponse } from "../../types/tree";
 
 /**
  * Read tree changes
- * 
+ *
  * Returns recent changes made to the FamilySearch Family Tree.
  * This is useful for monitoring tree activity and recent edits.
- * 
+ *
  * @param sdk - SDK instance
  * @param options - Optional query parameters
  * @returns Tree changes or null
- * 
+ *
  * @example
  * ```typescript
  * const changes = await getTreeChanges(sdk, { count: 50 });
@@ -41,7 +41,7 @@ export async function getTreeChanges(
 		const response = await sdk.get<TreeChangesResponse>(url);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to get tree changes:`,
 			error
 		);

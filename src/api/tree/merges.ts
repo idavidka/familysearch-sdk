@@ -1,8 +1,8 @@
 /**
  * FamilySearch Person Merge API
- * 
+ *
  * Handles person merge analysis and execution.
- * 
+ *
  * @see https://developers.familysearch.org/main/reference/readpersonmerge
  */
 
@@ -15,14 +15,14 @@ import type {
 
 /**
  * Get merge analysis for two persons
- * 
+ *
  * Analyzes potential conflicts and provides merge options.
- * 
+ *
  * @param sdk - SDK instance
  * @param survivorId - ID of the person to keep (survivor)
  * @param duplicateId - ID of the person to merge away (duplicate)
  * @returns Merge analysis or null
- * 
+ *
  * @example
  * ```typescript
  * const analysis = await getPersonMergeAnalysis(sdk, 'KWQS-BBQ', 'KWQS-BBC');
@@ -40,7 +40,7 @@ export async function getPersonMergeAnalysis(
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to get merge analysis for ${survivorId} and ${duplicateId}:`,
 			error
 		);
@@ -50,7 +50,7 @@ export async function getPersonMergeAnalysis(
 
 /**
  * Check if person merge is allowed
- * 
+ *
  * @param sdk - SDK instance
  * @param survivorId - ID of the person to keep
  * @param duplicateId - ID of the person to merge away
@@ -68,7 +68,7 @@ export async function canMergePersons(
 		);
 		return response.statusCode === 200;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to check if merge is allowed for ${survivorId} and ${duplicateId}:`,
 			error
 		);
@@ -78,16 +78,16 @@ export async function canMergePersons(
 
 /**
  * Merge two persons
- * 
+ *
  * Merges the duplicate person into the survivor person.
  * This is a destructive operation - the duplicate person will be deleted.
- * 
+ *
  * @param sdk - SDK instance
  * @param survivorId - ID of the person to keep (survivor)
  * @param duplicateId - ID of the person to merge away (duplicate)
  * @param mergeOptions - Optional merge configuration
  * @returns Merge response
- * 
+ *
  * @example
  * ```typescript
  * const result = await mergePerson(sdk, 'KWQS-BBQ', 'KWQS-BBC', {
@@ -108,9 +108,11 @@ export async function mergePerson(
 ): Promise<PersonMergeResponse | null> {
 	try {
 		const body = {
-			persons: [{
-				id: survivorId,
-			}],
+			persons: [
+				{
+					id: survivorId,
+				},
+			],
 			...(mergeOptions?.resolutions && {
 				resolutions: mergeOptions.resolutions,
 			}),
@@ -122,7 +124,7 @@ export async function mergePerson(
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to merge person ${duplicateId} into ${survivorId}:`,
 			error
 		);

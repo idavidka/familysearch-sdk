@@ -1,8 +1,8 @@
 /**
  * FamilySearch Trees API
- * 
+ *
  * Handles tree operations and tree management.
- * 
+ *
  * @see https://developers.familysearch.org/main/reference/readcurrenttree
  */
 
@@ -20,13 +20,13 @@ export interface TreeResponse {
 
 /**
  * Get the ID of the current tree
- * 
+ *
  * Retrieves the identifier of the tree that is currently being accessed
  * by the authenticated user.
- * 
+ *
  * @param sdk - SDK instance
  * @returns Tree information or null
- * 
+ *
  * @example
  * ```typescript
  * const currentTree = await getCurrentTree(sdk);
@@ -37,12 +37,10 @@ export async function getCurrentTree(
 	sdk: FamilySearchSDK
 ): Promise<TreeResponse | null> {
 	try {
-		const response = await sdk.get<TreeResponse>(
-			"/platform/trees/current"
-		);
+		const response = await sdk.get<TreeResponse>("/platform/trees/current");
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			"[FamilySearch SDK] Failed to get current tree:",
 			error
 		);

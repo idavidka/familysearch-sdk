@@ -1,8 +1,8 @@
 /**
  * FamilySearch Memories API
- * 
+ *
  * Handles memories (photos, documents, stories) and comments.
- * 
+ *
  * @see https://developers.familysearch.org/main/reference/readmemory
  */
 
@@ -26,7 +26,7 @@ import type {
 
 /**
  * Get a memory with its comments
- * 
+ *
  * @param sdk - SDK instance
  * @param memoryId - Memory artifact reference
  * @returns Memory with comments or null
@@ -41,7 +41,7 @@ export async function getMemoryWithComments(
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to get memory ${memoryId} with comments:`,
 			error
 		);
@@ -51,7 +51,7 @@ export async function getMemoryWithComments(
 
 /**
  * Get memories for a user
- * 
+ *
  * @param sdk - SDK instance
  * @param userId - User ID (use 'current' for authenticated user)
  * @returns User memories or null
@@ -66,7 +66,7 @@ export async function getUserMemories(
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to get memories for user ${userId}:`,
 			error
 		);
@@ -76,14 +76,14 @@ export async function getUserMemories(
 
 /**
  * Create a new memory (photo, document, or story)
- * 
+ *
  * **Note:** File upload requires multipart/form-data. This implementation
  * handles metadata creation. For actual file upload, use the artifact endpoint.
- * 
+ *
  * @param sdk - SDK instance
  * @param memory - Memory input data
  * @returns Created memory response
- * 
+ *
  * @example
  * ```typescript
  * const newMemory = await createMemory(sdk, {
@@ -107,7 +107,9 @@ export async function createMemory(
 					resourceType: memory.artifactType
 						? `http://gedcomx.org/${memory.artifactType.charAt(0).toUpperCase() + memory.artifactType.slice(1)}`
 						: undefined,
-					titles: memory.title ? [{ value: memory.title }] : undefined,
+					titles: memory.title
+						? [{ value: memory.title }]
+						: undefined,
 					descriptions: memory.description
 						? [{ value: memory.description }]
 						: undefined,
@@ -133,23 +135,20 @@ export async function createMemory(
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
-			"[FamilySearch SDK] Failed to create memory:",
-			error
-		);
+		sdk.logger.error("[FamilySearch SDK] Failed to create memory:", error);
 		throw error;
 	}
 }
 
 /**
  * Create multiple memories in batch
- * 
+ *
  * Creates multiple memory resources (photos, stories, documents, audio) in a single request.
- * 
+ *
  * @param sdk - SDK instance
  * @param memories - Array of memory creation inputs
  * @returns Batch creation response
- * 
+ *
  * @example
  * ```typescript
  * const result = await createMemories(sdk, [
@@ -168,7 +167,9 @@ export async function createMemories(
 			`/platform/memories`,
 			{
 				sourceDescriptions: memories.map((memory) => ({
-					titles: memory.title ? [{ value: memory.title }] : undefined,
+					titles: memory.title
+						? [{ value: memory.title }]
+						: undefined,
 					descriptions: memory.description
 						? [{ value: memory.description }]
 						: undefined,
@@ -179,7 +180,7 @@ export async function createMemories(
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to create memories in batch:`,
 			error
 		);
@@ -189,13 +190,13 @@ export async function createMemories(
 
 /**
  * Get multiple memories by IDs
- * 
+ *
  * Retrieves multiple memory resources in a single request.
- * 
+ *
  * @param sdk - SDK instance
  * @param memoryIds - Array of memory IDs
  * @returns Batch memory response
- * 
+ *
  * @example
  * ```typescript
  * const memories = await getMemories(sdk, ['MEM-1', 'MEM-2', 'MEM-3']);
@@ -213,22 +214,19 @@ export async function getMemories(
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
-			`[FamilySearch SDK] Failed to get memories:`,
-			error
-		);
+		sdk.logger.error(`[FamilySearch SDK] Failed to get memories:`, error);
 		return null;
 	}
 }
 
 /**
  * Update an existing memory
- * 
+ *
  * @param sdk - SDK instance
  * @param memoryId - Memory ID
  * @param memory - Updated memory data
  * @returns Updated memory response
- * 
+ *
  * @example
  * ```typescript
  * const updated = await updateMemory(sdk, 'MMMM-MMM', {
@@ -276,7 +274,7 @@ export async function updateMemory(
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to update memory ${memoryId}:`,
 			error
 		);
@@ -286,13 +284,13 @@ export async function updateMemory(
 
 /**
  * Delete a memory
- * 
+ *
  * **Warning:** This is a destructive operation.
- * 
+ *
  * @param sdk - SDK instance
  * @param memoryId - Memory ID
  * @returns Delete confirmation
- * 
+ *
  * @example
  * ```typescript
  * await deleteMemory(sdk, 'MMMM-MMM');
@@ -311,7 +309,7 @@ export async function deleteMemory(
 			statusText: response.statusText,
 		};
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to delete memory ${memoryId}:`,
 			error
 		);
@@ -321,7 +319,7 @@ export async function deleteMemory(
 
 /**
  * Get all personas for a memory
- * 
+ *
  * @param sdk - SDK instance
  * @param memoryId - Memory ID
  * @returns Memory personas or null
@@ -336,7 +334,7 @@ export async function getMemoryPersonas(
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to get personas for memory ${memoryId}:`,
 			error
 		);
@@ -346,7 +344,7 @@ export async function getMemoryPersonas(
 
 /**
  * Get a specific persona for a memory
- * 
+ *
  * @param sdk - SDK instance
  * @param memoryId - Memory ID
  * @param personaId - Persona ID
@@ -363,7 +361,7 @@ export async function getMemoryPersona(
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to get persona ${personaId} for memory ${memoryId}:`,
 			error
 		);
@@ -373,12 +371,12 @@ export async function getMemoryPersona(
 
 /**
  * Create a persona (tag a person) in a memory
- * 
+ *
  * @param sdk - SDK instance
  * @param memoryId - Memory ID
  * @param persona - Persona input data
  * @returns Created persona response
- * 
+ *
  * @example
  * ```typescript
  * const persona = await createMemoryPersona(sdk, 'MMMM-MMM', {
@@ -407,7 +405,7 @@ export async function createMemoryPersona(
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to create persona for memory ${memoryId}:`,
 			error
 		);
@@ -417,7 +415,7 @@ export async function createMemoryPersona(
 
 /**
  * Update a persona in a memory
- * 
+ *
  * @param sdk - SDK instance
  * @param memoryId - Memory ID
  * @param personaId - Persona ID
@@ -448,7 +446,7 @@ export async function updateMemoryPersona(
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to update persona ${personaId} for memory ${memoryId}:`,
 			error
 		);
@@ -458,7 +456,7 @@ export async function updateMemoryPersona(
 
 /**
  * Delete a persona from a memory
- * 
+ *
  * @param sdk - SDK instance
  * @param memoryId - Memory ID
  * @param personaId - Persona ID
@@ -478,7 +476,7 @@ export async function deleteMemoryPersona(
 			statusText: response.statusText,
 		};
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to delete persona ${personaId} from memory ${memoryId}:`,
 			error
 		);
@@ -488,7 +486,7 @@ export async function deleteMemoryPersona(
 
 /**
  * Get comments for a memory
- * 
+ *
  * @param sdk - SDK instance
  * @param memoryId - Memory ID
  * @returns Memory comments or null
@@ -503,7 +501,7 @@ export async function getMemoryComments(
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to get comments for memory ${memoryId}:`,
 			error
 		);
@@ -513,12 +511,12 @@ export async function getMemoryComments(
 
 /**
  * Create a comment on a memory
- * 
+ *
  * @param sdk - SDK instance
  * @param memoryId - Memory ID
  * @param comment - Comment input data
  * @returns Created comment response
- * 
+ *
  * @example
  * ```typescript
  * const comment = await createMemoryComment(sdk, 'MMMM-MMM', {
@@ -550,7 +548,7 @@ export async function createMemoryComment(
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to create comment for memory ${memoryId}:`,
 			error
 		);
@@ -560,7 +558,7 @@ export async function createMemoryComment(
 
 /**
  * Delete a comment from a memory
- * 
+ *
  * @param sdk - SDK instance
  * @param memoryId - Memory ID
  * @param commentId - Comment ID
@@ -580,7 +578,7 @@ export async function deleteMemoryComment(
 			statusText: response.statusText,
 		};
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to delete comment ${commentId} from memory ${memoryId}:`,
 			error
 		);
@@ -590,17 +588,17 @@ export async function deleteMemoryComment(
 
 /**
  * Update memory artifact metadata
- * 
+ *
  * Updates the metadata associated with a memory artifact, such as title,
  * description, coverage (location/time), and other descriptive information.
  * This modifies the source description for the memory.
- * 
+ *
  * @param sdk - SDK instance
  * @param memoryId - Memory artifact ID
  * @param input - Artifact metadata to update
  * @returns Updated artifact response
  * @throws Error if update fails
- * 
+ *
  * @example
  * ```typescript
  * const updated = await updateMemoryArtifact(sdk, "MMMM-MMM", {
@@ -628,7 +626,7 @@ export async function updateMemoryArtifact(
 		);
 		return response.data || { sourceDescriptions: [] };
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to update artifact for memory ${memoryId}:`,
 			error
 		);
@@ -638,17 +636,17 @@ export async function updateMemoryArtifact(
 
 /**
  * Delete memory artifact coverage
- * 
+ *
  * Removes a coverage region (spatial/temporal) from a memory artifact.
  * Coverage regions can be used to tag specific areas of a photo or
  * time periods associated with a memory.
- * 
+ *
  * @param sdk - SDK instance
  * @param memoryId - Memory artifact ID
  * @param coverageId - Coverage ID to delete
  * @returns Delete confirmation
  * @throws Error if deletion fails
- * 
+ *
  * @example
  * ```typescript
  * await deleteMemoryArtifactCoverage(sdk, "MMMM-MMM", "CCCC-CCC");
@@ -669,7 +667,7 @@ export async function deleteMemoryArtifactCoverage(
 			statusText: response.statusText,
 		};
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to delete coverage ${coverageId} from memory ${memoryId}:`,
 			error
 		);

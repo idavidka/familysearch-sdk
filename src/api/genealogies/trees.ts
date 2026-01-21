@@ -1,10 +1,10 @@
 /**
  * FamilySearch Genealogies API - Trees Module
- * 
+ *
  * Handles research tree (genealogy) management.
  * Genealogies are separate from the main FamilySearch Family Tree
  * and allow for hypothesis testing and research organization.
- * 
+ *
  * @see https://developers.familysearch.org/main/reference/readgenealogiestree
  */
 
@@ -19,13 +19,13 @@ import type {
 
 /**
  * Read a specific genealogy tree
- * 
+ *
  * Returns details for a specific research tree.
- * 
+ *
  * @param sdk - SDK instance
  * @param treeId - Tree identifier
  * @returns Tree details or null
- * 
+ *
  * @example
  * ```typescript
  * const tree = await getGenealogyTree(sdk, 'TREE-123');
@@ -42,7 +42,7 @@ export async function getGenealogyTree(
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to get genealogy tree ${treeId}:`,
 			error
 		);
@@ -52,12 +52,12 @@ export async function getGenealogyTree(
 
 /**
  * Get all genealogy trees for the current user
- * 
+ *
  * Returns all research trees owned by the authenticated user.
- * 
+ *
  * @param sdk - SDK instance
  * @returns List of trees or null
- * 
+ *
  * @example
  * ```typescript
  * const trees = await getGenealogyTrees(sdk);
@@ -73,7 +73,7 @@ export async function getGenealogyTrees(
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to get genealogy trees:`,
 			error
 		);
@@ -83,13 +83,13 @@ export async function getGenealogyTrees(
 
 /**
  * Create a new genealogy tree
- * 
+ *
  * Creates a new research tree with the specified details.
- * 
+ *
  * @param sdk - SDK instance
  * @param input - Tree creation data
  * @returns Created tree or null
- * 
+ *
  * @example
  * ```typescript
  * const tree = await createGenealogyTree(sdk, {
@@ -109,7 +109,7 @@ export async function createGenealogyTree(
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to create genealogy tree:`,
 			error
 		);
@@ -119,14 +119,14 @@ export async function createGenealogyTree(
 
 /**
  * Update an existing genealogy tree
- * 
+ *
  * Updates details for an existing research tree.
- * 
+ *
  * @param sdk - SDK instance
  * @param treeId - Tree identifier
  * @param input - Updated tree data
  * @returns Updated tree or null
- * 
+ *
  * @example
  * ```typescript
  * const updated = await updateGenealogyTree(sdk, 'TREE-123', {
@@ -146,7 +146,7 @@ export async function updateGenealogyTree(
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to update genealogy tree ${treeId}:`,
 			error
 		);
@@ -156,13 +156,13 @@ export async function updateGenealogyTree(
 
 /**
  * Delete a genealogy tree
- * 
+ *
  * Deletes an existing research tree.
- * 
+ *
  * @param sdk - SDK instance
  * @param treeId - Tree identifier
  * @returns Success status
- * 
+ *
  * @example
  * ```typescript
  * const success = await deleteGenealogyTree(sdk, 'TREE-123');
@@ -177,7 +177,7 @@ export async function deleteGenealogyTree(
 		await sdk.delete(`/platform/genealogies/trees/${treeId}`);
 		return true;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to delete genealogy tree ${treeId}:`,
 			error
 		);

@@ -1,8 +1,8 @@
 /**
  * FamilySearch Notes API
- * 
+ *
  * Handles notes (comments) on persons and relationships.
- * 
+ *
  * @see https://developers.familysearch.org/main/reference/readpersonnotes
  */
 
@@ -16,7 +16,7 @@ import type {
 
 /**
  * Get all notes for a person
- * 
+ *
  * @param sdk - SDK instance
  * @param personId - Person ID
  * @returns Person notes or null
@@ -31,7 +31,7 @@ export async function getPersonNotes(
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to get notes for person ${personId}:`,
 			error
 		);
@@ -41,7 +41,7 @@ export async function getPersonNotes(
 
 /**
  * Get a specific note for a person
- * 
+ *
  * @param sdk - SDK instance
  * @param personId - Person ID
  * @param noteId - Note ID
@@ -58,7 +58,7 @@ export async function getPersonNote(
 		);
 		return response.data?.notes?.[0] || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to get note ${noteId} for person ${personId}:`,
 			error
 		);
@@ -68,12 +68,12 @@ export async function getPersonNote(
 
 /**
  * Create a note for a person
- * 
+ *
  * @param sdk - SDK instance
  * @param personId - Person ID
  * @param note - Note input data
  * @returns Created note response
- * 
+ *
  * @example
  * ```typescript
  * const note = await createPersonNote(sdk, 'KWQS-BBQ', {
@@ -95,14 +95,18 @@ export async function createPersonNote(
 		}
 
 		const body = {
-			persons: [{
-				id: personId,
-				notes: [{
-					subject: note.subject,
-					text: note.text,
-					attribution: note.attribution,
-				}],
-			}],
+			persons: [
+				{
+					id: personId,
+					notes: [
+						{
+							subject: note.subject,
+							text: note.text,
+							attribution: note.attribution,
+						},
+					],
+				},
+			],
 		};
 
 		const response = await sdk.post<NoteResponse>(
@@ -112,7 +116,7 @@ export async function createPersonNote(
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to create note for person ${personId}:`,
 			error
 		);
@@ -122,7 +126,7 @@ export async function createPersonNote(
 
 /**
  * Update a person note
- * 
+ *
  * @param sdk - SDK instance
  * @param personId - Person ID
  * @param noteId - Note ID
@@ -143,15 +147,19 @@ export async function updatePersonNote(
 		}
 
 		const body = {
-			persons: [{
-				id: personId,
-				notes: [{
-					id: noteId,
-					subject: note.subject,
-					text: note.text,
-					attribution: note.attribution,
-				}],
-			}],
+			persons: [
+				{
+					id: personId,
+					notes: [
+						{
+							id: noteId,
+							subject: note.subject,
+							text: note.text,
+							attribution: note.attribution,
+						},
+					],
+				},
+			],
 		};
 
 		const response = await sdk.post<NoteResponse>(
@@ -161,7 +169,7 @@ export async function updatePersonNote(
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to update note ${noteId} for person ${personId}:`,
 			error
 		);
@@ -171,7 +179,7 @@ export async function updatePersonNote(
 
 /**
  * Delete a person note
- * 
+ *
  * @param sdk - SDK instance
  * @param personId - Person ID
  * @param noteId - Note ID
@@ -198,7 +206,7 @@ export async function deletePersonNote(
 			statusText: response.statusText,
 		};
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to delete note ${noteId} for person ${personId}:`,
 			error
 		);
@@ -212,7 +220,7 @@ export async function deletePersonNote(
 
 /**
  * Get all notes for a couple relationship
- * 
+ *
  * @param sdk - SDK instance
  * @param relationshipId - Couple relationship ID
  * @returns Couple relationship notes or null
@@ -227,7 +235,7 @@ export async function getCoupleRelationshipNotes(
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to get notes for couple relationship ${relationshipId}:`,
 			error
 		);
@@ -237,7 +245,7 @@ export async function getCoupleRelationshipNotes(
 
 /**
  * Get a specific note for a couple relationship
- * 
+ *
  * @param sdk - SDK instance
  * @param relationshipId - Couple relationship ID
  * @param noteId - Note ID
@@ -254,7 +262,7 @@ export async function getCoupleRelationshipNote(
 		);
 		return response.data?.notes?.[0] || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to get note ${noteId} for couple relationship ${relationshipId}:`,
 			error
 		);
@@ -264,7 +272,7 @@ export async function getCoupleRelationshipNote(
 
 /**
  * Create a note for a couple relationship
- * 
+ *
  * @param sdk - SDK instance
  * @param relationshipId - Couple relationship ID
  * @param note - Note input data
@@ -283,14 +291,18 @@ export async function createCoupleRelationshipNote(
 		}
 
 		const body = {
-			relationships: [{
-				id: relationshipId,
-				notes: [{
-					subject: note.subject,
-					text: note.text,
-					attribution: note.attribution,
-				}],
-			}],
+			relationships: [
+				{
+					id: relationshipId,
+					notes: [
+						{
+							subject: note.subject,
+							text: note.text,
+							attribution: note.attribution,
+						},
+					],
+				},
+			],
 		};
 
 		const response = await sdk.post<NoteResponse>(
@@ -300,7 +312,7 @@ export async function createCoupleRelationshipNote(
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to create note for couple relationship ${relationshipId}:`,
 			error
 		);
@@ -310,7 +322,7 @@ export async function createCoupleRelationshipNote(
 
 /**
  * Update a couple relationship note
- * 
+ *
  * @param sdk - SDK instance
  * @param relationshipId - Couple relationship ID
  * @param noteId - Note ID
@@ -331,15 +343,19 @@ export async function updateCoupleRelationshipNote(
 		}
 
 		const body = {
-			relationships: [{
-				id: relationshipId,
-				notes: [{
-					id: noteId,
-					subject: note.subject,
-					text: note.text,
-					attribution: note.attribution,
-				}],
-			}],
+			relationships: [
+				{
+					id: relationshipId,
+					notes: [
+						{
+							id: noteId,
+							subject: note.subject,
+							text: note.text,
+							attribution: note.attribution,
+						},
+					],
+				},
+			],
 		};
 
 		const response = await sdk.post<NoteResponse>(
@@ -349,7 +365,7 @@ export async function updateCoupleRelationshipNote(
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to update note ${noteId} for couple relationship ${relationshipId}:`,
 			error
 		);
@@ -359,7 +375,7 @@ export async function updateCoupleRelationshipNote(
 
 /**
  * Delete a couple relationship note
- * 
+ *
  * @param sdk - SDK instance
  * @param relationshipId - Couple relationship ID
  * @param noteId - Note ID
@@ -386,7 +402,7 @@ export async function deleteCoupleRelationshipNote(
 			statusText: response.statusText,
 		};
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to delete note ${noteId} for couple relationship ${relationshipId}:`,
 			error
 		);
@@ -400,7 +416,7 @@ export async function deleteCoupleRelationshipNote(
 
 /**
  * Get all notes for a child-and-parents relationship
- * 
+ *
  * @param sdk - SDK instance
  * @param relationshipId - Child-and-parents relationship ID
  * @returns Relationship notes or null
@@ -415,7 +431,7 @@ export async function getChildAndParentsRelationshipNotes(
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to get notes for child-and-parents relationship ${relationshipId}:`,
 			error
 		);
@@ -425,7 +441,7 @@ export async function getChildAndParentsRelationshipNotes(
 
 /**
  * Get a specific note for a child-and-parents relationship
- * 
+ *
  * @param sdk - SDK instance
  * @param relationshipId - Child-and-parents relationship ID
  * @param noteId - Note ID
@@ -442,7 +458,7 @@ export async function getChildAndParentsRelationshipNote(
 		);
 		return response.data?.notes?.[0] || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to get note ${noteId} for child-and-parents relationship ${relationshipId}:`,
 			error
 		);
@@ -452,7 +468,7 @@ export async function getChildAndParentsRelationshipNote(
 
 /**
  * Create a note for a child-and-parents relationship
- * 
+ *
  * @param sdk - SDK instance
  * @param relationshipId - Child-and-parents relationship ID
  * @param note - Note input data
@@ -471,14 +487,18 @@ export async function createChildAndParentsRelationshipNote(
 		}
 
 		const body = {
-			childAndParentsRelationships: [{
-				id: relationshipId,
-				notes: [{
-					subject: note.subject,
-					text: note.text,
-					attribution: note.attribution,
-				}],
-			}],
+			childAndParentsRelationships: [
+				{
+					id: relationshipId,
+					notes: [
+						{
+							subject: note.subject,
+							text: note.text,
+							attribution: note.attribution,
+						},
+					],
+				},
+			],
 		};
 
 		const response = await sdk.post<NoteResponse>(
@@ -488,7 +508,7 @@ export async function createChildAndParentsRelationshipNote(
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to create note for child-and-parents relationship ${relationshipId}:`,
 			error
 		);
@@ -498,7 +518,7 @@ export async function createChildAndParentsRelationshipNote(
 
 /**
  * Update a child-and-parents relationship note
- * 
+ *
  * @param sdk - SDK instance
  * @param relationshipId - Child-and-parents relationship ID
  * @param noteId - Note ID
@@ -519,15 +539,19 @@ export async function updateChildAndParentsRelationshipNote(
 		}
 
 		const body = {
-			childAndParentsRelationships: [{
-				id: relationshipId,
-				notes: [{
-					id: noteId,
-					subject: note.subject,
-					text: note.text,
-					attribution: note.attribution,
-				}],
-			}],
+			childAndParentsRelationships: [
+				{
+					id: relationshipId,
+					notes: [
+						{
+							id: noteId,
+							subject: note.subject,
+							text: note.text,
+							attribution: note.attribution,
+						},
+					],
+				},
+			],
 		};
 
 		const response = await sdk.post<NoteResponse>(
@@ -537,7 +561,7 @@ export async function updateChildAndParentsRelationshipNote(
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to update note ${noteId} for child-and-parents relationship ${relationshipId}:`,
 			error
 		);
@@ -547,7 +571,7 @@ export async function updateChildAndParentsRelationshipNote(
 
 /**
  * Delete a child-and-parents relationship note
- * 
+ *
  * @param sdk - SDK instance
  * @param relationshipId - Child-and-parents relationship ID
  * @param noteId - Note ID
@@ -574,7 +598,7 @@ export async function deleteChildAndParentsRelationshipNote(
 			statusText: response.statusText,
 		};
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to delete note ${noteId} for child-and-parents relationship ${relationshipId}:`,
 			error
 		);

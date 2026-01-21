@@ -94,8 +94,8 @@ export class FamilySearchSDK {
 	private environment: FamilySearchEnvironment;
 	private accessToken: string | null = null;
 	private appKey: string | null = null;
-	private logger: SDKLogger;
 	private rateLimiter: RateLimiter;
+	logger: SDKLogger;
 
 	constructor(config: FamilySearchSDKConfig = {}) {
 		this.environment = config.environment || "integration";
@@ -353,7 +353,7 @@ export class FamilySearchSDK {
 
 	/**
 	 * Get person by ID
-	 * 
+	 *
 	 * @deprecated Use `getPerson` from `@treeviz/familysearch-sdk/api/tree/persons` instead
 	 */
 	async getPerson(personId: string): Promise<FamilySearchPerson | null> {
@@ -362,7 +362,7 @@ export class FamilySearchSDK {
 
 	/**
 	 * Get person with full details including relationships
-	 * 
+	 *
 	 * @deprecated Use `getPersonWithDetails` from `@treeviz/familysearch-sdk/api/tree/persons` instead
 	 */
 	async getPersonWithDetails(
@@ -374,19 +374,23 @@ export class FamilySearchSDK {
 
 	/**
 	 * Get person notes
-	 * 
+	 *
 	 * @deprecated Use `getPersonNotes` from `@treeviz/familysearch-sdk/api/tree/notes` instead
 	 */
-	async getPersonNotes(personId: string): Promise<PersonNotesResponse | null> {
+	async getPersonNotes(
+		personId: string
+	): Promise<PersonNotesResponse | null> {
 		return getPersonNotesAPI(this, personId);
 	}
 
 	/**
 	 * Get person memories (photos, stories, documents)
-	 * 
+	 *
 	 * @deprecated Use `getPersonMemories` from `@treeviz/familysearch-sdk/api/tree/persons` instead
 	 */
-	async getPersonMemories(personId: string): Promise<PersonMemoriesResponse | null> {
+	async getPersonMemories(
+		personId: string
+	): Promise<PersonMemoriesResponse | null> {
 		try {
 			const response = await this.get<PersonMemoriesResponse>(
 				`/platform/tree/persons/${personId}/memories`
@@ -403,10 +407,12 @@ export class FamilySearchSDK {
 
 	/**
 	 * Get person source attachments
-	 * 
+	 *
 	 * @deprecated Use `getPersonSources` from `@treeviz/familysearch-sdk/api/tree/persons` instead
 	 */
-	async getPersonSources(personId: string): Promise<PersonSourcesResponse | null> {
+	async getPersonSources(
+		personId: string
+	): Promise<PersonSourcesResponse | null> {
 		try {
 			const response = await this.get<PersonSourcesResponse>(
 				`/platform/tree/persons/${personId}/sources`
@@ -423,7 +429,7 @@ export class FamilySearchSDK {
 
 	/**
 	 * Get tree person matches (record hints and possible duplicates)
-	 * 
+	 *
 	 * This is a convenience wrapper for the matches API with filtering options.
 	 */
 	async getTreePersonMatches(
@@ -433,9 +439,12 @@ export class FamilySearchSDK {
 		try {
 			const params = new URLSearchParams();
 			if (options.status) params.append("status", options.status);
-			if (options.collection) params.append("collection", options.collection);
-			if (options.count !== undefined) params.append("count", options.count.toString());
-			if (options.start !== undefined) params.append("start", options.start.toString());
+			if (options.collection)
+				params.append("collection", options.collection);
+			if (options.count !== undefined)
+				params.append("count", options.count.toString());
+			if (options.start !== undefined)
+				params.append("start", options.start.toString());
 
 			const queryString = params.toString();
 			const url = `/platform/tree/persons/${personId}/matches${queryString ? `?${queryString}` : ""}`;
@@ -453,14 +462,14 @@ export class FamilySearchSDK {
 
 	/**
 	 * Match person using external GEDCOM data
-	 * 
+	 *
 	 * Submits person data in GedcomX format to find matching persons in FamilySearch.
 	 * This method constructs a proper GedcomX person object and posts it to the matches endpoint.
-	 * 
+	 *
 	 * @param person - Person data with name, gender, birth/death/marriage facts
 	 * @param options - Match options (collection filter, result count)
 	 * @returns Tree person matches response with potential matches
-	 * 
+	 *
 	 * @example
 	 * ```typescript
 	 * const matches = await sdk.matchPerson({
@@ -644,7 +653,7 @@ export class FamilySearchSDK {
 
 	/**
 	 * Search for persons using external GEDCOM data
-	 * 
+	 *
 	 * Converts person data to search query parameters and searches FamilySearch.
 	 * Works with both Tree and Records collections.
 	 *
@@ -744,7 +753,7 @@ export class FamilySearchSDK {
 
 	/**
 	 * Search for persons in FamilySearch
-	 * 
+	 *
 	 * Low-level search method that accepts query parameters as a Record.
 	 * Use `searchPersonByData` for a higher-level interface.
 	 *
@@ -781,7 +790,7 @@ export class FamilySearchSDK {
 
 	/**
 	 * Get couple relationship by ID
-	 * 
+	 *
 	 * @deprecated Use `getCoupleRelationship` from `@treeviz/familysearch-sdk/api/tree/relationships` instead
 	 */
 	async getCoupleRelationship(relationshipId: string) {
@@ -790,7 +799,7 @@ export class FamilySearchSDK {
 
 	/**
 	 * Get child and parents relationship by ID
-	 * 
+	 *
 	 * @deprecated Use `getChildAndParentsRelationship` from `@treeviz/familysearch-sdk/api/tree/relationships` instead
 	 */
 	async getChildAndParentsRelationship(relationshipId: string) {
@@ -799,7 +808,7 @@ export class FamilySearchSDK {
 
 	/**
 	 * Get ancestry for a person
-	 * 
+	 *
 	 * @deprecated Use `getAncestry` from `@treeviz/familysearch-sdk/api/tree/pedigrees` instead
 	 */
 	async getAncestry(
@@ -811,7 +820,7 @@ export class FamilySearchSDK {
 
 	/**
 	 * Get descendancy for a person
-	 * 
+	 *
 	 * @deprecated Use `getDescendancy` from `@treeviz/familysearch-sdk/api/tree/pedigrees` instead
 	 */
 	async getDescendancy(
@@ -827,7 +836,7 @@ export class FamilySearchSDK {
 
 	/**
 	 * Search for places with advanced filtering options
-	 * 
+	 *
 	 * This is a convenience wrapper that provides additional filtering capabilities
 	 * beyond the basic place search API (parent, type, date filters).
 	 */
@@ -871,10 +880,10 @@ export class FamilySearchSDK {
 
 	/**
 	 * Get place by ID and extract the first place from response
-	 * 
+	 *
 	 * This is a convenience wrapper that simplifies the place details API
 	 * by returning just the place object instead of the full response structure.
-	 * 
+	 *
 	 * @deprecated Use `getPlaceDetails` from `@treeviz/familysearch-sdk/api/standards/places` for full response
 	 */
 	async getPlace(placeId: string): Promise<FamilySearchPlace | null> {

@@ -1,8 +1,8 @@
 /**
  * FamilySearch Dates API
- * 
+ *
  * Handles date standardization and normalization.
- * 
+ *
  * @see https://developers.familysearch.org/main/reference/normalizedate
  */
 
@@ -11,11 +11,11 @@ import type { DateStandardizationResponse } from "../../types";
 
 /**
  * Normalize a date string
- * 
+ *
  * @param sdk - SDK instance
  * @param dateString - Date string to normalize (e.g., "1850", "January 1850")
  * @returns Normalized date info or null
- * 
+ *
  * @example
  * ```typescript
  * const normalized = await normalizeDate(sdk, 'January 1850');
@@ -34,7 +34,7 @@ export async function normalizeDate(
 		);
 		return response.data || null;
 	} catch (error) {
-		sdk["logger"].error(
+		sdk.logger.error(
 			`[FamilySearch SDK] Failed to normalize date "${dateString}":`,
 			error
 		);
