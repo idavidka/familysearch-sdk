@@ -192,3 +192,66 @@ export async function deleteSourceDescription(
 		throw error;
 	}
 }
+
+/**
+ * Get source description changes
+ *
+ * Checks if source descriptions have changed since a specified timestamp.
+ * This is useful for syncing/caching source data.
+ *
+ * @param sdk - SDK instance
+ * @param sourceIds - Array of source description IDs to check (max 100)
+ * @param since - Unix epoch timestamp in milliseconds (e.g. 1346107362000)
+ * @returns Source descriptions that have changed, or null if none changed
+ *
+ * @example
+ * ```typescript
+ * const timestamp = Date.now() - (7 * 24 * 60 * 60 * 1000); // 7 days ago
+ * const changes = await getSourceDescriptionChanges(sdk, ['SRC-1', 'SRC-2'], timestamp);
+ * if (changes) {
+ *   console.log('Changed sources:', changes.sourceDescriptions?.length);
+ * }
+ * ```
+ */
+export async function getSourceDescriptionChanges(
+	sdk: FamilySearchSDK,
+	sourceIds: string[],
+	since: number
+): Promise<SourceDescriptionsResponse | null> {
+	try {
+		// Validate max 100 sources
+		if (sourceIds.length > 100) {
+			sdk.logger.warn(
+				`[FamilySearch SDK] Maximum 100 source descriptions allowed, got ${sourceIds.length}. Using first 100.`
+			);
+			sourceIds = sourceIds.slice(0, 100);
+		}
+
+		const params = new URLSearchParams({
+			since: since.toString(),
+		});
+
+		// Build request body with source description IDs
+		const input = {
+			sourceDescriptions: sourceIds.map((id) => ({ id })),
+		};
+
+		const response = await sdk.post<SourceDescriptionsResponse>(
+			`/platform/sources/descriptions/changes?${params.toString()}`,
+			input
+		);
+
+		// 204 No Content means no changes
+		if (response.statusCode === 204) {
+			return null;
+		}
+
+		return response.data || null;
+	} catch (error) {
+		sdk.logger.error(
+			`[FamilySearch SDK] Failed to get source description changes:`,
+			error
+		);
+		return null;
+	}
+}
