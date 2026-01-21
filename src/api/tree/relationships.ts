@@ -1064,21 +1064,67 @@ export async function restoreCoupleRelationship(
 	try {
 		const headers: Record<string, string> = {};
 		if (reason) {
-			headers["X-Reason"] = reason;
-		}
+		headers["X-Reason"] = reason;
+	}
 
-		const response = await sdk.post<DeletePersonResponse>(
-			`/platform/tree/couple-relationships/${relationshipId}/restore`,
-			{},
-			{ headers }
+	const response = await sdk.post<DeletePersonResponse>(
+		`/platform/tree/couple-relationships/${relationshipId}/restore`,
+		{},
+		{ headers }
+	);
+	return {
+		statusCode: response.statusCode,
+		statusText: response.statusText,
+	};
+} catch (error) {
+	sdk.logger.error(
+		`[FamilySearch SDK] Failed to restore couple relationship ${relationshipId}:`,
+		error
+	);
+	throw error;
+}
+}
+
+/**
+ * Get Child And Parent Relationship Note
+ *
+ * Retrieves a specific note attached to a child-and-parents relationship.
+ * Notes are used to provide additional context or documentation about the relationship.
+ *
+ * @param sdk - SDK instance
+ * @param relationshipId - Child-and-parents relationship ID
+ * @param noteId - Note ID
+ * @returns Note data or null if not found
+ * @throws Error if request fails
+ *
+ * @see https://www.familysearch.org/developers/docs/api/tree/Read_Child-and-Parents_Relationship_Note_usecase
+ *
+ * @example
+ * ```typescript
+ * const note = await getChildAndParentRelationshipNote(
+ *   sdk,
+ *   "PPPP-PPP-CAPR",
+ *   "NOTE-123"
+ * );
+ *
+ * if (note) {
+ *   console.log('Note text:', note.text);
+ * }
+ * ```
+ */
+export async function getChildAndParentRelationshipNote(
+	sdk: FamilySearchSDK,
+	relationshipId: string,
+	noteId: string
+): Promise<unknown | null> {
+	try {
+		const response = await sdk.get<unknown>(
+			`/platform/tree/child-and-parents-relationships/${relationshipId}/notes/${noteId}`
 		);
-		return {
-			statusCode: response.statusCode,
-			statusText: response.statusText,
-		};
+		return response.data || null;
 	} catch (error) {
 		sdk.logger.error(
-			`[FamilySearch SDK] Failed to restore couple relationship ${relationshipId}:`,
+			`[FamilySearch SDK] Failed to read note ${noteId} for child-and-parents relationship ${relationshipId}:`,
 			error
 		);
 		throw error;

@@ -491,3 +491,97 @@ export async function deletePersonNotAMatch(
 		throw error;
 	}
 }
+
+/**
+ * Get Tree Person Matches
+ *
+ * Retrieves match information for a person from a specified collection.
+ * Match results can be filtered by status, collection type, and confidence level.
+ *
+ * @param sdk - SDK instance
+ * @param personId - The ID of the person whose matches are requested
+ * @param options - Optional filter and pagination parameters
+ * @param options.collection - Collection to search ("tree", "cet", or "records", default "tree")
+ * @param options.confidence - Confidence level 1-5 (higher = more confident)
+ * @param options.count - Number of results to return, 1-100 (default 5)
+ * @param options.status - Match status filter (e.g., "pending", "accepted")
+ * @param options.treeId - Tree ID for CET collection matches
+ * @returns Match data or null if no matches found
+ * @throws Error if request fails
+ *
+ * @see https://www.familysearch.org/developers/docs/api/tree/Read_Tree_Person_Matches_usecase
+ *
+ * @example
+ * ```typescript
+ * // Get default matches from tree collection
+ * const matches = await getTreePersonMatches(sdk, "PPPP-PPP");
+ *
+ * // Get high-confidence matches from records
+ * const recordMatches = await getTreePersonMatches(sdk, "PPPP-PPP", {
+ *   collection: "records",
+ *   confidence: 4,
+ *   count: 20
+ * });
+ *
+ * // Get matches from CET with tree ID
+ * const cetMatches = await getTreePersonMatches(sdk, "PPPP-PPP", {
+ *   collection: "cet",
+ *   treeId: "TREE-123"
+ * });
+ * ```
+ */
+export async function getTreePersonMatches(
+	sdk: FamilySearchSDK,
+	personId: string,
+	options?: {
+		collection?: "tree" | "cet" | "records";
+		confidence?: number;
+		count?: number;
+		status?: string;
+		treeId?: string;
+	}
+): Promise<unknown | null> {
+	try {
+		const params = new URLSearchParams();
+
+		if (options?.collection) {
+			params.append("collection", options.collection);
+		}
+
+		if (options?.confidence !== undefined) {
+			params.append("confidence", String(options.confidence));
+		}
+
+		if (options?.count !== undefined) {
+			params.append("count", String(options.count));
+		}
+
+		if (options?.status) {
+			params.append("status", options.status);
+		}
+
+		if (options?.treeId) {
+			params.append("treeId", options.treeId);
+		}
+
+		const queryString = params.toString();
+		const url = `/platform/tree/persons/${personId}/matches${
+			queryString ? `?${queryString}` : ""
+		}`;
+
+		const response = await sdk.get<unknown>(url);
+
+		// Returns 204 No Content if no matches found
+		if (response.statusCode === 204) {
+			return null;
+		}
+
+		return response.data || null;
+	} catch (error) {
+		sdk.logger.error(
+			`[FamilySearch SDK] Failed to read tree person matches for ${personId}:`,
+			error
+		);
+		throw error;
+	}
+}

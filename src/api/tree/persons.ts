@@ -814,3 +814,80 @@ export async function deleteTreePersonReference(
 		throw error;
 	}
 }
+
+/**
+ * Get Research Tree Persons
+ *
+ * Retrieves the list of person IDs in a CET (Collaborative Extracted Tree).
+ * The list is returned as a feed of entry elements where each entry contains a person ID.
+ *
+ * @param sdk - SDK instance
+ * @param treeId - The ID of the tree from which person IDs are to be retrieved
+ * @param options - Optional pagination and view parameters
+ * @param options.count - Maximum number of person IDs to return (minimum 100, default 100)
+ * @param options.from - Page token for pagination (omit for first page)
+ * @param options.view - Type of data to return (default "identifiers", currently only supported value)
+ * @returns Research tree persons feed or null if tree is empty
+ * @throws Error if request fails
+ *
+ * @see https://www.familysearch.org/developers/docs/api/tree/Read_Research_Tree_Persons_usecase
+ *
+ * @example
+ * ```typescript
+ * // Get first page of person IDs
+ * const firstPage = await getResearchTreePersons(sdk, "TREE-123");
+ *
+ * // Get specific count
+ * const limited = await getResearchTreePersons(sdk, "TREE-123", { count: 200 });
+ *
+ * // Paginate through results
+ * const nextPage = await getResearchTreePersons(sdk, "TREE-123", {
+ *   from: "next-page-token"
+ * });
+ * ```
+ */
+export async function getResearchTreePersons(
+	sdk: FamilySearchSDK,
+	treeId: string,
+	options?: {
+		count?: number;
+		from?: string;
+		view?: string;
+	}
+): Promise<unknown | null> {
+	try {
+		const params = new URLSearchParams();
+
+		if (options?.count !== undefined) {
+			params.append("count", String(options.count));
+		}
+
+		if (options?.from) {
+			params.append("from", options.from);
+		}
+
+		if (options?.view) {
+			params.append("view", options.view);
+		}
+
+		const queryString = params.toString();
+		const url = `/platform/trees/${treeId}/persons${
+			queryString ? `?${queryString}` : ""
+		}`;
+
+		const response = await sdk.get<unknown>(url);
+
+		// Returns 204 No Content if tree has no person IDs
+		if (response.statusCode === 204) {
+			return null;
+		}
+
+		return response.data || null;
+	} catch (error) {
+		sdk.logger.error(
+			`[FamilySearch SDK] Failed to read research tree persons for tree ${treeId}:`,
+			error
+		);
+		throw error;
+	}
+}

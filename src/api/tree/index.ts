@@ -39,6 +39,7 @@ export {
 	deletePersonMemoriesPersonaReference,
 	deletePersonSourceReference,
 	deleteTreePersonReference,
+	getResearchTreePersons,
 } from "./persons";
 
 // Relationships API
@@ -67,6 +68,7 @@ export {
 	deleteCoupleRelationshipSourceReference,
 	deleteChildAndParentsRelationshipSourceReference,
 	deleteChildAndParentsRelationshipParent,
+	getChildAndParentRelationshipNote,
 } from "./relationships";
 
 // Pedigrees API
@@ -88,6 +90,7 @@ export {
 	updatePersonNotAMatches,
 	deletePersonNotAMatches,
 	deletePersonNotAMatch,
+	getTreePersonMatches,
 } from "./matches";
 
 // Sources API
