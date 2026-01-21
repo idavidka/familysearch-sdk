@@ -1,6 +1,6 @@
 # FamilySearch SDK API Analysis Report
 
-**Generated:** 2026-01-21T13:13:26.236Z
+**Generated:** 2026-01-21T13:16:23.554Z
 
 ---
 
