@@ -263,42 +263,6 @@ export async function getCurrentUser(
 }
 
 /**
- * Get person by ID with full details
- */
-export async function readPersonWithDetails(
-	sdk: FamilySearchSDK,
-	personId: string,
-	options: { sourceDescriptions?: boolean } = {}
-): Promise<EnhancedPerson | null> {
-	try {
-		const [details, notes] = await Promise.all([
-			readPersonWithDetailsAPI(sdk, personId, options),
-			readPersonNotes(sdk, personId),
-		]);
-
-		if (!details) {
-			return null;
-		}
-
-		// The details response contains the person data in persons array
-		const fullDetails = details as EnhancedPerson["fullDetails"];
-		const personData = fullDetails?.persons?.[0];
-
-		if (!personData) {
-			return null;
-		}
-
-		return {
-			...personData,
-			fullDetails: fullDetails,
-			notes: notes as EnhancedPerson["notes"],
-		};
-	} catch {
-		return null;
-	}
-}
-
-/**
  * Fetch multiple persons at once
  */
 export async function fetchMultiplePersons(

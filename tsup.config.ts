@@ -5,7 +5,7 @@ export default defineConfig({
 		index: "src/index.ts",
 		"auth/index": "src/auth/index.ts",
 		"places/index": "src/places/index.ts",
-		"tree/index": "src/tree/index.ts",
+		"tree/index": "src/api/tree/index.ts",
 		"utils/index": "src/utils/index.ts",
 	},
 	format: ["esm", "cjs"],

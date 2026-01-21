@@ -11,13 +11,6 @@
  * - Configurable logging
  */
 
-import { readPersonNotes as readPersonNotesAPI } from "./api/tree/notes";
-import { readAncestry, readDescendancy } from "./api/tree/pedigrees";
-import { readPerson, readPersonWithDetails } from "./api/tree/persons";
-import {
-	readCoupleRelationship,
-	readChildAndParentsRelationship,
-} from "./api/tree/relationships";
 import {
 	createErrorFromResponse,
 	createNetworkError,
@@ -31,16 +24,11 @@ import type {
 	FamilySearchEnvironment,
 	FamilySearchSDKConfig,
 	FamilySearchUser,
-	FamilySearchPerson,
 	FamilySearchPlace,
-	PersonNotesResponse,
-	PersonMemoriesResponse,
-	PersonSourcesResponse,
 	TreePersonMatchesResponse,
 	TreePersonMatchesOptions,
 	PersonMatchInput,
 	PersonMatchOptions,
-	PedigreeResponse,
 	PersonSearchResponse,
 	RateLimiterConfig,
 	SDKLogger,
@@ -319,7 +307,7 @@ export class FamilySearchSDK {
 
 	/**
 	 * OPTIONS request
-	 * 
+	 *
 	 * Used to check endpoint capabilities and availability.
 	 * Returns response headers that indicate allowed methods, warnings, etc.
 	 */
@@ -327,12 +315,15 @@ export class FamilySearchSDK {
 		url: string,
 		requestOptions: RequestInit = {}
 	): Promise<FamilySearchApiResponse<void>> {
-		return this.request<void>(url, { ...requestOptions, method: "OPTIONS" });
+		return this.request<void>(url, {
+			...requestOptions,
+			method: "OPTIONS",
+		});
 	}
 
 	/**
 	 * HEAD request
-	 * 
+	 *
 	 * Used to check resource existence and retrieve metadata without fetching the body.
 	 * Returns response headers including content-type, last-modified, etc.
 	 */
@@ -370,82 +361,6 @@ export class FamilySearchSDK {
 	// ====================================
 	// Tree/Pedigree API
 	// ====================================
-
-	/**
-	 * Get person by ID
-	 *
-	 * @deprecated Use `getPerson` from `@treeviz/familysearch-sdk/api/tree/persons` instead
-	 */
-	async getPerson(personId: string): Promise<FamilySearchPerson | null> {
-		return readPerson(this, personId);
-	}
-
-	/**
-	 * Get person with full details including relationships
-	 *
-	 * @deprecated Use `getPersonWithDetails` from `@treeviz/familysearch-sdk/api/tree/persons` instead
-	 */
-	async getPersonWithDetails(
-		personId: string,
-		options: { sourceDescriptions?: boolean } = {}
-	) {
-		return readPersonWithDetails(this, personId, options);
-	}
-
-	/**
-	 * Get person notes
-	 *
-	 * @deprecated Use `getPersonNotes` from `@treeviz/familysearch-sdk/api/tree/notes` instead
-	 */
-	async getPersonNotes(
-		personId: string
-	): Promise<PersonNotesResponse | null> {
-		return readPersonNotesAPI(this, personId);
-	}
-
-	/**
-	 * Get person memories (photos, stories, documents)
-	 *
-	 * @deprecated Use `getPersonMemories` from `@treeviz/familysearch-sdk/api/tree/persons` instead
-	 */
-	async getPersonMemories(
-		personId: string
-	): Promise<PersonMemoriesResponse | null> {
-		try {
-			const response = await this.get<PersonMemoriesResponse>(
-				`/platform/tree/persons/${personId}/memories`
-			);
-			return response.data || null;
-		} catch (error) {
-			this.logger.error(
-				`[FamilySearch SDK] Failed to get person memories for ${personId}:`,
-				error
-			);
-			return null;
-		}
-	}
-
-	/**
-	 * Get person source attachments
-	 *
-	 * @deprecated Use `getPersonSources` from `@treeviz/familysearch-sdk/api/tree/persons` instead
-	 */
-	async getPersonSources(
-		personId: string
-	): Promise<PersonSourcesResponse | null> {
-		try {
-			const response = await this.get<PersonSourcesResponse>(
-				`/platform/tree/persons/${personId}/sources`
-			);
-			return response.data || null;
-		} catch (error) {
-			this.logger.error(
-				`[FamilySearch SDK] Failed to get person sources for ${personId}:`,
-				error
-			);
-			return null;
-		}
-	}
 
 	/**
 	 * Get tree person matches (record hints and possible duplicates)
@@ -806,48 +721,6 @@ export class FamilySearchSDK {
 		return this.get<PersonSearchResponse>(
 			`/platform/tree/search?${params.toString()}`
 		);
-	}
-
-	/**
-	 * Get couple relationship by ID
-	 *
-	 * @deprecated Use `getCoupleRelationship` from `@treeviz/familysearch-sdk/api/tree/relationships` instead
-	 */
-	async getCoupleRelationship(relationshipId: string) {
-		return readCoupleRelationship(this, relationshipId);
-	}
-
-	/**
-	 * Get child and parents relationship by ID
-	 *
-	 * @deprecated Use `getChildAndParentsRelationship` from `@treeviz/familysearch-sdk/api/tree/relationships` instead
-	 */
-	async getChildAndParentsRelationship(relationshipId: string) {
-		return readChildAndParentsRelationship(this, relationshipId);
-	}
-
-	/**
-	 * Get ancestry for a person
-	 *
-	 * @deprecated Use `getAncestry` from `@treeviz/familysearch-sdk/api/tree/pedigrees` instead
-	 */
-	async getAncestry(
-		personId: string,
-		generations: number = 4
-	): Promise<PedigreeResponse | null> {
-		return readAncestry(this, personId, generations);
-	}
-
-	/**
-	 * Get descendancy for a person
-	 *
-	 * @deprecated Use `getDescendancy` from `@treeviz/familysearch-sdk/api/tree/pedigrees` instead
-	 */
-	async getDescendancy(
-		personId: string,
-		generations: number = 2
-	): Promise<PedigreeResponse | null> {
-		return readDescendancy(this, personId, generations);
 	}
 
 	// ====================================

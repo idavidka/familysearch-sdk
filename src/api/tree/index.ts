@@ -23,7 +23,6 @@ export {
 	updatePerson,
 	deletePerson,
 	restorePerson,
-	readPersonNotes,
 	readPersonMemories,
 	readPersonSources,
 	readPersonDiscussions,
@@ -108,6 +107,7 @@ export {
 
 // Notes API
 export {
+	readPersonNotes,
 	readPersonNote,
 	createPersonNote,
 	updatePersonNote,
@@ -192,4 +192,9 @@ export {
 export { readTreeChanges } from "./tree-changes";
 
 // Trees API
-export { readTree, deleteTree, createTree, readResearchTreePersons } from "./trees";
+export {
+	readTree,
+	deleteTree,
+	createTree,
+	readResearchTreePersons,
+} from "./trees";

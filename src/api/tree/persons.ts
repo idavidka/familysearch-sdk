@@ -15,7 +15,6 @@ import type {
 	PersonDiscussionsResponse,
 	PersonInput,
 	PersonMemoriesResponse,
-	PersonNotesResponse,
 	PersonPortraitsResponse,
 	PersonSourcesResponse,
 	PersonFamiliesResponse,
@@ -254,31 +253,6 @@ export async function restorePerson(
 			error
 		);
 		throw error;
-	}
-}
-
-/**
- * Read notes for a person
- *
- * @param sdk - SDK instance
- * @param personId - Person ID
- * @returns Person notes or null
- */
-export async function readPersonNotes(
-	sdk: FamilySearchSDK,
-	personId: string
-): Promise<PersonNotesResponse | null> {
-	try {
-		const response = await sdk.get<PersonNotesResponse>(
-			`/platform/tree/persons/${personId}/notes`
-		);
-		return response.data || null;
-	} catch (error) {
-		sdk.logger.error(
-			`[FamilySearch SDK] Failed to read notes for ${personId}:`,
-			error
-		);
-		return null;
 	}
 }
 
@@ -862,4 +836,3 @@ export async function createPersonMemory(
 		throw error;
 	}
 }
-
