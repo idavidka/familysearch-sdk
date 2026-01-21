@@ -5,15 +5,7 @@
  *
  * This script:
  * 1. Reads all HTML documentation files
- * 2. Extracts endpoint detai	readpersonchangehistory: "getPersonChangeHistory",
-	readpersonmerge: "getPersonMerge",
-	readpersonmatches: "getPersonMatches",
-	readpersonnonmatches: "getPersonNonMatches",
-	updatematchresolution: "updateMatchResolution",
-	readpersonnotamatches: "getNotAMatchDeclarations",
-	updatepersonnotamatches: "createNotAMatchDeclaration",
-	deletepersonnotamatches: "deleteAllNotAMatchDeclarations",
-	deletepersonnotamatch: "deleteNotAMatchDeclaration",thod, params, response)
+ * 2. Extracts endpoint detai
  * 3. Checks existing implementation
  * 4. Generates missing implementations
  * 5. Creates detailed report
@@ -159,18 +151,18 @@ function checkImplementation(endpointName) {
 		updategenealogytree: "updateGenealogyTree",
 		deletegenealogytree: "deleteGenealogyTree",
 
-	// Current User / Tree
-	readcurrenttreeperson: "getCurrentUser",
-	readcurrentuser: "getCurrentUser",
-	readagent: "getAgent",
-	readpartnereligibility: "checkPartnerEligibility",
-	readuserhistory: "getUserHistory",
-	updateuserhistory: "updateUserHistory",
-	deleteuser: "deleteUserAccount",
+		// Current User / Tree
+		readcurrenttreeperson: "getCurrentUser",
+		readcurrentuser: "getCurrentUser",
+		readagent: "getAgent",
+		readpartnereligibility: "checkPartnerEligibility",
+		readuserhistory: "getUserHistory",
+		updateuserhistory: "updateUserHistory",
+		deleteuser: "deleteUserAccount",
 
-	// Person APIs
-	readperson: "getPerson",
-	readpersons: "getPersons",
+		// Person APIs
+		readperson: "getPerson",
+		readpersons: "getPersons",
 		createperson: "createPerson",
 		updateperson: "updatePerson",
 		deleteperson: "deletePerson",
@@ -198,154 +190,177 @@ function checkImplementation(endpointName) {
 		deletepersonportrait: "deletePersonPortrait",
 		createpersonmemory: "createPersonMemory",
 		readpersonmemories: "getPersonMemories",
-		deletepersonmemoriespersonareference: "deletePersonMemoryPersonaReference",
+		deletepersonmemoriespersonareference:
+			"deletePersonMemoryPersonaReference",
 		deletepersonconclusion: "deletePersonConclusion",
 		deletepersondiscussionreference: "deletePersonDiscussionReference",
 
-	// Relationships
-	readrelationship: "getRelationship",
-	readrelationships: "getRelationships",
-	createrelationship: "createRelationship",
-	updaterelationship: "updateRelationship",
-	deleterelationship: "deleteRelationship",
-	restorerelationship: "restoreRelationship",
-	restorechange: "restoreChange",
-	readchildandparentsrelationship: "getChildAndParentsRelationship",
-	readchildandparentrelationship: "getChildAndParentsRelationshipChangeHistory",
-	createchildandparentsrelationship: "createChildAndParentsRelationship",
-	updatechildandparentsrelationship: "updateChildAndParentsRelationship",
-	deletechildandparentsrelationship: "deleteChildAndParentsRelationship",
-	restorechildandparentsrelationship:
-		"restoreChildAndParentsRelationship",
-	readchildandparentrelationshipnote: "getChildAndParentsRelationshipNote",
-	readchildandparentsrelationshipnote: "getChildAndParentsRelationshipNote",
-	readchildandparentsrelationshipnotes: "getChildAndParentsRelationshipNotes",
-	createchildandparentsrelationshipnote: "createChildAndParentsRelationshipNote",
-	updatechildandparentsrelationshipnote: "updateChildAndParentsRelationshipNote",
-	deletechildandparentsrelationshipnote: "deleteChildAndParentsRelationshipNote",
-	readchildandparentsrelationshipsourcereferences: "getChildAndParentsRelationshipSourceReferences",
-	createchildandparentsrelationshipsourcereference: "createChildAndParentsRelationshipSourceReference",
-	deletechildandparentsrelationshipsourcereference: "deleteChildAndParentsRelationshipSourceReference",
-	deletechildandparentsrelationshipconclusion: "deleteChildAndParentsRelationshipConclusion",
-	deletechildandparentsrelationshipparent: "deleteChildAndParentsRelationshipParent",
-	readcouplerelationship: "getCoupleRelationship",
-	createcouplerelationship: "createCoupleRelationship",
-	updatecouplerelationship: "updateCoupleRelationship",
-	deletecouplerelationship: "deleteCoupleRelationship",
-	restorecouplerelationship: "restoreCoupleRelationship",
-	readcouplerelationshipchangehistory: "getCoupleRelationshipChangeHistory",
-	readcouplerelationshipnote: "getCoupleRelationshipNote",
-	readcouplerelationshipnotes: "getCoupleRelationshipNotes",
-	createcouplerelationshipnote: "createCoupleRelationshipNote",
-	updatecouplerelationshipnote: "updateCoupleRelationshipNote",
-	deletecouplerelationshipnote: "deleteCoupleRelationshipNote",
-	readcouplerelationshipsourcereferences: "getCoupleRelationshipSourceReferences",
-	createcouplerelationshipsourcereference: "createCoupleRelationshipSourceReference",
-	deletecouplerelationshipsourcereference: "deleteCoupleRelationshipSourceReference",
-	deletecouplerelationshipconclusion: "deleteCoupleRelationshipConclusion",
-	getchildandparentsrelationshipnotes: "getChildAndParentsRelationshipNotes",
-	getcouplerelationshipnotes: "getCoupleRelationshipNotes",
-	getchildandparentsrelationshipsourcereferences: "getChildAndParentsRelationshipSourceReferences",
-	getchildandparentsrelationshipsources: "getChildAndParentsRelationshipSources",
-	getcouplerelationshipsourcereferences: "getCoupleRelationshipSourceReferences",
-	readcouplerelationshipsources: "getCoupleRelationshipSources",
-	getpersonmemories: "getPersonMemories",
-	getchildandparentsrelationship: "getChildAndParentsRelationship",
-	getgroups: "getGroups",
-	getmemories: "getMemories",
-	getnamescript: "getNameScript",
-	getnamesegments: "getNameSegments",
-	getpreferredparentrelationship: "getPreferredParentRelationship",
-	updatepreferredparentrelationship: "setPreferredParentRelationship",
-	deletepreferredparentrelationship: "deletePreferredParentRelationship",
-	readpreferredspouserelationship: "getPreferredSpouseRelationship",
-	updatepreferredspouserelationship: "setPreferredSpouseRelationship",
-	deletepreferredspouserelationship: "deletePreferredSpouseRelationship",
-	getsourcedescriptionchanges: "getSourceDescriptionChanges",
-	
-	// Sources
-	readsourcedescription: "getSourceDescription",
-	readsourcedescriptions: "getSourceDescriptions",
-	createsourcedescription: "createSourceDescription",
-	updatesourcedescription: "updateSourceDescription",
-	deletesourcedescription: "deleteSourceDescription",
-	readsourcedescriptionchanges: "getSourceDescriptionChanges",
-	attachsource: "attachSource",
-	detachsource: "detachSource",
-	updatesourceattachment: "updateSourceAttachment",
-	
-	// Source Box (Collections & Folders)
-	readusersourcefolders: "getUserSourceFolders",
-	readsourcefolders: "getSourceFolders",
-	createsourcefolder: "createSourceFolder",
-	readuserdefinedcollection: "getUserDefinedCollection",
-	updateuserdefinedcollection: "updateUserDefinedCollection",
-	deleteuserdefinedcollection: "deleteUserDefinedCollection",
-	readcollectionsourcedescriptions: "getCollectionSourceDescriptions",
-	updatesourcedescriptionstocollection: "addSourcesToCollection",
-	deletesourcedescriptionsfromcollections: "removeSourcesFromCollection",
+		// Relationships
+		readrelationship: "getRelationship",
+		readrelationships: "getRelationships",
+		createrelationship: "createRelationship",
+		updaterelationship: "updateRelationship",
+		deleterelationship: "deleteRelationship",
+		restorerelationship: "restoreRelationship",
+		restorechange: "restoreChange",
+		readchildandparentsrelationship: "getChildAndParentsRelationship",
+		readchildandparentrelationship:
+			"getChildAndParentsRelationshipChangeHistory",
+		createchildandparentsrelationship: "createChildAndParentsRelationship",
+		updatechildandparentsrelationship: "updateChildAndParentsRelationship",
+		deletechildandparentsrelationship: "deleteChildAndParentsRelationship",
+		restorechildandparentsrelationship:
+			"restoreChildAndParentsRelationship",
+		readchildandparentrelationshipnote:
+			"getChildAndParentsRelationshipNote",
+		readchildandparentsrelationshipnote:
+			"getChildAndParentsRelationshipNote",
+		readchildandparentsrelationshipnotes:
+			"getChildAndParentsRelationshipNotes",
+		createchildandparentsrelationshipnote:
+			"createChildAndParentsRelationshipNote",
+		updatechildandparentsrelationshipnote:
+			"updateChildAndParentsRelationshipNote",
+		deletechildandparentsrelationshipnote:
+			"deleteChildAndParentsRelationshipNote",
+		readchildandparentsrelationshipsourcereferences:
+			"getChildAndParentsRelationshipSourceReferences",
+		createchildandparentsrelationshipsourcereference:
+			"createChildAndParentsRelationshipSourceReference",
+		deletechildandparentsrelationshipsourcereference:
+			"deleteChildAndParentsRelationshipSourceReference",
+		deletechildandparentsrelationshipconclusion:
+			"deleteChildAndParentsRelationshipConclusion",
+		deletechildandparentsrelationshipparent:
+			"deleteChildAndParentsRelationshipParent",
+		readcouplerelationship: "getCoupleRelationship",
+		createcouplerelationship: "createCoupleRelationship",
+		updatecouplerelationship: "updateCoupleRelationship",
+		deletecouplerelationship: "deleteCoupleRelationship",
+		restorecouplerelationship: "restoreCoupleRelationship",
+		readcouplerelationshipchangehistory:
+			"getCoupleRelationshipChangeHistory",
+		readcouplerelationshipnote: "getCoupleRelationshipNote",
+		readcouplerelationshipnotes: "getCoupleRelationshipNotes",
+		createcouplerelationshipnote: "createCoupleRelationshipNote",
+		updatecouplerelationshipnote: "updateCoupleRelationshipNote",
+		deletecouplerelationshipnote: "deleteCoupleRelationshipNote",
+		readcouplerelationshipsourcereferences:
+			"getCoupleRelationshipSourceReferences",
+		createcouplerelationshipsourcereference:
+			"createCoupleRelationshipSourceReference",
+		deletecouplerelationshipsourcereference:
+			"deleteCoupleRelationshipSourceReference",
+		deletecouplerelationshipconclusion:
+			"deleteCoupleRelationshipConclusion",
+		getchildandparentsrelationshipnotes:
+			"getChildAndParentsRelationshipNotes",
+		getcouplerelationshipnotes: "getCoupleRelationshipNotes",
+		getchildandparentsrelationshipsourcereferences:
+			"getChildAndParentsRelationshipSourceReferences",
+		getchildandparentsrelationshipsources:
+			"getChildAndParentsRelationshipSources",
+		getcouplerelationshipsourcereferences:
+			"getCoupleRelationshipSourceReferences",
+		readcouplerelationshipsources: "getCoupleRelationshipSources",
+		getpersonmemories: "getPersonMemories",
+		getchildandparentsrelationship: "getChildAndParentsRelationship",
+		getgroups: "getGroups",
+		getmemories: "getMemories",
+		getnamescript: "getNameScript",
+		getnamesegments: "getNameSegments",
+		getpreferredparentrelationship: "getPreferredParentRelationship",
+		updatepreferredparentrelationship: "setPreferredParentRelationship",
+		deletepreferredparentrelationship: "deletePreferredParentRelationship",
+		readpreferredspouserelationship: "getPreferredSpouseRelationship",
+		updatepreferredspouserelationship: "setPreferredSpouseRelationship",
+		deletepreferredspouserelationship: "deletePreferredSpouseRelationship",
+		getsourcedescriptionchanges: "getSourceDescriptionChanges",
 
-	// Places
-	standardizedate: "normalizeDate",
-	readplaces: "searchPlaces",
-	readplace: "getPlaceDetails",
-	searchforparentplaces: "searchParentPlaces",
-	readplacechildren: "getPlaceChildren",
-	readplacedescription: "getPlaceDescription",
-	readplacedescriptions: "getPlaceDescriptions",
-	checkplaceischild: "checkPlaceIsChild",
-	readplacetype: "getPlaceType",
-	readplacetypes: "getPlaceTypes",
-	readplacetypegroups: "getPlaceTypeGroups",
+		// Sources
+		readsourcedescription: "getSourceDescription",
+		readsourcedescriptions: "getSourceDescriptions",
+		createsourcedescription: "createSourceDescription",
+		updatesourcedescription: "updateSourceDescription",
+		deletesourcedescription: "deleteSourceDescription",
+		readsourcedescriptionchanges: "getSourceDescriptionChanges",
+		attachsource: "attachSource",
+		detachsource: "detachSource",
+		updatesourceattachment: "updateSourceAttachment",
 
-	// Memories
-	readmemory: "getMemory",
-	readmemories: "getMemories",
-	readusermemories: "getUserMemories",
-	creatememory: "createMemory",
-	updatememory: "updateMemory",
-	deletememory: "deleteMemory",
-	readmemorycomments: "getMemoryWithComments",
-	readmemorypersona: "getMemoryPersona",
-	readmemorypersonas: "getMemoryPersonas",
+		// Source Box (Collections & Folders)
+		readusersourcefolders: "getUserSourceFolders",
+		readsourcefolders: "getSourceFolders",
+		createsourcefolder: "createSourceFolder",
+		readuserdefinedcollection: "getUserDefinedCollection",
+		updateuserdefinedcollection: "updateUserDefinedCollection",
+		deleteuserdefinedcollection: "deleteUserDefinedCollection",
+		readcollectionsourcedescriptions: "getCollectionSourceDescriptions",
+		updatesourcedescriptionstocollection: "addSourcesToCollection",
+		deletesourcedescriptionsfromcollections: "removeSourcesFromCollection",
 
-	// Genealogies (User-Submitted Trees)
-	readgenealogiestree: "getGenealogyTree",
-	readgenealogiestrees: "getGenealogyTrees",
-	creategenealogiestree: "createGenealogyTree",
-	updategenealogiestree: "updateGenealogyTree",
-	deletegenealogiestree: "deleteGenealogyTree",
-	readgenealogiessourcedescription: "getGenealogySourceDescription",
-	creategenealogiessourcedescription: "createGenealogySourceDescription",
-	updategenealogiessourcedescription: "updateGenealogySourceDescription",
-	deletegenealogiessourcedescription: "deleteGenealogySourceDescription",
-	deletegenealogiesconclusion: "deleteGenealogyConclusion",
-	readgenealogiesbulkmatch: "getGenealogyBulkMatch",
-	readgenealogiespersonmatches: "getGenealogyPersonMatches",
-	readgenealogiesnote: "getGenealogyNote",
-	updategenealogiesperson: "updateGenealogyPerson",
-	deletegenealogiesperson: "deleteGenealogyPerson",
-	restoregenealogiesperson: "restoreGenealogyPerson",
-	updategenealogiespersonrelationship: "updateGenealogyRelationship",
-	deletegenealogiespersonrelationship: "deleteGenealogyRelationship",
+		// Places
+		standardizedate: "normalizeDate",
+		readplaces: "searchPlaces",
+		readplace: "getPlaceDetails",
+		searchforparentplaces: "searchParentPlaces",
+		readplacechildren: "getPlaceChildren",
+		readplacedescription: "getPlaceDescription",
+		readplacedescriptions: "getPlaceDescriptions",
+		checkplaceischild: "checkPlaceIsChild",
+		readplacetype: "getPlaceType",
+		readplacetypes: "getPlaceTypes",
+		readplacetypegroups: "getPlaceTypeGroups",
 
-	// Discussions
-	readdiscussion: "getDiscussion",
-	creatediscussion: "createDiscussion",
-	updatediscussion: "updateDiscussion",
-	deletediscussion: "deleteDiscussion",
-	readcomments: "getDiscussionComments",
+		// Memories
+		readmemory: "getMemory",
+		readmemories: "getMemories",
+		readusermemories: "getUserMemories",
+		creatememory: "createMemory",
+		updatememory: "updateMemory",
+		deletememory: "deleteMemory",
+		readmemorycomments: "getMemoryWithComments",
+		readmemorypersona: "getMemoryPersona",
+		readmemorypersonas: "getMemoryPersonas",
 
-	// Vocabularies & Standards
-	readvocabulary: "getVocabulary",
-	readvocabularies: "getVocabularies",
-	readname: "getNameType",
-	readnames: "getNameTypes",
-	createnamesegments: "createNameSegments",
-	
-	// Trees (Tree Management)
-	readcurrenttree: "getCurrentTree",
-};	if (mappings[name]) {
+		// Genealogies (User-Submitted Trees)
+		readgenealogiestree: "getGenealogyTree",
+		readgenealogiestrees: "getGenealogyTrees",
+		creategenealogiestree: "createGenealogyTree",
+		updategenealogiestree: "updateGenealogyTree",
+		deletegenealogiestree: "deleteGenealogyTree",
+		readgenealogiessourcedescription: "getGenealogySourceDescription",
+		creategenealogiessourcedescription: "createGenealogySourceDescription",
+		updategenealogiessourcedescription: "updateGenealogySourceDescription",
+		deletegenealogiessourcedescription: "deleteGenealogySourceDescription",
+		deletegenealogiesconclusion: "deleteGenealogyConclusion",
+		readgenealogiesbulkmatch: "getGenealogyBulkMatch",
+		readgenealogiespersonmatches: "getGenealogyPersonMatches",
+		readgenealogiesnote: "getGenealogyNote",
+		updategenealogiesperson: "updateGenealogyPerson",
+		deletegenealogiesperson: "deleteGenealogyPerson",
+		restoregenealogiesperson: "restoreGenealogyPerson",
+		updategenealogiespersonrelationship: "updateGenealogyRelationship",
+		deletegenealogiespersonrelationship: "deleteGenealogyRelationship",
+
+		// Discussions
+		readdiscussion: "getDiscussion",
+		creatediscussion: "createDiscussion",
+		updatediscussion: "updateDiscussion",
+		deletediscussion: "deleteDiscussion",
+		readcomments: "getDiscussionComments",
+
+		// Vocabularies & Standards
+		readvocabulary: "getVocabulary",
+		readvocabularies: "getVocabularies",
+		readname: "getNameType",
+		readnames: "getNameTypes",
+		createnamesegments: "createNameSegments",
+
+		// Trees (Tree Management)
+		readcurrenttree: "getCurrentTree",
+	};
+	if (mappings[name]) {
 		return { implemented: true, function: mappings[name] };
 	}
 
