@@ -240,6 +240,11 @@ function checkImplementation(endpointName) {
 	getnamescript: "getNameScript",
 	getnamesegments: "getNameSegments",
 	getpreferredparentrelationship: "getPreferredParentRelationship",
+	updatepreferredparentrelationship: "setPreferredParentRelationship",
+	deletepreferredparentrelationship: "deletePreferredParentRelationship",
+	readpreferredspouserelationship: "getPreferredSpouseRelationship",
+	updatepreferredspouserelationship: "setPreferredSpouseRelationship",
+	deletepreferredspouserelationship: "deletePreferredSpouseRelationship",
 	getsourcedescriptionchanges: "getSourceDescriptionChanges",
 	
 	// Sources

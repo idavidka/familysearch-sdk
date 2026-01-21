@@ -1,6 +1,6 @@
 # FamilySearch SDK API Analysis Report
 
-**Generated:** 2026-01-21T10:05:11.223Z
+**Generated:** 2026-01-21T10:16:00.068Z
 
 ---
 
@@ -9,15 +9,15 @@
 | Metric | Count | Percentage |
 |--------|-------|------------|
 | **Total Endpoints** | 204 | 100% |
-| ✅ **Implemented** | 101 | 50% |
-| ❌ **Missing** | 91 | 45% |
+| ✅ **Implemented** | 106 | 52% |
+| ❌ **Missing** | 86 | 42% |
 | 🚫 **Not Applicable** | 12 | 6% |
 
-**Applicable Coverage:** 101/192 (53%)
+**Applicable Coverage:** 106/192 (55%)
 
 ---
 
-## ✅ Implemented Endpoints (101)
+## ✅ Implemented Endpoints (106)
 
 ### createchildandparentsrelationshipnote
 
@@ -269,6 +269,20 @@ and if the reason supplied is too long, the request may fail as a bad request.
 - **Method:** DELETE
 - **Function:** `deletePersonSourceReference()`
 - **Description:** Delete a source reference for a person.
+
+### deletepreferredparentrelationship
+
+- **Title:** Delete Preferred Parent Relationship
+- **Method:** DELETE
+- **Function:** `deletePreferredParentRelationship()`
+- **Description:** Delete the preferred parent relationship for the given user and tree person.
+
+### deletepreferredspouserelationship
+
+- **Title:** Delete Preferred Spouse Relationship
+- **Method:** DELETE
+- **Function:** `deletePreferredSpouseRelationship()`
+- **Description:** Delete the preferred spouse relationship for the given user and tree person.
 
 ### deletesourcedescription
 
@@ -571,6 +585,13 @@ and if the reason supplied is too long, the request may fail as a bad request.
 - **Function:** `searchPlaces()`
 - **Description:** The Places Search query facilitates the interpretation of a place name with a standardized place description. Clients can interpret user-entered place names and associate a standardized place with the name. They can also retrieve specific types of places by including specific name-value pairs withing the places query parameter. Please note that all name-value pairs and URLs must adhere to the HTTP specifications. The following name-value pairs are applicable to the places query:
 
+### readpreferredspouserelationship
+
+- **Title:** Read Preferred Spouse Relationship
+- **Method:** GET
+- **Function:** `getPreferredSpouseRelationship()`
+- **Description:** Read the preferred spouse relationship for the given user and tree person.
+
 ### readsourcedescription
 
 - **Title:** Read Source Description
@@ -725,6 +746,20 @@ and if the reason supplied is too long, the request may fail as a bad request.
 - **Function:** `updatePersonPortraits()`
 - **Description:** Update the portrait list associated with a tree person.
 
+### updatepreferredparentrelationship
+
+- **Title:** Update Preferred Parent Relationship
+- **Method:** PUT
+- **Function:** `setPreferredParentRelationship()`
+- **Description:** Set the preferred parent relationship for the given user and tree person.
+
+### updatepreferredspouserelationship
+
+- **Title:** Set Preferred Spouse Relationship
+- **Method:** PUT
+- **Function:** `setPreferredSpouseRelationship()`
+- **Description:** Set the preferred spouse relationship for the given user and tree person.
+
 ### updatesourcedescription
 
 - **Title:** Update Source Description
@@ -734,7 +769,7 @@ and if the reason supplied is too long, the request may fail as a bad request.
 
 ---
 
-## ❌ Missing Endpoints (91)
+## ❌ Missing Endpoints (86)
 
 These endpoints need to be implemented. Implementation templates are provided below.
 
@@ -1449,94 +1484,6 @@ export async function deletememorypersona(
 		return response.data;
 	} catch (error) {
 		sdk["logger"].error("[FamilySearch SDK] Failed to deletememorypersona:", error);
-		throw error;
-	}
-}
-
-```
-
----
-
-### deletepreferredparentrelationship
-
-- **Title:** Delete Preferred Parent Relationship
-- **Method:** DELETE
-- **URL:** `https://apibeta.familysearch.org/platform/tree/users/{uid}/preferred-parent-relationships/{pid}`
-- **Description:** Delete the preferred parent relationship for the given user and tree person.
-
-**Path Parameters:**
-
-- `uid` (string) - required
-- `pid` (string) - required
-
-**Response Codes:** 204, 404, 429
-
-**Implementation Template:**
-
-```typescript
-/**
- * Delete Preferred Parent Relationship
- *
- * Delete the preferred parent relationship for the given user and tree person.
- *
- * @param uid - uid
- * @param pid - pid
- * @returns Promise with response data
- */
-export async function deletepreferredparentrelationship(
-	sdk: FamilySearchSDK,
-	uid: string,
-	pid: string
-): Promise<any> {
-	try {
-		const response = await sdk.delete<any>(`/platform/tree/users/${uid}/preferred-parent-relationships/${pid}`);
-		return response.data;
-	} catch (error) {
-		sdk["logger"].error("[FamilySearch SDK] Failed to deletepreferredparentrelationship:", error);
-		throw error;
-	}
-}
-
-```
-
----
-
-### deletepreferredspouserelationship
-
-- **Title:** Delete Preferred Spouse Relationship
-- **Method:** DELETE
-- **URL:** `https://apibeta.familysearch.org/platform/tree/users/{uid}/preferred-spouse-relationships/{pid}`
-- **Description:** Delete the preferred spouse relationship for the given user and tree person.
-
-**Path Parameters:**
-
-- `uid` (string) - required
-- `pid` (string) - required
-
-**Response Codes:** 204, 404, 429
-
-**Implementation Template:**
-
-```typescript
-/**
- * Delete Preferred Spouse Relationship
- *
- * Delete the preferred spouse relationship for the given user and tree person.
- *
- * @param uid - uid
- * @param pid - pid
- * @returns Promise with response data
- */
-export async function deletepreferredspouserelationship(
-	sdk: FamilySearchSDK,
-	uid: string,
-	pid: string
-): Promise<any> {
-	try {
-		const response = await sdk.delete<any>(`/platform/tree/users/${uid}/preferred-spouse-relationships/${pid}`);
-		return response.data;
-	} catch (error) {
-		sdk["logger"].error("[FamilySearch SDK] Failed to deletepreferredspouserelationship:", error);
 		throw error;
 	}
 }
@@ -2916,50 +2863,6 @@ export async function getplacetypes(
 
 ---
 
-### readpreferredspouserelationship
-
-- **Title:** Read Preferred Spouse Relationship
-- **Method:** GET
-- **URL:** `https://apibeta.familysearch.org/platform/tree/users/{uid}/preferred-spouse-relationships/{pid}`
-- **Description:** Read the preferred spouse relationship for the given user and tree person.
-
-**Path Parameters:**
-
-- `uid` (string) - required
-- `pid` (string) - required
-
-**Response Codes:** 204, 301, 303, 404, 410, 429
-
-**Implementation Template:**
-
-```typescript
-/**
- * Read Preferred Spouse Relationship
- *
- * Read the preferred spouse relationship for the given user and tree person.
- *
- * @param uid - uid
- * @param pid - pid
- * @returns Promise with response data
- */
-export async function getpreferredspouserelationship(
-	sdk: FamilySearchSDK,
-	uid: string,
-	pid: string
-): Promise<any> {
-	try {
-		const response = await sdk.get<any>(`/platform/tree/users/${uid}/preferred-spouse-relationships/${pid}`);
-		return response.data;
-	} catch (error) {
-		sdk["logger"].error("[FamilySearch SDK] Failed to getpreferredspouserelationship:", error);
-		throw error;
-	}
-}
-
-```
-
----
-
 ### readresearchtreepersons
 
 - **Title:** Read CET Tree Person Ids
@@ -4152,100 +4055,6 @@ export async function updatepartneraccount(
 		return response.data;
 	} catch (error) {
 		sdk["logger"].error("[FamilySearch SDK] Failed to updatepartneraccount:", error);
-		throw error;
-	}
-}
-
-```
-
----
-
-### updatepreferredparentrelationship
-
-- **Title:** Update Preferred Parent Relationship
-- **Method:** PUT
-- **URL:** `https://apibeta.familysearch.org/platform/tree/users/{uid}/preferred-parent-relationships/{pid}/tree/users/{uid}/preferred-parent-relationships/{pid}`
-- **Description:** Set the preferred parent relationship for the given user and tree person.
-
-**Path Parameters:**
-
-- `uid` (string) - required
-- `pid` (string) - required
-- `uid` (string) - required
-- `pid` (string) - required
-
-**Response Codes:** 204, 404, 410, 429
-
-**Implementation Template:**
-
-```typescript
-/**
- * Update Preferred Parent Relationship
- *
- * Set the preferred parent relationship for the given user and tree person.
- *
- * @param uid - uid
- * @param pid - pid
- * @param uid - uid
- * @param pid - pid
- * @returns Promise with response data
- */
-export async function updatepreferredparentrelationship(
-	sdk: FamilySearchSDK,
-	uid: string,
-	pid: string,
-	uid: string,
-	pid: string
-): Promise<any> {
-	try {
-		const response = await sdk.put<any>(`/platform/tree/users/$${uid}/preferred-parent-relationships/$${pid}/tree/users/{uid}/preferred-parent-relationships/{pid}`, data);
-		return response.data;
-	} catch (error) {
-		sdk["logger"].error("[FamilySearch SDK] Failed to updatepreferredparentrelationship:", error);
-		throw error;
-	}
-}
-
-```
-
----
-
-### updatepreferredspouserelationship
-
-- **Title:** Set Preferred Spouse Relationship
-- **Method:** PUT
-- **URL:** `https://apibeta.familysearch.org/platform/tree/users/{uid}/preferred-spouse-relationships/{pid}`
-- **Description:** Set the preferred spouse relationship for the given user and tree person.
-
-**Path Parameters:**
-
-- `uid` (string) - required
-- `pid` (string) - required
-
-**Response Codes:** 204, 404, 410, 429
-
-**Implementation Template:**
-
-```typescript
-/**
- * Set Preferred Spouse Relationship
- *
- * Set the preferred spouse relationship for the given user and tree person.
- *
- * @param uid - uid
- * @param pid - pid
- * @returns Promise with response data
- */
-export async function updatepreferredspouserelationship(
-	sdk: FamilySearchSDK,
-	uid: string,
-	pid: string
-): Promise<any> {
-	try {
-		const response = await sdk.put<any>(`/platform/tree/users/${uid}/preferred-spouse-relationships/${pid}`, data);
-		return response.data;
-	} catch (error) {
-		sdk["logger"].error("[FamilySearch SDK] Failed to updatepreferredspouserelationship:", error);
 		throw error;
 	}
 }
