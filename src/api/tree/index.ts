@@ -51,6 +51,12 @@ export {
 	restoreChange,
 	setParentOrder,
 	setSpouseOrder,
+	getCoupleRelationshipSourceReferences,
+	getChildAndParentsRelationshipSourceReferences,
+	createCoupleRelationshipSourceReference,
+	createChildAndParentsRelationshipSourceReference,
+	deleteCoupleRelationshipSourceReference,
+	deleteChildAndParentsRelationshipSourceReference,
 } from "./relationships";
 
 // Pedigrees API

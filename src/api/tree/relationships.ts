@@ -3,7 +3,22 @@
  * 
  * Handles couple and child-and-parents relationships in the FamilySearch Family Tree.
  * 
- * @see https://developers.familysearch.org/main/reference/readcouplerelationship
+ * @see https:/): Promise<DeletePersonResponse> {
+	try {
+		const headers: Record<string, string> = {};
+		if (reason) {
+			headers["X-Reason"] = reason;
+		}
+
+		const response = await sdk.delete<DeletePersonResponse>(
+			`/platform/tree/couple-relationships/${relationshipId}`,
+			{ headers }
+		);
+		return {
+			statusCode: response.statusCode,
+			statusText: response.statusText,
+		};
+	} catch (error) {familysearch.org/main/reference/readcouplerelationship
  */
 
 import type { FamilySearchSDK } from "../../client";
@@ -21,6 +36,9 @@ import type {
 	SetParentOrderResponse,
 	SetSpouseOrderInput,
 	SetSpouseOrderResponse,
+	AttachSourceInput,
+	AttachSourceResponse,
+	RelationshipSourceReferencesResponse,
 } from "../../types";
 
 /**
@@ -70,9 +88,15 @@ export async function getCoupleRelationship(
  */
 export async function createCoupleRelationship(
 	sdk: FamilySearchSDK,
-	relationship: CreateCoupleRelationshipInput
+	relationship: CreateCoupleRelationshipInput,
+	reason?: string
 ): Promise<CreateRelationshipResponse | null> {
 	try {
+		const headers: Record<string, string> = {};
+		if (reason) {
+			headers["X-Reason"] = reason;
+		}
+
 		const body = {
 			relationships: [{
 				type: "http://gedcomx.org/Couple",
@@ -84,7 +108,8 @@ export async function createCoupleRelationship(
 
 		const response = await sdk.post<CreateRelationshipResponse>(
 			"/platform/tree/couple-relationships",
-			body
+			body,
+			{ headers }
 		);
 		return response.data || null;
 	} catch (error) {
@@ -107,9 +132,15 @@ export async function createCoupleRelationship(
 export async function updateCoupleRelationship(
 	sdk: FamilySearchSDK,
 	relationshipId: string,
-	relationship: CreateCoupleRelationshipInput
+	relationship: CreateCoupleRelationshipInput,
+	reason?: string
 ): Promise<UpdateRelationshipResponse | null> {
 	try {
+		const headers: Record<string, string> = {};
+		if (reason) {
+			headers["X-Reason"] = reason;
+		}
+
 		const body = {
 			relationships: [{
 				id: relationshipId,
@@ -122,7 +153,8 @@ export async function updateCoupleRelationship(
 
 		const response = await sdk.post<UpdateRelationshipResponse>(
 			`/platform/tree/couple-relationships/${relationshipId}`,
-			body
+			body,
+			{ headers }
 		);
 		return response.data || null;
 	} catch (error) {
@@ -148,11 +180,15 @@ export async function deleteCoupleRelationship(
 	reason?: string
 ): Promise<DeletePersonResponse | null> {
 	try {
-		const url = reason
-			? `/platform/tree/couple-relationships/${relationshipId}?reason=${encodeURIComponent(reason)}`
-			: `/platform/tree/couple-relationships/${relationshipId}`;
+		const headers: Record<string, string> = {};
+		if (reason) {
+			headers["X-Reason"] = reason;
+		}
 
-		const response = await sdk.delete<DeletePersonResponse>(url);
+		const response = await sdk.delete<DeletePersonResponse>(
+			`/platform/tree/couple-relationships/${relationshipId}`,
+			{ headers }
+		);
 		return {
 			statusCode: response.statusCode,
 			statusText: response.statusText,
@@ -215,9 +251,15 @@ export async function getChildAndParentsRelationship(
  */
 export async function createChildAndParentsRelationship(
 	sdk: FamilySearchSDK,
-	relationship: CreateChildAndParentsRelationshipInput
+	relationship: CreateChildAndParentsRelationshipInput,
+	reason?: string
 ): Promise<CreateRelationshipResponse | null> {
 	try {
+		const headers: Record<string, string> = {};
+		if (reason) {
+			headers["X-Reason"] = reason;
+		}
+
 		const body = {
 			childAndParentsRelationships: [{
 				type: "http://gedcomx.org/ParentChild",
@@ -235,7 +277,8 @@ export async function createChildAndParentsRelationship(
 
 		const response = await sdk.post<CreateRelationshipResponse>(
 			"/platform/tree/child-and-parents-relationships",
-			body
+			body,
+			{ headers }
 		);
 		return response.data || null;
 	} catch (error) {
@@ -258,9 +301,15 @@ export async function createChildAndParentsRelationship(
 export async function updateChildAndParentsRelationship(
 	sdk: FamilySearchSDK,
 	relationshipId: string,
-	relationship: CreateChildAndParentsRelationshipInput
+	relationship: CreateChildAndParentsRelationshipInput,
+	reason?: string
 ): Promise<UpdateRelationshipResponse | null> {
 	try {
+		const headers: Record<string, string> = {};
+		if (reason) {
+			headers["X-Reason"] = reason;
+		}
+
 		const body = {
 			childAndParentsRelationships: [{
 				id: relationshipId,
@@ -279,7 +328,8 @@ export async function updateChildAndParentsRelationship(
 
 		const response = await sdk.post<UpdateRelationshipResponse>(
 			`/platform/tree/child-and-parents-relationships/${relationshipId}`,
-			body
+			body,
+			{ headers }
 		);
 		return response.data || null;
 	} catch (error) {
@@ -305,11 +355,15 @@ export async function deleteChildAndParentsRelationship(
 	reason?: string
 ): Promise<DeletePersonResponse | null> {
 	try {
-		const url = reason
-			? `/platform/tree/child-and-parents-relationships/${relationshipId}?reason=${encodeURIComponent(reason)}`
-			: `/platform/tree/child-and-parents-relationships/${relationshipId}`;
+		const headers: Record<string, string> = {};
+		if (reason) {
+			headers["X-Reason"] = reason;
+		}
 
-		const response = await sdk.delete<DeletePersonResponse>(url);
+		const response = await sdk.delete<DeletePersonResponse>(
+			`/platform/tree/child-and-parents-relationships/${relationshipId}`,
+			{ headers }
+		);
 		return {
 			statusCode: response.statusCode,
 			statusText: response.statusText,
@@ -551,6 +605,268 @@ export async function setSpouseOrder(
 	} catch (error) {
 		sdk["logger"].error(
 			`[FamilySearch SDK] Failed to set spouse order for ${relationshipId}:`,
+			error
+		);
+		throw error;
+	}
+}
+
+/**
+ * Get source references for a couple relationship
+ * 
+ * @param sdk - SDK instance
+ * @param relationshipId - Couple relationship ID
+ * @returns Source references response or null
+ * 
+ * @example
+ * ```typescript
+ * const sources = await getCoupleRelationshipSourceReferences(sdk, "XXXX-YYY");
+ * console.log(sources?.relationships?.[0]?.sources);
+ * ```
+ */
+export async function getCoupleRelationshipSourceReferences(
+	sdk: FamilySearchSDK,
+	relationshipId: string
+): Promise<RelationshipSourceReferencesResponse | null> {
+	try {
+		const response = await sdk.get<RelationshipSourceReferencesResponse>(
+			`/platform/tree/couple-relationships/${relationshipId}/source-references`
+		);
+		return response.data || null;
+	} catch (error) {
+		sdk["logger"].error(
+			`[FamilySearch SDK] Failed to get couple relationship source references for ${relationshipId}:`,
+			error
+		);
+		throw error;
+	}
+}
+
+/**
+ * Get source references for a child-and-parents relationship
+ * 
+ * @param sdk - SDK instance
+ * @param relationshipId - Child-and-parents relationship ID
+ * @returns Source references response or null
+ * 
+ * @example
+ * ```typescript
+ * const sources = await getChildAndParentsRelationshipSourceReferences(sdk, "XXXX-YYY");
+ * console.log(sources?.childAndParentsRelationships?.[0]?.sources);
+ * ```
+ */
+export async function getChildAndParentsRelationshipSourceReferences(
+	sdk: FamilySearchSDK,
+	relationshipId: string
+): Promise<RelationshipSourceReferencesResponse | null> {
+	try {
+		const response = await sdk.get<RelationshipSourceReferencesResponse>(
+			`/platform/tree/child-and-parents-relationships/${relationshipId}/source-references`
+		);
+		return response.data || null;
+	} catch (error) {
+		sdk["logger"].error(
+			`[FamilySearch SDK] Failed to get child-and-parents relationship source references for ${relationshipId}:`,
+			error
+		);
+		throw error;
+	}
+}
+
+/**
+ * Create a source reference for a couple relationship
+ * 
+ * @param sdk - SDK instance
+ * @param relationshipId - Couple relationship ID
+ * @param source - Source attachment input
+ * @param reason - Optional reason for audit trail
+ * @returns Attach source response or null
+ * 
+ * @example
+ * ```typescript
+ * const result = await createCoupleRelationshipSourceReference(sdk, "XXXX-YYY", {
+ *   descriptionId: "SOURCE-DESC-ID"
+ * }, "Adding marriage certificate source");
+ * ```
+ */
+export async function createCoupleRelationshipSourceReference(
+	sdk: FamilySearchSDK,
+	relationshipId: string,
+	source: AttachSourceInput,
+	reason?: string
+): Promise<AttachSourceResponse | null> {
+	try {
+		const headers: Record<string, string> = {};
+		if (reason) {
+			headers["X-Reason"] = reason;
+		}
+
+		const body = {
+			sourceReferences: [
+				{
+					description: source.descriptionId,
+					tags: source.tags,
+				},
+			],
+		};
+
+		const response = await sdk.post<AttachSourceResponse>(
+			`/platform/tree/couple-relationships/${relationshipId}/source-references`,
+			body,
+			{ headers }
+		);
+		return response.data || null;
+	} catch (error) {
+		sdk["logger"].error(
+			`[FamilySearch SDK] Failed to create couple relationship source reference for ${relationshipId}:`,
+			error
+		);
+		throw error;
+	}
+}
+
+/**
+ * Create a source reference for a child-and-parents relationship
+ * 
+ * @param sdk - SDK instance
+ * @param relationshipId - Child-and-parents relationship ID
+ * @param source - Source attachment input
+ * @param reason - Optional reason for audit trail
+ * @returns Attach source response or null
+ * 
+ * @example
+ * ```typescript
+ * const result = await createChildAndParentsRelationshipSourceReference(sdk, "XXXX-YYY", {
+ *   descriptionId: "SOURCE-DESC-ID"
+ * }, "Adding birth certificate source");
+ * ```
+ */
+export async function createChildAndParentsRelationshipSourceReference(
+	sdk: FamilySearchSDK,
+	relationshipId: string,
+	source: AttachSourceInput,
+	reason?: string
+): Promise<AttachSourceResponse | null> {
+	try {
+		const headers: Record<string, string> = {};
+		if (reason) {
+			headers["X-Reason"] = reason;
+		}
+
+		const body = {
+			sourceReferences: [
+				{
+					description: source.descriptionId,
+					tags: source.tags,
+				},
+			],
+		};
+
+		const response = await sdk.post<AttachSourceResponse>(
+			`/platform/tree/child-and-parents-relationships/${relationshipId}/source-references`,
+			body,
+			{ headers }
+		);
+		return response.data || null;
+	} catch (error) {
+		sdk["logger"].error(
+			`[FamilySearch SDK] Failed to create child-and-parents relationship source reference for ${relationshipId}:`,
+			error
+		);
+		throw error;
+	}
+}
+
+/**
+ * Delete a source reference from a couple relationship
+ * 
+ * @param sdk - SDK instance
+ * @param relationshipId - Couple relationship ID
+ * @param sourceId - Source reference ID to delete
+ * @param reason - Optional reason for audit trail
+ * @returns Deletion response with status
+ * 
+ * @example
+ * ```typescript
+ * const result = await deleteCoupleRelationshipSourceReference(
+ *   sdk, 
+ *   "XXXX-YYY", 
+ *   "SOURCE-REF-ID",
+ *   "Removing incorrect source"
+ * );
+ * ```
+ */
+export async function deleteCoupleRelationshipSourceReference(
+	sdk: FamilySearchSDK,
+	relationshipId: string,
+	sourceId: string,
+	reason?: string
+): Promise<DeletePersonResponse> {
+	try {
+		const headers: Record<string, string> = {};
+		if (reason) {
+			headers["X-Reason"] = reason;
+		}
+
+		const response = await sdk.delete<DeletePersonResponse>(
+			`/platform/tree/couple-relationships/${relationshipId}/source-references/${sourceId}`,
+			{ headers }
+		);
+		return {
+			statusCode: response.statusCode,
+			statusText: response.statusText,
+		};
+	} catch (error) {
+		sdk["logger"].error(
+			`[FamilySearch SDK] Failed to delete couple relationship source reference ${sourceId} for ${relationshipId}:`,
+			error
+		);
+		throw error;
+	}
+}
+
+/**
+ * Delete a source reference from a child-and-parents relationship
+ * 
+ * @param sdk - SDK instance
+ * @param relationshipId - Child-and-parents relationship ID
+ * @param sourceId - Source reference ID to delete
+ * @param reason - Optional reason for audit trail
+ * @returns Deletion response with status
+ * 
+ * @example
+ * ```typescript
+ * const result = await deleteChildAndParentsRelationshipSourceReference(
+ *   sdk, 
+ *   "XXXX-YYY", 
+ *   "SOURCE-REF-ID",
+ *   "Removing incorrect source"
+ * );
+ * ```
+ */
+export async function deleteChildAndParentsRelationshipSourceReference(
+	sdk: FamilySearchSDK,
+	relationshipId: string,
+	sourceId: string,
+	reason?: string
+): Promise<DeletePersonResponse> {
+	try {
+		const headers: Record<string, string> = {};
+		if (reason) {
+			headers["X-Reason"] = reason;
+		}
+
+		const response = await sdk.delete<DeletePersonResponse>(
+			`/platform/tree/child-and-parents-relationships/${relationshipId}/source-references/${sourceId}`,
+			{ headers }
+		);
+		return {
+			statusCode: response.statusCode,
+			statusText: response.statusText,
+		};
+	} catch (error) {
+		sdk["logger"].error(
+			`[FamilySearch SDK] Failed to delete child-and-parents relationship source reference ${sourceId} for ${relationshipId}:`,
 			error
 		);
 		throw error;

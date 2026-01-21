@@ -527,6 +527,29 @@ export interface AttachSourceResponse {
 	};
 }
 
+/**
+ * Response from getting relationship source references
+ * Returned by GET endpoints for couple and child-and-parents relationship sources
+ */
+export interface RelationshipSourceReferencesResponse {
+	/** Array of relationships with their source references */
+	relationships?: Array<{
+		/** Relationship ID */
+		id?: string;
+		/** Source references attached to the relationship */
+		sources?: SourceReference[];
+	}>;
+	/** Array of child-and-parents relationships with their source references */
+	childAndParentsRelationships?: Array<{
+		/** Relationship ID */
+		id?: string;
+		/** Source references attached to the relationship */
+		sources?: SourceReference[];
+	}>;
+	/** Source descriptions */
+	sourceDescriptions?: SourceDescription[];
+}
+
 // ====================================
 // Search & Matches Types
 // ====================================

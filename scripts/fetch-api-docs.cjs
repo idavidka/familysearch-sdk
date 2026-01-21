@@ -106,7 +106,10 @@ async function main() {
 
 		log(`Found ${filteredUrls.length} matching URL(s)`, "yellow");
 	} else {
-		log(`Found ${urls.length} unique URLs to fetch (random order)`, "yellow");
+		log(
+			`Found ${urls.length} unique URLs to fetch (random order)`,
+			"yellow"
+		);
 	}
 	console.log("");
 
@@ -169,7 +172,10 @@ async function main() {
 			await page.waitForTimeout(2000);
 
 			// Get only the article#content HTML (not the full page)
-			const html = await page.$eval("article#content", (el) => el.outerHTML);
+			const html = await page.$eval(
+				"article#content",
+				(el) => el.outerHTML
+			);
 
 			// Save to file
 			fs.writeFileSync(filename, html, "utf-8");
@@ -189,10 +195,10 @@ async function main() {
 			// Every 20 successful fetches, take a longer break
 			if (success % 20 === 0 && success > 0) {
 				log(
-					`  💤 20 requests completed - taking 5 minute break...`,
+					`  💤 20 requests completed - taking 2 minute break...`,
 					"yellow"
 				);
-				await page.waitForTimeout(300000); // 5 minutes
+				await page.waitForTimeout(120000); // 2 minutes
 			}
 		} catch (error) {
 			failed++;
@@ -233,7 +239,10 @@ async function main() {
 				await page.waitForTimeout(2000);
 
 				// Get only the article#content HTML (not the full page)
-				const html = await page.$eval("article#content", (el) => el.outerHTML);
+				const html = await page.$eval(
+					"article#content",
+					(el) => el.outerHTML
+				);
 				fs.writeFileSync(filename, html, "utf-8");
 
 				retrySuccess++;
