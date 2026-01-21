@@ -98,6 +98,7 @@ export {
 export {
 	readSourceDescriptions,
 	readSourceDescription,
+	readSourceDescriptionHead,
 	createSourceDescription,
 	updateSourceDescription,
 	deleteSourceDescription,

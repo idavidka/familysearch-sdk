@@ -330,6 +330,19 @@ export class FamilySearchSDK {
 		return this.request<void>(url, { ...requestOptions, method: "OPTIONS" });
 	}
 
+	/**
+	 * HEAD request
+	 * 
+	 * Used to check resource existence and retrieve metadata without fetching the body.
+	 * Returns response headers including content-type, last-modified, etc.
+	 */
+	async head(
+		url: string,
+		requestOptions: RequestInit = {}
+	): Promise<FamilySearchApiResponse<void>> {
+		return this.request<void>(url, { ...requestOptions, method: "HEAD" });
+	}
+
 	// ====================================
 	// User API
 	// ====================================

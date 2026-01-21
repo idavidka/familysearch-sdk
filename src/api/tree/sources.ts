@@ -255,3 +255,44 @@ export async function readSourceDescriptionChanges(
 		return null;
 	}
 }
+
+/**
+ * Check if source description exists (HEAD request)
+ *
+ * Performs a HEAD request to check if a source description exists without
+ * retrieving the full content. Useful for verifying existence or checking
+ * metadata via response headers.
+ *
+ * @param sdk - SDK instance
+ * @param sourceId - Source description ID
+ * @returns Object with exists flag and response headers
+ *
+ * @example
+ * ```typescript
+ * const check = await readSourceDescriptionHead(sdk, "MMMM-MMM");
+ * if (check.exists) {
+ *   console.log("Source exists, last modified:", check.headers?.["last-modified"]);
+ * }
+ * ```
+ */
+export async function readSourceDescriptionHead(
+	sdk: FamilySearchSDK,
+	sourceId: string
+): Promise<{ exists: boolean; headers?: Record<string, string> }> {
+	try {
+		const response = await sdk.head(
+			`/platform/sources/descriptions/${sourceId}`
+		);
+
+		return {
+			exists: response.statusCode === 200,
+			headers: response.headers,
+		};
+	} catch (error) {
+		sdk.logger.error(
+			`[FamilySearch SDK] Failed to check source description ${sourceId}:`,
+			error
+		);
+		return { exists: false };
+	}
+}

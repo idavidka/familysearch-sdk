@@ -94,6 +94,8 @@ const endpointToFunction = (endpoint) => {
 		readpersonspouses: "readPersonSpouses",
 		readpersonchangehistory: "readPersonChangeHistory",
 		readpersonmerge: "readPersonMerge",
+		readpersonmatches: "readPersonMatches",
+		readtreepersonmatches: "readPersonMatches",
 		readpersonnotamatches: "readPersonNotAMatches",
 		deletepersonnotamatch: "deletePersonNotAMatch",
 		readpersonnote: "readPersonNote",
