@@ -157,6 +157,7 @@ export {
 	updateUserDefinedCollection,
 	deleteUserDefinedCollection,
 	getCollectionSourceDescriptions,
+	getUserSourceDescriptions,
 	addSourcesToCollection,
 	removeSourcesFromCollection,
 } from "./source-box";

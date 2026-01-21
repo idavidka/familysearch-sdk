@@ -363,3 +363,47 @@ export async function removeSourcesFromCollection(
 		throw error;
 	}
 }
+
+/**
+ * Get user source descriptions
+ *
+ * Returns all source descriptions from all user-defined collections owned by a specific user.
+ * This provides a complete inventory of sources the user has organized.
+ *
+ * @param sdk - SDK instance
+ * @param userId - User ID (or 'current' for current user)
+ * @param start - Zero-based index of first result (default: 0)
+ * @param count - Maximum number of results to return (default: 25)
+ * @returns Collection source descriptions response
+ * @throws Error if request fails
+ *
+ * @example
+ * ```typescript
+ * const sources = await getUserSourceDescriptions(sdk, 'current');
+ * console.log('User sources:', sources?.sourceDescriptions?.length);
+ * ```
+ */
+export async function getUserSourceDescriptions(
+	sdk: FamilySearchSDK,
+	userId: string = "current",
+	start: number = 0,
+	count: number = 25
+): Promise<CollectionSourceDescriptionsResponse> {
+	try {
+		const params = new URLSearchParams({
+			start: start.toString(),
+			count: count.toString(),
+		});
+
+		const response = await sdk.get<CollectionSourceDescriptionsResponse>(
+			`/platform/sources/${userId}/collections/descriptions?${params.toString()}`
+		);
+		return response.data || { sourceDescriptions: [] };
+	} catch (error) {
+		sdk.logger.error(
+			`[FamilySearch SDK] Failed to get user source descriptions for ${userId}:`,
+			error
+		);
+		throw error;
+	}
+}
