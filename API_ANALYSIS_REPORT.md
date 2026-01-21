@@ -1,6 +1,6 @@
 # FamilySearch SDK API Analysis Report
 
-**Generated:** 2026-01-21T10:27:17.327Z
+**Generated:** 2026-01-21T10:36:43.996Z
 
 ---
 
@@ -9,15 +9,22 @@
 | Metric | Count | Percentage |
 |--------|-------|------------|
 | **Total Endpoints** | 204 | 100% |
-| ✅ **Implemented** | 110 | 54% |
-| ❌ **Missing** | 82 | 40% |
+| ✅ **Implemented** | 120 | 59% |
+| ❌ **Missing** | 72 | 35% |
 | 🚫 **Not Applicable** | 12 | 6% |
 
-**Applicable Coverage:** 110/192 (57%)
+**Applicable Coverage:** 120/192 (63%)
 
 ---
 
-## ✅ Implemented Endpoints (110)
+## ✅ Implemented Endpoints (120)
+
+### checkplaceischild
+
+- **Title:** Check If Place IsChild
+- **Method:** GET
+- **Function:** `checkPlaceIsChild()`
+- **Description:** Check if a place is a child of one or more of the specified parent places.
 
 ### createchildandparentsrelationshipnote
 
@@ -501,6 +508,27 @@ and if the reason supplied is too long, the request may fail as a bad request.
 - **Function:** `getMemory()`
 - **Description:** Read a memory.  A memory consists of one or more artifacts, each with an associated description.  When reading a memory, it is represented as the (paged) list of artifact descriptions.
 
+### readmemorycomments
+
+- **Title:** Read Memory Comments
+- **Method:** GET
+- **Function:** `getMemoryWithComments()`
+- **Description:** Read a memory's comments.
+
+### readmemorypersona
+
+- **Title:** Read Memory Persona
+- **Method:** GET
+- **Function:** `getMemoryPersona()`
+- **Description:** Read a memories persona.
+
+### readmemorypersonas
+
+- **Title:** Read Memory Personas
+- **Method:** GET
+- **Function:** `getMemoryPersonas()`
+- **Description:** Read a memories personas.
+
 ### readperson
 
 - **Title:** Read Person
@@ -606,12 +634,54 @@ and if the reason supplied is too long, the request may fail as a bad request.
 - **Function:** `getPlaceDetails()`
 - **Description:** Read a place. A Place resource represents a logical place and will have one or more Place Descriptions associated with it. For example, the city of Provo exists in the county of Utah, in the state of Utah, in the United States. However, when Provo was first established, the state of Utah did not exist. Utah County existed in the Utah Territory. So, Provo has two Place Descriptions but only one Place resource:
 
+### readplacechildren
+
+- **Title:** Read Place Children
+- **Method:** GET
+- **Function:** `getPlaceChildren()`
+- **Description:** Read the children of a place. It returns the direct children (those place descriptions that are in the jurisdiction) of a given place description. It is generally used for traversing from parent jurisdiction to child jurisdiction where no additional flexibility is needed or wanted. For example, if there's a need to filter on type, year, etc. this resource should not be used. Using this resource to search for children of a place (/description/1/children) will return the same results as searching for everything with the parentId of place "1" (/search?q=+parentId:1).
+
+### readplacedescription
+
+- **Title:** Read Place Description
+- **Method:** GET
+- **Function:** `getPlaceDescription()`
+- **Description:** Read a place description. A Place Description represents a place in a given time period, within a specific jurisdiction, with a specific official name. Place Description identifiers are in a different namespace than Place identifiers - for example, Place ID 123 is not the same as Place Description ID 123.
+
+### readplacedescriptions
+
+- **Title:** Read Place Descriptions
+- **Method:** GET
+- **Function:** `getPlaceDescriptions()`
+- **Description:** Read a list of place descriptions.  See the Place Description resource for a definition of a Place Description.
+
 ### readplaces
 
 - **Title:** Places Search
 - **Method:** GET
 - **Function:** `searchPlaces()`
 - **Description:** The Places Search query facilitates the interpretation of a place name with a standardized place description. Clients can interpret user-entered place names and associate a standardized place with the name. They can also retrieve specific types of places by including specific name-value pairs withing the places query parameter. Please note that all name-value pairs and URLs must adhere to the HTTP specifications. The following name-value pairs are applicable to the places query:
+
+### readplacetype
+
+- **Title:** Read Place Type
+- **Method:** GET
+- **Function:** `getPlaceType()`
+- **Description:** Read a place type.  A place type is a type of place, such as a cemetery, city, state, etc. Types have translated names, which is useful for localization purposes.
+
+### readplacetypegroups
+
+- **Title:** Read Place Type Groups
+- **Method:** GET
+- **Function:** `getPlaceTypeGroups()`
+- **Description:** Read the list of place type groups. A place type group is a collection of related place types that provides convenience when working with types. For example, a "city-like" type group includes city, populated place, and capital city types.
+
+### readplacetypes
+
+- **Title:** Read Place Types
+- **Method:** GET
+- **Function:** `getPlaceTypes()`
+- **Description:** Read the list of place types. A place type defines a category of place such as cemetery, city, state, etc. Types have translated names for localization purposes.
 
 ### readpreferredspouserelationship
 
@@ -797,7 +867,7 @@ and if the reason supplied is too long, the request may fail as a bad request.
 
 ---
 
-## ❌ Missing Endpoints (82)
+## ❌ Missing Endpoints (72)
 
 These endpoints need to be implemented. Implementation templates are provided below.
 
@@ -836,47 +906,6 @@ export async function allowpersonmerge(
 		return response.data;
 	} catch (error) {
 		sdk["logger"].error("[FamilySearch SDK] Failed to allowpersonmerge:", error);
-		throw error;
-	}
-}
-
-```
-
----
-
-### checkplaceischild
-
-- **Title:** Check If Place IsChild
-- **Method:** GET
-- **URL:** `https://apibeta.familysearch.org/platform/places/{pid}/ischild`
-- **Description:** Check if a place is a child of one or more of the specified parent places.
-
-**Path Parameters:**
-
-- `pid` (string) - required
-
-**Response Codes:** 200, 400, 404
-
-**Implementation Template:**
-
-```typescript
-/**
- * Check If Place IsChild
- *
- * Check if a place is a child of one or more of the specified parent places.
- *
- * @param pid - pid
- * @returns Promise with response data
- */
-export async function checkplaceischild(
-	sdk: FamilySearchSDK,
-	pid: string
-): Promise<any> {
-	try {
-		const response = await sdk.get<any>(`/platform/places/${pid}/ischild`);
-		return response.data;
-	} catch (error) {
-		sdk["logger"].error("[FamilySearch SDK] Failed to checkplaceischild:", error);
 		throw error;
 	}
 }
@@ -2136,132 +2165,6 @@ export async function getgenealogiestrees(
 
 ---
 
-### readmemorycomments
-
-- **Title:** Read Memory Comments
-- **Method:** GET
-- **URL:** `https://apibeta.familysearch.org/platform/memories/memories/{mid}/comments`
-- **Description:** Read a memory's comments.
-
-**Path Parameters:**
-
-- `mid` (string) - required
-
-**Response Codes:** 200, 404
-
-**Implementation Template:**
-
-```typescript
-/**
- * Read Memory Comments
- *
- * Read a memory's comments.
- *
- * @param mid - mid
- * @returns Promise with response data
- */
-export async function getmemorycomments(
-	sdk: FamilySearchSDK,
-	mid: string
-): Promise<any> {
-	try {
-		const response = await sdk.get<any>(`/platform/memories/memories/${mid}/comments`);
-		return response.data;
-	} catch (error) {
-		sdk["logger"].error("[FamilySearch SDK] Failed to getmemorycomments:", error);
-		throw error;
-	}
-}
-
-```
-
----
-
-### readmemorypersona
-
-- **Title:** Read Memory Persona
-- **Method:** GET
-- **URL:** `https://apibeta.familysearch.org/platform/memories/memories/{mid}/personas/{pid}`
-- **Description:** Read a memories persona.
-
-**Path Parameters:**
-
-- `mid` (string) - required
-- `pid` (string) - required
-
-**Response Codes:** 200, 301, 404, 410
-
-**Implementation Template:**
-
-```typescript
-/**
- * Read Memory Persona
- *
- * Read a memories persona.
- *
- * @param mid - mid
- * @param pid - pid
- * @returns Promise with response data
- */
-export async function getmemorypersona(
-	sdk: FamilySearchSDK,
-	mid: string,
-	pid: string
-): Promise<any> {
-	try {
-		const response = await sdk.get<any>(`/platform/memories/memories/${mid}/personas/${pid}`);
-		return response.data;
-	} catch (error) {
-		sdk["logger"].error("[FamilySearch SDK] Failed to getmemorypersona:", error);
-		throw error;
-	}
-}
-
-```
-
----
-
-### readmemorypersonas
-
-- **Title:** Read Memory Personas
-- **Method:** GET
-- **URL:** `https://apibeta.familysearch.org/platform/memories/memories/{mid}/personas`
-- **Description:** Read a memories personas.
-
-**Path Parameters:**
-
-- `mid` (string) - required
-
-**Response Codes:** 200, 204, 404
-
-**Implementation Template:**
-
-```typescript
-/**
- * Read Memory Personas
- *
- * Read a memories personas.
- *
- * @param mid - mid
- * @returns Promise with response data
- */
-export async function getmemorypersonas(
-	sdk: FamilySearchSDK,
-	mid: string
-): Promise<any> {
-	try {
-		const response = await sdk.get<any>(`/platform/memories/memories/${mid}/personas`);
-		return response.data;
-	} catch (error) {
-		sdk["logger"].error("[FamilySearch SDK] Failed to getmemorypersonas:", error);
-		throw error;
-	}
-}
-
-```
-
----
-
 ### readpartnereligibility
 
 - **Title:** Read Partner Eligibility
@@ -2373,123 +2276,6 @@ export async function getplaceattributes(
 
 ---
 
-### readplacechildren
-
-- **Title:** Read Place Children
-- **Method:** GET
-- **URL:** `https://apibeta.familysearch.org/platform/places/description/{pdid}/children`
-- **Description:** Read the children of a place. It returns the direct children (those place descriptions that are in the jurisdiction) of a given place description. It is generally used for traversing from parent jurisdiction to child jurisdiction where no additional flexibility is needed or wanted. For example, if there's a need to filter on type, year, etc. this resource should not be used. Using this resource to search for children of a place (/description/1/children) will return the same results as searching for everything with the parentId of place "1" (/search?q=+parentId:1).
-
-**Path Parameters:**
-
-- `pdid` (string) - required
-
-**Response Codes:** 200, 204, 404
-
-**Implementation Template:**
-
-```typescript
-/**
- * Read Place Children
- *
- * Read the children of a place. It returns the direct children (those place descriptions that are in the jurisdiction) of a given place description. It is generally used for traversing from parent jurisdiction to child jurisdiction where no additional flexibility is needed or wanted. For example, if there's a need to filter on type, year, etc. this resource should not be used. Using this resource to search for children of a place (/description/1/children) will return the same results as searching for everything with the parentId of place "1" (/search?q=+parentId:1).
- *
- * @param pdid - pdid
- * @returns Promise with response data
- */
-export async function getplacechildren(
-	sdk: FamilySearchSDK,
-	pdid: string
-): Promise<any> {
-	try {
-		const response = await sdk.get<any>(`/platform/places/description/${pdid}/children`);
-		return response.data;
-	} catch (error) {
-		sdk["logger"].error("[FamilySearch SDK] Failed to getplacechildren:", error);
-		throw error;
-	}
-}
-
-```
-
----
-
-### readplacedescription
-
-- **Title:** Read Place Description
-- **Method:** GET
-- **URL:** `https://apibeta.familysearch.org/platform/places/description/{pdid}`
-- **Description:** Read a place description. A Place Description represents a place in a given time period, within a specific jurisdiction, with a specific official name. Place Description identifiers are in a different namespace than Place identifiers - for example, Place ID 123 is not the same as Place Description ID 123.
-
-**Path Parameters:**
-
-- `pdid` (string) - required
-
-**Response Codes:** 200, 404
-
-**Implementation Template:**
-
-```typescript
-/**
- * Read Place Description
- *
- * Read a place description. A Place Description represents a place in a given time period, within a specific jurisdiction, with a specific official name. Place Description identifiers are in a different namespace than Place identifiers - for example, Place ID 123 is not the same as Place Description ID 123.
- *
- * @param pdid - pdid
- * @returns Promise with response data
- */
-export async function getplacedescription(
-	sdk: FamilySearchSDK,
-	pdid: string
-): Promise<any> {
-	try {
-		const response = await sdk.get<any>(`/platform/places/description/${pdid}`);
-		return response.data;
-	} catch (error) {
-		sdk["logger"].error("[FamilySearch SDK] Failed to getplacedescription:", error);
-		throw error;
-	}
-}
-
-```
-
----
-
-### readplacedescriptions
-
-- **Title:** Read Place Descriptions
-- **Method:** GET
-- **URL:** `https://apibeta.familysearch.org/platform/places/description`
-- **Description:** Read a list of place descriptions.  See the Place Description resource for a definition of a Place Description.
-
-**Response Codes:** 200, 404
-
-**Implementation Template:**
-
-```typescript
-/**
- * Read Place Descriptions
- *
- * Read a list of place descriptions.  See the Place Description resource for a definition of a Place Description.
- *
- * @returns Promise with response data
- */
-export async function getplacedescriptions(
-	sdk: FamilySearchSDK
-): Promise<any> {
-	try {
-		const response = await sdk.get<any>(`/platform/places/description`);
-		return response.data;
-	} catch (error) {
-		sdk["logger"].error("[FamilySearch SDK] Failed to getplacedescriptions:", error);
-		throw error;
-	}
-}
-
-```
-
----
-
 ### readplacedescriptionsgroup
 
 - **Title:** Read Place Descriptions Group
@@ -2572,47 +2358,6 @@ export async function getplacedescriptionwithrelated(
 
 ---
 
-### readplacetype
-
-- **Title:** Read Place Type
-- **Method:** GET
-- **URL:** `https://apibeta.familysearch.org/platform/places/types/{ptid}`
-- **Description:** Read a place type.  A place type is a type of place, such as a cemetery, city, state, etc. Types have translated names, which is useful for localization purposes.
-
-**Path Parameters:**
-
-- `ptid` (string) - required
-
-**Response Codes:** 200, 404
-
-**Implementation Template:**
-
-```typescript
-/**
- * Read Place Type
- *
- * Read a place type.  A place type is a type of place, such as a cemetery, city, state, etc. Types have translated names, which is useful for localization purposes.
- *
- * @param ptid - ptid
- * @returns Promise with response data
- */
-export async function getplacetype(
-	sdk: FamilySearchSDK,
-	ptid: string
-): Promise<any> {
-	try {
-		const response = await sdk.get<any>(`/platform/places/types/${ptid}`);
-		return response.data;
-	} catch (error) {
-		sdk["logger"].error("[FamilySearch SDK] Failed to getplacetype:", error);
-		throw error;
-	}
-}
-
-```
-
----
-
 ### readplacetypegroup
 
 - **Title:** Read Place Type Group
@@ -2646,76 +2391,6 @@ export async function getplacetypegroup(
 		return response.data;
 	} catch (error) {
 		sdk["logger"].error("[FamilySearch SDK] Failed to getplacetypegroup:", error);
-		throw error;
-	}
-}
-
-```
-
----
-
-### readplacetypegroups
-
-- **Title:** Read Place Type Groups
-- **Method:** GET
-- **URL:** `https://apibeta.familysearch.org/platform/places/type-groups`
-- **Description:** Read the list of place type groups. A place type group is a collection of related place types that provides convenience when working with types. For example, a "city-like" type group includes city, populated place, and capital city types.
-
-**Response Codes:** 200, 404
-
-**Implementation Template:**
-
-```typescript
-/**
- * Read Place Type Groups
- *
- * Read the list of place type groups. A place type group is a collection of related place types that provides convenience when working with types. For example, a "city-like" type group includes city, populated place, and capital city types.
- *
- * @returns Promise with response data
- */
-export async function getplacetypegroups(
-	sdk: FamilySearchSDK
-): Promise<any> {
-	try {
-		const response = await sdk.get<any>(`/platform/places/type-groups`);
-		return response.data;
-	} catch (error) {
-		sdk["logger"].error("[FamilySearch SDK] Failed to getplacetypegroups:", error);
-		throw error;
-	}
-}
-
-```
-
----
-
-### readplacetypes
-
-- **Title:** Read Place Types
-- **Method:** GET
-- **URL:** `https://apibeta.familysearch.org/platform/places/types`
-- **Description:** Read the list of place types. A place type defines a category of place such as cemetery, city, state, etc. Types have translated names for localization purposes.
-
-**Response Codes:** 200, 404
-
-**Implementation Template:**
-
-```typescript
-/**
- * Read Place Types
- *
- * Read the list of place types. A place type defines a category of place such as cemetery, city, state, etc. Types have translated names for localization purposes.
- *
- * @returns Promise with response data
- */
-export async function getplacetypes(
-	sdk: FamilySearchSDK
-): Promise<any> {
-	try {
-		const response = await sdk.get<any>(`/platform/places/types`);
-		return response.data;
-	} catch (error) {
-		sdk["logger"].error("[FamilySearch SDK] Failed to getplacetypes:", error);
 		throw error;
 	}
 }

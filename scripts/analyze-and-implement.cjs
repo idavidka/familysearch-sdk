@@ -261,20 +261,28 @@ function checkImplementation(endpointName) {
 	detachsource: "detachSource",
 	updatesourceattachment: "updateSourceAttachment",
 
-		// Places
-		standardizedate: "normalizeDate",
-		readplaces: "searchPlaces",
-		readplace: "getPlaceDetails",
-		searchforparentplaces: "searchParentPlaces",
+	// Places
+	standardizedate: "normalizeDate",
+	readplaces: "searchPlaces",
+	readplace: "getPlaceDetails",
+	searchforparentplaces: "searchParentPlaces",
+	readplacechildren: "getPlaceChildren",
+	readplacedescription: "getPlaceDescription",
+	readplacedescriptions: "getPlaceDescriptions",
+	checkplaceischild: "checkPlaceIsChild",
+	readplacetype: "getPlaceType",
+	readplacetypes: "getPlaceTypes",
+	readplacetypegroups: "getPlaceTypeGroups",
 
-		// Memories
-		readmemory: "getMemory",
-		readmemories: "getMemories",
-		creatememory: "createMemory",
-		updatememory: "updateMemory",
-		deletememory: "deleteMemory",
-
-		// Discussions
+	// Memories
+	readmemory: "getMemory",
+	readmemories: "getMemories",
+	creatememory: "createMemory",
+	updatememory: "updateMemory",
+	deletememory: "deleteMemory",
+	readmemorycomments: "getMemoryWithComments",
+	readmemorypersona: "getMemoryPersona",
+	readmemorypersonas: "getMemoryPersonas",		// Discussions
 		readdiscussion: "getDiscussion",
 		creatediscussion: "createDiscussion",
 		updatediscussion: "updateDiscussion",
