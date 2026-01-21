@@ -55,6 +55,8 @@ export interface FamilySearchSDKConfig {
 	accessToken?: string;
 	/** Application key for API requests */
 	appKey?: string;
+	/** OAuth redirect URI (required for OAuth flows) */
+	redirectUri?: string;
 	/** Optional logger for debugging */
 	logger?: SDKLogger;
 	/** Optional rate limiter configuration */

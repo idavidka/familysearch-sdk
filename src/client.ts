@@ -48,12 +48,14 @@ import {
 import { CurrentTreeAPI } from "./api/trees";
 import { UserAPI } from "./api/user";
 import { VocabAPI } from "./api/vocab";
+import { OAuthAPI } from "./auth";
 import {
 	createErrorFromResponse,
 	createNetworkError,
 	FamilySearchError,
 } from "./errors";
 import { RateLimiter } from "./rate-limiter";
+import { PedigreeAPI } from "./tree";
 import type {
 	EnvironmentConfig,
 	FamilySearchApiError,
@@ -115,6 +117,9 @@ export class FamilySearchSDK {
 	private rateLimiter: RateLimiter;
 	logger: SDKLogger;
 
+	// Authentication
+	public readonly oauth: OAuthAPI;
+
 	// API module instances
 	public readonly persons: PersonsAPI;
 	public readonly notes: NotesAPI;
@@ -149,6 +154,8 @@ export class FamilySearchSDK {
 	public readonly genealogyRelationships: GenealogyRelationshipsAPI;
 	public readonly genealogySources: GenealogySourcesAPI;
 	public readonly genealogyOther: GenealogyOtherAPI;
+	// Helper modules
+	public readonly pedigree: PedigreeAPI;
 
 	constructor(config: FamilySearchSDKConfig = {}) {
 		this.environment = config.environment || "integration";
@@ -159,6 +166,13 @@ export class FamilySearchSDK {
 		// Initialize rate limiter with optional config
 		const rateLimiterConfig: RateLimiterConfig = config.rateLimiter || {};
 		this.rateLimiter = new RateLimiter(rateLimiterConfig);
+
+		// Initialize OAuth API (requires config)
+		this.oauth = new OAuthAPI({
+			clientId: config.appKey || "",
+			redirectUri: config.redirectUri || "",
+			environment: this.environment,
+		});
 
 		// Initialize API modules
 		this.persons = new PersonsAPI(this);
@@ -194,6 +208,8 @@ export class FamilySearchSDK {
 		this.genealogyRelationships = new GenealogyRelationshipsAPI(this);
 		this.genealogySources = new GenealogySourcesAPI(this);
 		this.genealogyOther = new GenealogyOtherAPI(this);
+		// Helper modules
+		this.pedigree = new PedigreeAPI(this);
 	}
 
 	/**

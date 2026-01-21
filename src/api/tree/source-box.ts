@@ -455,7 +455,10 @@ export class SourceBoxAPI {
 		return addSourcesToCollection(this.sdk, collectionId, sourceIds);
 	}
 
-	async removeSourcesFromCollection(collectionId: string, sourceIds: string[]) {
+	async removeSourcesFromCollection(
+		collectionId: string,
+		sourceIds: string[]
+	) {
 		return removeSourcesFromCollection(this.sdk, collectionId, sourceIds);
 	}
 

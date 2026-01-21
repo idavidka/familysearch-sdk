@@ -8,4 +8,5 @@ export {
 	fetchPedigree,
 	readCurrentUser,
 	fetchMultiplePersons,
+	PedigreeAPI,
 } from "./pedigree";

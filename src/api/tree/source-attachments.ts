@@ -269,7 +269,11 @@ export class SourceAttachmentsAPI {
 		relationshipId: string,
 		source: AttachSourceInput
 	) {
-		return attachSourceToCoupleRelationship(this.sdk, relationshipId, source);
+		return attachSourceToCoupleRelationship(
+			this.sdk,
+			relationshipId,
+			source
+		);
 	}
 
 	async detachSourceFromCoupleRelationship(

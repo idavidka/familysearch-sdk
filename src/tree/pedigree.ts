@@ -273,3 +273,41 @@ export async function fetchMultiplePersons(
 	const response = await sdk.get(`/platform/tree/persons?pids=${pids}`);
 	return response.data;
 }
+
+/**
+ * PedigreeAPI class provides convenient methods for fetching pedigree and ancestry data.
+ */
+export class PedigreeAPI {
+	constructor(private sdk: FamilySearchSDK) {}
+
+	/**
+	 * Fetch pedigree/ancestry data with enhanced details
+	 */
+	async fetchPedigree(
+		personId?: string,
+		options?: {
+			generations?: number;
+			onProgress?: ProgressCallback;
+			includeDetails?: boolean;
+			includeNotes?: boolean;
+			includeRelationshipDetails?: boolean;
+			includeSourceDescriptions?: boolean;
+		}
+	): Promise<EnhancedPedigreeData> {
+		return fetchPedigree(this.sdk, personId, options);
+	}
+
+	/**
+	 * Get current user information
+	 */
+	async readCurrentUser(): Promise<FamilySearchUser | null> {
+		return readCurrentUser(this.sdk);
+	}
+
+	/**
+	 * Fetch multiple persons at once
+	 */
+	async fetchMultiplePersons(personIds: string[]): Promise<unknown> {
+		return fetchMultiplePersons(this.sdk, personIds);
+	}
+}

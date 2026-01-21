@@ -511,4 +511,144 @@ export function clearAllTokens(): void {
 	});
 }
 
+/**
+ * OAuthAPI class provides convenient OAuth methods.
+ * 
+ * Note: Most OAuth operations don't require SDK instance as they are stateless
+ * utility functions, but having them in a class provides consistency with other
+ * API modules and allows future extension.
+ */
+export class OAuthAPI {
+	constructor(private config: OAuthConfig) {}
+
+	/**
+	 * Get OAuth endpoints for current environment
+	 */
+	getEndpoints(): OAuthEndpoints {
+		return getOAuthEndpoints(this.config.environment);
+	}
+
+	/**
+	 * Generate a cryptographically secure random state
+	 */
+	generateState(): string {
+		return generateOAuthState();
+	}
+
+	/**
+	 * Build authorization URL
+	 */
+	buildAuthorizationUrl(
+		state: string,
+		options?: { scopes?: string[]; prompt?: string }
+	): string {
+		return buildAuthorizationUrl(this.config, state, options);
+	}
+
+	/**
+	 * Exchange authorization code for access token
+	 */
+	async exchangeCodeForToken(code: string): Promise<OAuthTokenResponse> {
+		return exchangeCodeForToken(code, this.config);
+	}
+
+	/**
+	 * Refresh an access token
+	 */
+	async refreshAccessToken(refreshToken: string): Promise<OAuthTokenResponse> {
+		return refreshAccessToken(refreshToken, this.config);
+	}
+
+	/**
+	 * Validate an access token
+	 */
+	async validateAccessToken(accessToken: string): Promise<boolean> {
+		return validateAccessToken(accessToken, this.config.environment);
+	}
+
+	/**
+	 * Get user info from access token
+	 */
+	async getUserInfo(accessToken: string) {
+		return getUserInfo(accessToken, this.config.environment);
+	}
+
+	/**
+	 * Store OAuth state in localStorage
+	 */
+	storeState(
+		state: string,
+		options?: { isLinkMode?: boolean; lang?: string; parentUid?: string }
+	): void {
+		return storeOAuthState(state, options);
+	}
+
+	/**
+	 * Validate OAuth state from callback
+	 */
+	validateState(state: string): OAuthStateValidation {
+		return validateOAuthState(state);
+	}
+
+	/**
+	 * Open OAuth authorization in popup
+	 */
+	openPopup(
+		authUrl: string,
+		options?: { width?: number; height?: number; windowName?: string }
+	): Window | null {
+		return openOAuthPopup(authUrl, options);
+	}
+
+	/**
+	 * Parse OAuth callback parameters from URL
+	 */
+	parseCallbackParams(url?: string) {
+		return parseCallbackParams(url);
+	}
+
+	/**
+	 * Store tokens for a user
+	 */
+	storeTokens(
+		userId: string,
+		tokens: {
+			accessToken: string;
+			expiresAt?: number;
+			refreshToken?: string;
+			environment?: string;
+		}
+	): void {
+		return storeTokens(userId, tokens);
+	}
+
+	/**
+	 * Get stored access token for a user
+	 */
+	getStoredAccessToken(userId: string): string | null {
+		return getStoredAccessToken(userId);
+	}
+
+	/**
+	 * Get stored refresh token for a user
+	 */
+	getStoredRefreshToken(userId: string): string | null {
+		return getStoredRefreshToken(userId);
+	}
+
+	/**
+	 * Clear all stored tokens for a user
+	 */
+	clearStoredTokens(userId: string): void {
+		return clearStoredTokens(userId);
+	}
+
+	/**
+	 * Clear all FamilySearch tokens from storage
+	 */
+	clearAllTokens(): void {
+		return clearAllTokens();
+	}
+}
+
 export { OAUTH_ENDPOINTS };
