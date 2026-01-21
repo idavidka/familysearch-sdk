@@ -184,6 +184,7 @@ export {
 
 // Trees API
 export {
+	getTree,
 	deleteTree,
 	createTree,
 } from "./trees";

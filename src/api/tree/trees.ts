@@ -9,6 +9,37 @@
 import type { FamilySearchSDK } from "../../client";
 
 /**
+ * Get Tree
+ *
+ * Read a CET (Collaborative Event Tree) specified by the tree ID.
+ *
+ * @param sdk - SDK instance
+ * @param tid - Tree ID
+ * @returns Tree data or null
+ *
+ * @example
+ * ```typescript
+ * const tree = await getTree(sdk, 'TREE-123');
+ * console.log('Tree name:', tree?.name);
+ * ```
+ */
+export async function getTree(
+	sdk: FamilySearchSDK,
+	tid: string
+): Promise<unknown> {
+	try {
+		const response = await sdk.get<unknown>(`/platform/trees/${tid}`);
+		return response.data || null;
+	} catch (error) {
+		sdk.logger.error(
+			`[FamilySearch SDK] Failed to get tree ${tid}:`,
+			error
+		);
+		return null;
+	}
+}
+
+/**
  * Delete Tree
  *
  * Delete a CET (Collaborative Event Tree).

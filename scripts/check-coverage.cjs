@@ -63,6 +63,7 @@ const endpointToFunction = (endpoint) => {
 		updategenealogytree: "updateGenealogyTree",
 		deletegenealogytree: "deleteGenealogyTree",
 		readgenealogiesnote: "getGenealogyNote",
+		updategenealogiestree: "updateGenealogyTree",
 
 		// Current User / Tree
 		readcurrenttreeperson: "getCurrentUser",
@@ -159,6 +160,12 @@ const endpointToFunction = (endpoint) => {
 
 		// Matches
 		readtreematches: "getTreeMatches",
+
+		// Trees
+		readtree: "getTree",
+		deletetree: "deleteTree",
+		createtree: "createTree",
+		readtreechanges: "getTreeChanges",
 	};
 
 	if (mappings[name]) return mappings[name];
