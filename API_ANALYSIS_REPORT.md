@@ -1,6 +1,6 @@
 # FamilySearch SDK API Analysis Report
 
-**Generated:** 2026-01-21T09:49:08.798Z
+**Generated:** 2026-01-21T10:05:11.223Z
 
 ---
 
@@ -9,15 +9,15 @@
 | Metric | Count | Percentage |
 |--------|-------|------------|
 | **Total Endpoints** | 204 | 100% |
-| ✅ **Implemented** | 98 | 48% |
-| ❌ **Missing** | 94 | 46% |
+| ✅ **Implemented** | 101 | 50% |
+| ❌ **Missing** | 91 | 45% |
 | 🚫 **Not Applicable** | 12 | 6% |
 
-**Applicable Coverage:** 98/192 (51%)
+**Applicable Coverage:** 101/192 (53%)
 
 ---
 
-## ✅ Implemented Endpoints (98)
+## ✅ Implemented Endpoints (101)
 
 ### createchildandparentsrelationshipnote
 
@@ -117,12 +117,26 @@
 - **Function:** `deleteChildAndParentsRelationship()`
 - **Description:** Delete a child and parents relationship.
 
+### deletechildandparentsrelationshipconclusion
+
+- **Title:** Delete Child and Parents Relationship Conclusion
+- **Method:** DELETE
+- **Function:** `deleteChildAndParentsRelationshipConclusion()`
+- **Description:** Delete a child and parents relationship conclusion
+
 ### deletechildandparentsrelationshipnote
 
 - **Title:** Delete Child and Parents Relationship Note
 - **Method:** DELETE
 - **Function:** `deleteChildAndParentsRelationshipNote()`
 - **Description:** Delete a note
+
+### deletechildandparentsrelationshipparent
+
+- **Title:** Delete Parent from Child and Parents Relationship
+- **Method:** DELETE
+- **Function:** `deleteChildAndParentsRelationshipParent()`
+- **Description:** Remove a parent from the child and parent relationship.
 
 ### deletechildandparentsrelationshipsourcereference
 
@@ -137,6 +151,13 @@
 - **Method:** DELETE
 - **Function:** `deleteCoupleRelationship()`
 - **Description:** Delete a couple relationship.
+
+### deletecouplerelationshipconclusion
+
+- **Title:** Delete Couple Relationship Conclusion
+- **Method:** DELETE
+- **Function:** `deleteCoupleRelationshipConclusion()`
+- **Description:** Delete a Couple Relationship conclusion.
 
 ### deletecouplerelationshipnote
 
@@ -713,7 +734,7 @@ and if the reason supplied is too long, the request may fail as a bad request.
 
 ---
 
-## ❌ Missing Endpoints (94)
+## ❌ Missing Endpoints (91)
 
 These endpoints need to be implemented. Implementation templates are provided below.
 
@@ -1134,97 +1155,6 @@ export async function createtree(
 
 ---
 
-### deletechildandparentsrelationshipconclusion
-
-- **Title:** Delete Child and Parents Relationship Conclusion
-- **Method:** DELETE
-- **URL:** `https://apibeta.familysearch.org/platform/tree/child-and-parents-relationships/{caprid}/{role}/conclusions/{cid}`
-- **Description:** Delete a child and parents relationship conclusion
-
-**Path Parameters:**
-
-- `caprid` (string) - required
-- `role` (string) - required
-- `cid` (string) - required
-
-**Response Codes:** 204, 404, 429
-
-**Implementation Template:**
-
-```typescript
-/**
- * Delete Child and Parents Relationship Conclusion
- *
- * Delete a child and parents relationship conclusion
- *
- * @param caprid - caprid
- * @param role - role
- * @param cid - cid
- * @returns Promise with response data
- */
-export async function deletechildandparentsrelationshipconclusion(
-	sdk: FamilySearchSDK,
-	caprid: string,
-	role: string,
-	cid: string
-): Promise<any> {
-	try {
-		const response = await sdk.delete<any>(`/platform/tree/child-and-parents-relationships/${caprid}/${role}/conclusions/${cid}`);
-		return response.data;
-	} catch (error) {
-		sdk["logger"].error("[FamilySearch SDK] Failed to deletechildandparentsrelationshipconclusion:", error);
-		throw error;
-	}
-}
-
-```
-
----
-
-### deletechildandparentsrelationshipparent
-
-- **Title:** Delete Parent from Child and Parents Relationship
-- **Method:** DELETE
-- **URL:** `https://apibeta.familysearch.org/platform/tree/child-and-parents-relationships/{caprid}/{role}`
-- **Description:** Remove a parent from the child and parent relationship.
-
-**Path Parameters:**
-
-- `caprid` (string) - required
-- `role` (string) - required
-
-**Response Codes:** 204, 404, 410, 429
-
-**Implementation Template:**
-
-```typescript
-/**
- * Delete Parent from Child and Parents Relationship
- *
- * Remove a parent from the child and parent relationship.
- *
- * @param caprid - caprid
- * @param role - role
- * @returns Promise with response data
- */
-export async function deletechildandparentsrelationshipparent(
-	sdk: FamilySearchSDK,
-	caprid: string,
-	role: string
-): Promise<any> {
-	try {
-		const response = await sdk.delete<any>(`/platform/tree/child-and-parents-relationships/${caprid}/${role}`);
-		return response.data;
-	} catch (error) {
-		sdk["logger"].error("[FamilySearch SDK] Failed to deletechildandparentsrelationshipparent:", error);
-		throw error;
-	}
-}
-
-```
-
----
-
 ### deletecomment
 
 - **Title:** Delete Comment
@@ -1261,50 +1191,6 @@ export async function deletecomment(
 		return response.data;
 	} catch (error) {
 		sdk["logger"].error("[FamilySearch SDK] Failed to deletecomment:", error);
-		throw error;
-	}
-}
-
-```
-
----
-
-### deletecouplerelationshipconclusion
-
-- **Title:** Delete Couple Relationship Conclusion
-- **Method:** DELETE
-- **URL:** `https://apibeta.familysearch.org/platform/tree/couple-relationships/{crid}/conclusions/{cid}`
-- **Description:** Delete a Couple Relationship conclusion.
-
-**Path Parameters:**
-
-- `crid` (string) - required
-- `cid` (string) - required
-
-**Response Codes:** 204, 404, 429
-
-**Implementation Template:**
-
-```typescript
-/**
- * Delete Couple Relationship Conclusion
- *
- * Delete a Couple Relationship conclusion.
- *
- * @param crid - crid
- * @param cid - cid
- * @returns Promise with response data
- */
-export async function deletecouplerelationshipconclusion(
-	sdk: FamilySearchSDK,
-	crid: string,
-	cid: string
-): Promise<any> {
-	try {
-		const response = await sdk.delete<any>(`/platform/tree/couple-relationships/${crid}/conclusions/${cid}`);
-		return response.data;
-	} catch (error) {
-		sdk["logger"].error("[FamilySearch SDK] Failed to deletecouplerelationshipconclusion:", error);
 		throw error;
 	}
 }

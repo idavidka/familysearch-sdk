@@ -57,6 +57,7 @@ export {
 	createChildAndParentsRelationshipSourceReference,
 	deleteCoupleRelationshipSourceReference,
 	deleteChildAndParentsRelationshipSourceReference,
+	deleteChildAndParentsRelationshipParent,
 } from "./relationships";
 
 // Pedigrees API

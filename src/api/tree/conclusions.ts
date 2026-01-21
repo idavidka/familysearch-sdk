@@ -50,11 +50,15 @@ export async function deletePersonConclusion(
 	reason?: string
 ): Promise<DeleteResponse> {
 	try {
-		const url = reason
-			? `/platform/tree/persons/${personId}/conclusions/${conclusionId}?reason=${encodeURIComponent(reason)}`
-			: `/platform/tree/persons/${personId}/conclusions/${conclusionId}`;
+		const headers: Record<string, string> = {};
+		if (reason) {
+			headers["X-Reason"] = reason;
+		}
 
-		const response = await sdk.delete<DeleteResponse>(url);
+		const response = await sdk.delete<DeleteResponse>(
+			`/platform/tree/persons/${personId}/conclusions/${conclusionId}`,
+			{ headers }
+		);
 		return {
 			statusCode: response.statusCode,
 			statusText: response.statusText,
@@ -101,11 +105,15 @@ export async function deleteCoupleRelationshipConclusion(
 	reason?: string
 ): Promise<DeleteResponse> {
 	try {
-		const url = reason
-			? `/platform/tree/couple-relationships/${relationshipId}/conclusions/${conclusionId}?reason=${encodeURIComponent(reason)}`
-			: `/platform/tree/couple-relationships/${relationshipId}/conclusions/${conclusionId}`;
+		const headers: Record<string, string> = {};
+		if (reason) {
+			headers["X-Reason"] = reason;
+		}
 
-		const response = await sdk.delete<DeleteResponse>(url);
+		const response = await sdk.delete<DeleteResponse>(
+			`/platform/tree/couple-relationships/${relationshipId}/conclusions/${conclusionId}`,
+			{ headers }
+		);
 		return {
 			statusCode: response.statusCode,
 			statusText: response.statusText,
@@ -152,11 +160,15 @@ export async function deleteChildAndParentsRelationshipConclusion(
 	reason?: string
 ): Promise<DeleteResponse> {
 	try {
-		const url = reason
-			? `/platform/tree/child-and-parents-relationships/${relationshipId}/conclusions/${conclusionId}?reason=${encodeURIComponent(reason)}`
-			: `/platform/tree/child-and-parents-relationships/${relationshipId}/conclusions/${conclusionId}`;
+		const headers: Record<string, string> = {};
+		if (reason) {
+			headers["X-Reason"] = reason;
+		}
 
-		const response = await sdk.delete<DeleteResponse>(url);
+		const response = await sdk.delete<DeleteResponse>(
+			`/platform/tree/child-and-parents-relationships/${relationshipId}/conclusions/${conclusionId}`,
+			{ headers }
+		);
 		return {
 			statusCode: response.statusCode,
 			statusText: response.statusText,

@@ -872,3 +872,52 @@ export async function deleteChildAndParentsRelationshipSourceReference(
 		throw error;
 	}
 }
+
+/**
+ * Delete a parent from a child-and-parents relationship
+ *
+ * @param sdk - The FamilySearch SDK instance
+ * @param relationshipId - The child-and-parents relationship ID
+ * @param role - The parent role to delete ("parent1" or "parent2")
+ * @param reason - Optional reason for the deletion (recommended for audit trail)
+ * @returns The response with status information
+ *
+ * @example
+ * ```typescript
+ * const result = await deleteChildAndParentsRelationshipParent(
+ *   sdk,
+ *   "PPPP-QQQ",
+ *   "parent2",
+ *   "Incorrect parent assignment"
+ * );
+ * console.log(result.statusCode); // 204
+ * ```
+ */
+export async function deleteChildAndParentsRelationshipParent(
+	sdk: FamilySearchSDK,
+	relationshipId: string,
+	role: "parent1" | "parent2",
+	reason?: string
+): Promise<DeletePersonResponse> {
+	try {
+		const headers: Record<string, string> = {};
+		if (reason) {
+			headers["X-Reason"] = reason;
+		}
+
+		const response = await sdk.delete<DeletePersonResponse>(
+			`/platform/tree/child-and-parents-relationships/${relationshipId}/${role}`,
+			{ headers }
+		);
+		return {
+			statusCode: response.statusCode,
+			statusText: response.statusText,
+		};
+	} catch (error) {
+		sdk["logger"].error(
+			`[FamilySearch SDK] Failed to delete child-and-parents relationship parent from ${role}:`,
+			error
+		);
+		throw error;
+	}
+}
