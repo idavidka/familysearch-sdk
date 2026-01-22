@@ -1,0 +1,128 @@
+FamilySearch SDK Coverage Checker
+=================================
+
+📊 Analyzing documented endpoints...
+FamilySearch API Endpoint Analyzer
+===================================
+
+Found 204 unique URLs
+
+Analysis Complete!
+=================
+Total Endpoints: 204
+Categories: 19
+
+  Authentication                 2 endpoints
+  Change History                 1 endpoints
+  Dates (Standards)              9 endpoints
+  Discussions                    10 endpoints
+  Genealogies (User Trees)       12 endpoints
+  Groups                         4 endpoints
+  Matches                        1 endpoints
+  Memories                       5 endpoints
+  Names (Standards)              3 endpoints
+  Notes                          1 endpoints
+  Other                          8 endpoints
+  Pedigrees                      2 endpoints
+  Places (Standards)             13 endpoints
+  Relationships                  48 endpoints
+  Sources                        19 endpoints
+  Tree Persons                   48 endpoints
+  Trees                          4 endpoints
+  User/Agent                     8 endpoints
+  Vocabularies                   6 endpoints
+
+Output saved to: api-docs-cache/endpoints.json
+Summary markdown: api-docs-cache/endpoints-summary.md
+
+
+📦 Extracting SDK implemented functions...
+Found 185 SDK functions
+
+
+=================================
+COVERAGE REPORT
+=================================
+
+Total Documented Endpoints: 204
+Implemented: 147 (72%)
+Missing: 51
+Uncertain (HEAD/rare): 6
+
+MISSING ENDPOINTS BY CATEGORY:
+==============================
+
+Authentication (2 missing):
+  ❌ GET getauthorizationpage → Expected: getauthorizationpage()
+  ❌ GET getaccesstoken → Expected: getaccesstoken()
+
+Dates (Standards) (2 missing):
+  ❌ PUT updatetree → Expected: updateTree()
+  ❌ PUT updategenealogiestree → Expected: updateGenealogiestree()
+
+Discussions (3 missing):
+  ❌ PUT updatecomments → Expected: updateComments()
+  ❌ DELETE deletecomment → Expected: deleteComment()
+  ❌ POST creatememorycomments → Expected: createMemorycomments()
+
+Genealogies (User Trees) (7 missing):
+  ❌ DELETE deletegenealogiesconclusion → Expected: deleteGenealogiesconclusion()
+  ❌ GET readgenealogiesbulkmatch → Expected: getGenealogiesbulkmatch()
+  ❌ GET readgenealogiespersonmatches → Expected: getGenealogiespersonmatches()
+  ❌ GET readgenealogiestree → Expected: getGenealogiestree()
+  ❌ DELETE deletegenealogiestree → Expected: deleteGenealogiestree()
+  ❌ GET readgenealogiestrees → Expected: getGenealogiestrees()
+  ❌ POST creategenealogiestree → Expected: createGenealogiestree()
+
+Notes (1 missing):
+  ❌ GET readgenealogiesnote → Expected: getGenealogiesnote()
+
+Other (2 missing):
+  ❌ GET api-reference-guide → Expected: api-reference-guide()
+  ❌ GET json-schema → Expected: json-schema()
+
+Relationships (7 missing):
+  ❌ GET readchildandparentrelationship → Expected: getChildandparentrelationship()
+  ❌ PUT updatechildandparentsrelationshipparentsorder → Expected: updateChildandparentsrelationshipparentsorder()
+  ❌ GET restorechildandparentsrelationship → Expected: restoreChildAndParentsRelationship()
+  ❌ GET restorecouplerelationship → Expected: restoreCoupleRelationship()
+  ❌ PUT updatecouplerelationshipspousesorder → Expected: updateCouplerelationshipspousesorder()
+  ❌ POST createrelationshipgedcomx → Expected: createRelationshipgedcomx()
+  ❌ GET readchildandparentrelationshipnote → Expected: getChildandparentrelationshipnote()
+
+Sources (10 missing):
+  ❌ GET readsourcedescriptionhead → Expected: getSourcedescriptionhead()
+  ❌ GET getsourcedescriptionchanges → Expected: getsourcedescriptionchanges()
+  ❌ GET readusersourcedescriptions → Expected: getUsersourcedescriptions()
+  ❌ DELETE deletesourcedescriptionsfromcollections → Expected: deleteSourcedescriptionsfromcollections()
+  ❌ GET readuserdefinedcollectionsourcedescriptions → Expected: getUserdefinedcollectionsourcedescriptions()
+  ❌ PUT updatesourcedescriptionstocollection → Expected: updateSourcedescriptionstocollection()
+  ❌ GET readgenealogiessourcedescription → Expected: getGenealogiessourcedescription()
+  ❌ PUT updategenealogiessourcedescription → Expected: updateGenealogiessourcedescription()
+  ❌ DELETE deletegenealogiessourcedescription → Expected: deleteGenealogiessourcedescription()
+  ❌ POST creategenealogiessourcedescription → Expected: createGenealogiessourcedescription()
+
+Tree Persons (15 missing):
+  ❌ GET readpersonchildren → Expected: getPersonChildren()
+  ❌ DELETE deletetreepersonreference → Expected: deleteTreepersonreference()
+  ❌ GET allowpersonmerge → Expected: allowpersonmerge()
+  ❌ DELETE deletepersondiscussionreference → Expected: deletePersondiscussionreference()
+  ❌ POST createpersonmemory → Expected: createPersonmemory()
+  ❌ DELETE deletepersonmemoriespersonareference → Expected: deletePersonmemoriespersonareference()
+  ❌ DELETE deletepersonsourcereference → Expected: deletePersonsourcereference()
+  ❌ GET readtreepersonmatches → Expected: getTreepersonmatches()
+  ❌ GET performpersonmatchesbyexample → Expected: performpersonmatchesbyexample()
+  ❌ GET readpersonnotamatches → Expected: getPersonNotAMatches()
+  ❌ PUT updatepersonnotamatches → Expected: updatePersonnotamatches()
+  ❌ DELETE deletepersonnotamatches → Expected: deletePersonnotamatches()
+  ❌ DELETE deletepersonnotamatch → Expected: deletePersonNotAMatch()
+  ❌ GET searchtreepersons → Expected: searchtreepersons()
+  ❌ GET readresearchtreepersons → Expected: getResearchtreepersons()
+
+Trees (2 missing):
+  ❌ DELETE deletetree → Expected: deleteTree()
+  ❌ POST createtree → Expected: createTree()
+
+
+Detailed report saved to: api-docs-cache/coverage-report.json
+

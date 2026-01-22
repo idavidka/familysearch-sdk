@@ -6,7 +6,7 @@
 
 export {
 	fetchPedigree,
-	getCurrentUser,
-	getPersonWithDetails,
+	readCurrentUser,
 	fetchMultiplePersons,
+	PedigreeAPI,
 } from "./pedigree";

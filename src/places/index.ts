@@ -1,12 +1,23 @@
 /**
  * FamilySearch Places Module
  *
- * Re-exports all places utilities
+ * Re-exports from api/standards/places for backward compatibility
  */
 
 export {
 	searchPlaces,
-	getPlaceById,
-	getPlaceChildren,
-	getPlaceDetails,
-} from "./places";
+	readPlaceDetails,
+	readPlaceChildren,
+	readPlaceDescriptions,
+	readPlaceDescription,
+	readPlaceTypes,
+	readPlaceType,
+	readPlaceTypeGroups,
+	readPlaceTypeGroup,
+	searchParentPlaces,
+	checkPlaceIsChild,
+	readPlaceAttributes,
+	readPlaceDescriptionWithRelated,
+	readPlaceDescriptionsGroup,
+	PlacesAPI,
+} from "../api/standards/places";

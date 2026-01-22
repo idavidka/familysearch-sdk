@@ -1,0 +1,227 @@
+🚀 FamilySearch SDK API Analysis
+
+=============================================================
+
+🔍 Analyzing all endpoint documentation...
+
+❌ allowpersonmerge - MISSING
+🚫 api-reference-guide - Documentation page
+❌ checkplaceischild - MISSING
+✅ createchildandparentsrelationshipnote → createChildAndParentsRelationshipNote()
+❌ createchildandparentsrelationshipsourcereference - MISSING
+✅ createcouplerelationshipnote → createCoupleRelationshipNote()
+❌ createcouplerelationshipsourcereference - MISSING
+✅ creatediscussion → createDiscussion()
+✅ creategenealogiesperson → createGenealogyPerson()
+❌ creategenealogiessourcedescription - MISSING
+❌ creategenealogiestree - MISSING
+✅ creategroup → createGroup()
+✅ creatememories → createMemories()
+❌ creatememorycomments - MISSING
+❌ creatememorypersona - MISSING
+❌ createnamesegments - MISSING
+❌ createpartneraccount - MISSING
+✅ createperson → createPerson()
+✅ createpersonmemory → createPersonMemory()
+✅ createpersonnote → createPersonNote()
+❌ createrelationshipgedcomx - MISSING
+✅ createsourcedescription → createSourceDescription()
+❌ createsourcefolder - MISSING
+❌ createtree - MISSING
+✅ delete → delete()
+✅ deletechildandparentsrelationship → deleteChildAndParentsRelationship()
+❌ deletechildandparentsrelationshipconclusion - MISSING
+✅ deletechildandparentsrelationshipnote → deleteChildAndParentsRelationshipNote()
+❌ deletechildandparentsrelationshipparent - MISSING
+❌ deletechildandparentsrelationshipsourcereference - MISSING
+❌ deletecomment - MISSING
+✅ deletecouplerelationship → deleteCoupleRelationship()
+❌ deletecouplerelationshipconclusion - MISSING
+✅ deletecouplerelationshipnote → deleteCoupleRelationshipNote()
+❌ deletecouplerelationshipsourcereference - MISSING
+❌ deletegenealogiesconclusion - MISSING
+✅ deletegenealogiesperson → deleteGenealogyPerson()
+✅ deletegenealogiesrelationship → deleteGenealogyRelationship()
+❌ deletegenealogiessourcedescription - MISSING
+❌ deletegenealogiestree - MISSING
+✅ deletegroup → deleteGroup()
+✅ deletememory → deleteMemory()
+❌ deletememoryartifactcoverage - MISSING
+❌ deletememorycomment - MISSING
+❌ deletememorypersona - MISSING
+✅ deleteperson → deletePerson()
+✅ deletepersonconclusion → deletePersonConclusion()
+✅ deletepersondiscussionreference → deletePersonDiscussionReference()
+✅ deletepersonmemoriespersonareference → deletePersonMemoryPersonaReference()
+✅ deletepersonnotamatch → deleteNotAMatchDeclaration()
+✅ deletepersonnotamatches → deleteAllNotAMatchDeclarations()
+✅ deletepersonnote → deletePersonNote()
+✅ deletepersonportrait → deletePersonPortrait()
+✅ deletepersonsourcereference → deletePersonSourceReference()
+❌ deletepreferredparentrelationship - MISSING
+❌ deletepreferredspouserelationship - MISSING
+✅ deletesourcedescription → deleteSourceDescription()
+❌ deletesourcedescriptionsfromcollections - MISSING
+❌ deletetree - MISSING
+❌ deletetreepersonreference - MISSING
+❌ deleteuserdefinedcollection - MISSING
+❌ findrelationship - MISSING
+✅ getaccesstoken → exchangeCodeForToken()
+🚫 getauthorizationpage - OAuth redirect page
+✅ getchildandparentsrelationship → getChildAndParentsRelationship()
+✅ getchildandparentsrelationshipnotes → getChildAndParentsRelationshipNotes()
+❌ getchildandparentsrelationshipsourcereferences - MISSING
+❌ getchildandparentsrelationshipsources - MISSING
+✅ getcouplerelationshipnotes → getCoupleRelationshipNotes()
+✅ getgroups → getGroups()
+✅ getmemories → readMemories()
+✅ getnamescript → readNameScript()
+✅ getnamesegments → readNameSegments()
+✅ getpersonmemories → getPersonMemories()
+✅ getpreferredparentrelationship → getPreferredParentRelationship()
+✅ getsourcedescriptionchanges → getSourceDescriptionChanges()
+🚫 headchildandparentrelationshiphistory - HEAD request (metadata only)
+🚫 headperson - HEAD request (metadata only)
+🚫 headpersonchangehistory - HEAD request (metadata only)
+🚫 json-schema - Documentation page
+❌ mergeperson - MISSING
+❌ performpersonmatchesbyexample - MISSING
+✅ readagent → getAgent()
+✅ readancestry → getAncestry()
+❌ readchildandparentrelationship - MISSING
+❌ readchildandparentrelationshipnote - MISSING
+🚫 readchildandparentsrelationshipheaders - HEAD request (metadata only)
+❌ readcomments - MISSING
+✅ readcouplerelationship → getCoupleRelationship()
+❌ readcouplerelationshipchangehistory - MISSING
+🚫 readcouplerelationshipchangehistoryheaders - HEAD request (metadata only)
+🚫 readcouplerelationshipheaders - HEAD request (metadata only)
+✅ readcouplerelationshipnote → getCoupleRelationshipNote()
+❌ readcouplerelationshipsourcereferences - MISSING
+❌ readcouplerelationshipsources - MISSING
+❌ readcurrenttree - MISSING
+✅ readcurrenttreeperson → readCurrentUser()
+✅ readcurrentuser → readCurrentUser()
+✅ readdescendancy → getDescendancy()
+✅ readdiscussion → readDiscussion()
+🚫 readdiscussionheaders - HEAD request (metadata only)
+❌ readgenealogiesbulkmatch - MISSING
+❌ readgenealogiesnote - MISSING
+✅ readgenealogiesperson → getGenealogyPerson()
+❌ readgenealogiespersonmatches - MISSING
+✅ readgenealogiespersons → getGenealogyPersons()
+❌ readgenealogiessourcedescription - MISSING
+❌ readgenealogiestree - MISSING
+❌ readgenealogiestrees - MISSING
+✅ readgroup → getGroup()
+✅ readmemory → getMemory()
+❌ readmemorycomments - MISSING
+❌ readmemorypersona - MISSING
+❌ readmemorypersonas - MISSING
+❌ readpartnereligibility - MISSING
+❌ readpendingmodifications - MISSING
+✅ readperson → getPerson()
+✅ readpersonchangehistory → getPersonChangeHistory()
+✅ readpersonchildren → getPersonChildren()
+✅ readpersonfamilies → getPersonFamilies()
+✅ readpersonmerge → getPersonMerge()
+✅ readpersonnotamatches → getNotAMatchDeclarations()
+✅ readpersonnote → getPersonNote()
+✅ readpersonnotes → getPersonNotes()
+✅ readpersonparents → getPersonParents()
+✅ readpersonportrait → getPersonPortrait()
+✅ readpersonportraits → getPersonPortraits()
+✅ readpersons → getPersons()
+✅ readpersonsources → getPersonSources()
+✅ readpersonspouses → getPersonSpouses()
+✅ readplace → readPlaceDetails()
+❌ readplaceattributes - MISSING
+❌ readplacechildren - MISSING
+❌ readplacedescription - MISSING
+❌ readplacedescriptions - MISSING
+❌ readplacedescriptionsgroup - MISSING
+❌ readplacedescriptionwithrelated - MISSING
+✅ readplaces → searchPlaces()
+❌ readplacetype - MISSING
+❌ readplacetypegroup - MISSING
+❌ readplacetypegroups - MISSING
+❌ readplacetypes - MISSING
+❌ readpreferredspouserelationship - MISSING
+❌ readresearchtreepersons - MISSING
+✅ readsourcedescription → getSourceDescription()
+🚫 readsourcedescriptionhead - HEAD request (metadata only)
+❌ readsourcedescriptions - MISSING
+❌ readsourcefolders - MISSING
+❌ readsourcereferences - MISSING
+✅ readtree → getTree()
+❌ readtreechanges - MISSING
+❌ readtreematches - MISSING
+❌ readtreepersonmatches - MISSING
+🚫 readtreepersonmatchesheaders - HEAD request (metadata only)
+❌ readuserdefinedcollection - MISSING
+❌ readuserdefinedcollectionsourcedescriptions - MISSING
+❌ readuserhistory - MISSING
+❌ readusermemories - MISSING
+❌ readusersourcedescriptions - MISSING
+❌ readusersourcefolders - MISSING
+❌ readvocabconceptdefinition - MISSING
+❌ readvocabconceptssearch - MISSING
+❌ readvocabconceptv2 - MISSING
+❌ readvocablist - MISSING
+❌ readvocabterm - MISSING
+❌ readvocabtermtranslation - MISSING
+✅ restorechange → restoreChange()
+✅ restorechildandparentsrelationship → restoreChildAndParentsRelationship()
+✅ restorecouplerelationship → restoreCoupleRelationship()
+✅ restoregenealogiesperson → restoreGenealogyPerson()
+✅ restoreperson → restorePerson()
+✅ searchforparentplaces → searchParentPlaces()
+❌ searchtreepersons - MISSING
+❌ setcurrenttree - MISSING
+✅ standardizedate → normalizeDate()
+✅ updatechildandparentsrelationship → updateChildAndParentsRelationship()
+✅ updatechildandparentsrelationshipnote → updateChildAndParentsRelationshipNote()
+❌ updatechildandparentsrelationshipparentsorder - MISSING
+❌ updatecomments - MISSING
+✅ updatecouplerelationship → updateCoupleRelationship()
+✅ updatecouplerelationshipnote → updateCoupleRelationshipNote()
+❌ updatecouplerelationshipspousesorder - MISSING
+✅ updatediscussion → updateDiscussion()
+✅ updategenealogiesperson → updateGenealogyPerson()
+✅ updategenealogiesrelationship → updateGenealogyRelationship()
+❌ updategenealogiessourcedescription - MISSING
+❌ updategenealogiestree - MISSING
+✅ updategroup → updateGroup()
+❌ updatematchresolution - MISSING
+✅ updatememory → updateMemory()
+❌ updatememoryartifact - MISSING
+❌ updatememorypersona - MISSING
+❌ updatepartneraccount - MISSING
+✅ updateperson → updatePerson()
+✅ updatepersonnotamatches → createNotAMatchDeclaration()
+✅ updatepersonnote → updatePersonNote()
+✅ updatepersonportraits → updatePersonPortraits()
+❌ updatepreferredparentrelationship - MISSING
+❌ updatepreferredspouserelationship - MISSING
+✅ updatesourcedescription → updateSourceDescription()
+❌ updatesourcedescriptionstocollection - MISSING
+❌ updatetree - MISSING
+❌ updateuserdefinedcollection - MISSING
+❌ updateuserhistory - MISSING
+
+=============================================================
+
+📊 Analysis Complete!
+
+  Total Endpoints:    204
+  ✅ Implemented:      91 (45%)
+  ❌ Missing:          101 (50%)
+  🚫 Not Applicable:   12 (6%)
+
+  📈 Applicable Coverage: 91/192 (47%)
+
+
+📝 Generating comprehensive report...
+
+✅ Report saved to: /Users/davidimre/Develop/treeviz/gedcom-visualiser/packages/familysearch-sdk/API_ANALYSIS_REPORT.md
+

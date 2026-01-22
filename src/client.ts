@@ -11,26 +11,58 @@
  * - Configurable logging
  */
 
+import { DiscussionsAPI } from "./api/discussions";
+import {
+	GenealogyOtherAPI,
+	GenealogyPersonsAPI,
+	GenealogyRelationshipsAPI,
+	GenealogySourcesAPI,
+	TreesAPI as GenealogyTreesAPI,
+} from "./api/genealogies";
+import { MemoriesAPI } from "./api/memories";
+import {
+	DatesAPI,
+	NamesAPI,
+	PlacesAPI,
+	VocabulariesAPI,
+} from "./api/standards";
+import {
+	AgentAPI,
+	ConclusionsAPI,
+	GroupsAPI,
+	MatchesAPI,
+	MergesAPI,
+	NotesAPI,
+	PedigreesAPI,
+	PendingModificationsAPI,
+	PersonsAPI,
+	PreferencesAPI,
+	RelationshipsAPI,
+	SearchAPI,
+	SourceAttachmentsAPI,
+	SourceBoxAPI,
+	SourcesAPI,
+	TreeChangesAPI,
+	TreesManagementAPI,
+} from "./api/tree";
+import { CurrentTreeAPI } from "./api/trees";
+import { UserAPI } from "./api/user";
+import { VocabAPI } from "./api/vocab";
+import { OAuthAPI } from "./auth";
+import {
+	createErrorFromResponse,
+	createNetworkError,
+	FamilySearchError,
+} from "./errors";
+import { RateLimiter } from "./rate-limiter";
+import { PedigreeAPI } from "./tree";
 import type {
 	EnvironmentConfig,
 	FamilySearchApiError,
 	FamilySearchApiResponse,
 	FamilySearchEnvironment,
-	FamilySearchPlace,
-	FamilySearchPerson,
 	FamilySearchSDKConfig,
-	FamilySearchUser,
-	PersonWithRelationships,
-	PersonNotesResponse,
-	PersonMemoriesResponse,
-	PersonSearchResponse,
-	PersonSourcesResponse,
-	TreePersonMatchesResponse,
-	TreePersonMatchesOptions,
-	PersonMatchInput,
-	PersonMatchOptions,
-	PedigreeData,
-	RelationshipDetails,
+	RateLimiterConfig,
 	SDKLogger,
 } from "./types";
 
@@ -68,7 +100,7 @@ const noopLogger: SDKLogger = {
  *   accessToken: 'your-oauth-token'
  * });
  *
- * const user = await sdk.getCurrentUser();
+ * const user = await sdk.readCurrentUser();
  * console.log(user?.displayName);
  * ```
  */
@@ -76,13 +108,102 @@ export class FamilySearchSDK {
 	private environment: FamilySearchEnvironment;
 	private accessToken: string | null = null;
 	private appKey: string | null = null;
-	private logger: SDKLogger;
+	private rateLimiter: RateLimiter;
+	logger: SDKLogger;
+
+	// Authentication
+	public readonly oauth: OAuthAPI;
+
+	// API module instances
+	public readonly persons: PersonsAPI;
+	public readonly notes: NotesAPI;
+	public readonly pedigrees: PedigreesAPI;
+	public readonly relationships: RelationshipsAPI;
+	public readonly matches: MatchesAPI;
+	public readonly discussions: DiscussionsAPI;
+	public readonly memories: MemoriesAPI;
+	public readonly sources: SourcesAPI;
+	public readonly places: PlacesAPI;
+	public readonly user: UserAPI;
+	public readonly dates: DatesAPI;
+	public readonly names: NamesAPI;
+	public readonly vocabularies: VocabulariesAPI;
+	// Tree-specific modules
+	public readonly agent: AgentAPI;
+	public readonly conclusions: ConclusionsAPI;
+	public readonly groups: GroupsAPI;
+	public readonly merges: MergesAPI;
+	public readonly pendingModifications: PendingModificationsAPI;
+	public readonly preferences: PreferencesAPI;
+	public readonly treesManagement: TreesManagementAPI;
+	public readonly search: SearchAPI;
+	public readonly sourceAttachments: SourceAttachmentsAPI;
+	public readonly sourceBox: SourceBoxAPI;
+	public readonly treeChanges: TreeChangesAPI;
+	public readonly currentTree: CurrentTreeAPI;
+	public readonly vocab: VocabAPI;
+	// Genealogies sub-modules
+	public readonly trees: GenealogyTreesAPI;
+	public readonly genealogyPersons: GenealogyPersonsAPI;
+	public readonly genealogyRelationships: GenealogyRelationshipsAPI;
+	public readonly genealogySources: GenealogySourcesAPI;
+	public readonly genealogyOther: GenealogyOtherAPI;
+	// Helper modules
+	public readonly pedigree: PedigreeAPI;
 
 	constructor(config: FamilySearchSDKConfig = {}) {
 		this.environment = config.environment || "integration";
 		this.accessToken = config.accessToken || null;
 		this.appKey = config.appKey || null;
 		this.logger = config.logger || noopLogger;
+
+		// Initialize rate limiter with optional config
+		const rateLimiterConfig: RateLimiterConfig = config.rateLimiter || {};
+		this.rateLimiter = new RateLimiter(rateLimiterConfig);
+
+		// Initialize OAuth API (requires config)
+		this.oauth = new OAuthAPI({
+			clientId: config.appKey || "",
+			redirectUri: config.redirectUri || "",
+			environment: this.environment,
+		});
+
+		// Initialize API modules
+		this.persons = new PersonsAPI(this);
+		this.notes = new NotesAPI(this);
+		this.pedigrees = new PedigreesAPI(this);
+		this.relationships = new RelationshipsAPI(this);
+		this.matches = new MatchesAPI(this);
+		this.discussions = new DiscussionsAPI(this);
+		this.memories = new MemoriesAPI(this);
+		this.sources = new SourcesAPI(this);
+		this.places = new PlacesAPI(this);
+		this.user = new UserAPI(this);
+		this.dates = new DatesAPI(this);
+		this.names = new NamesAPI(this);
+		this.vocabularies = new VocabulariesAPI(this);
+		// Tree-specific modules
+		this.agent = new AgentAPI(this);
+		this.conclusions = new ConclusionsAPI(this);
+		this.groups = new GroupsAPI(this);
+		this.merges = new MergesAPI(this);
+		this.pendingModifications = new PendingModificationsAPI(this);
+		this.preferences = new PreferencesAPI(this);
+		this.treesManagement = new TreesManagementAPI(this);
+		this.search = new SearchAPI(this);
+		this.sourceAttachments = new SourceAttachmentsAPI(this);
+		this.sourceBox = new SourceBoxAPI(this);
+		this.treeChanges = new TreeChangesAPI(this);
+		this.currentTree = new CurrentTreeAPI(this);
+		this.vocab = new VocabAPI(this);
+		// Genealogies sub-modules
+		this.trees = new GenealogyTreesAPI(this);
+		this.genealogyPersons = new GenealogyPersonsAPI(this);
+		this.genealogyRelationships = new GenealogyRelationshipsAPI(this);
+		this.genealogySources = new GenealogySourcesAPI(this);
+		this.genealogyOther = new GenealogyOtherAPI(this);
+		// Helper modules
+		this.pedigree = new PedigreeAPI(this);
 	}
 
 	/**
@@ -128,83 +249,114 @@ export class FamilySearchSDK {
 	}
 
 	/**
-	 * Make authenticated API request
+	 * Make authenticated API request with rate limiting and error handling
 	 */
 	private async request<T>(
 		url: string,
-		options: RequestInit = {}
+		options: RequestInit = {},
+		context?: { resourceType?: string; resourceId?: string }
 	): Promise<FamilySearchApiResponse<T>> {
-		const config = this.getConfig();
-		const fullUrl = url.startsWith("http")
-			? url
-			: `${config.platformHost}${url}`;
+		// Use rate limiter to execute request with automatic retry on 429
+		return this.rateLimiter.execute(
+			async () => {
+				const config = this.getConfig();
+				const fullUrl = url.startsWith("http")
+					? url
+					: `${config.platformHost}${url}`;
 
-		const headers: Record<string, string> = {
-			Accept: "application/json",
-			...(options.headers as Record<string, string>),
-		};
+				const headers: Record<string, string> = {
+					Accept: "application/json",
+					...(options.headers as Record<string, string>),
+				};
 
-		// Add authorization header if token is available
-		// FamilySearch API endpoints that require auth start with /platform/
-		const requiresAuth = fullUrl.includes("/platform/");
-		if (this.accessToken && requiresAuth) {
-			headers.Authorization = `Bearer ${this.accessToken}`;
-		}
+				// Add authorization header if token is available
+				// FamilySearch API endpoints that require auth start with /platform/
+				const requiresAuth = fullUrl.includes("/platform/");
+				if (this.accessToken && requiresAuth) {
+					headers.Authorization = `Bearer ${this.accessToken}`;
+				}
 
-		// Add app key if available
-		if (this.appKey) {
-			headers["X-FS-App-Key"] = this.appKey;
-		}
+				// Add app key if available
+				if (this.appKey) {
+					headers["X-FS-App-Key"] = this.appKey;
+				}
 
-		this.logger.log(
-			`[FamilySearch SDK] ${options.method || "GET"} ${fullUrl}`
-		);
+				this.logger.log(
+					`[FamilySearch SDK] ${options.method || "GET"} ${fullUrl}`
+				);
 
-		try {
-			const response = await fetch(fullUrl, {
-				...options,
-				headers,
-			});
-
-			const responseHeaders: Record<string, string> = {};
-			response.headers.forEach((value, key) => {
-				responseHeaders[key] = value;
-			});
-
-			let data: T | undefined;
-			const contentType = response.headers.get("content-type");
-			if (contentType && contentType.includes("application/json")) {
 				try {
-					data = await response.json();
+					const response = await fetch(fullUrl, {
+						...options,
+						headers,
+					});
+
+					const responseHeaders: Record<string, string> = {};
+					response.headers.forEach((value, key) => {
+						responseHeaders[key] = value;
+					});
+
+					let data: T | undefined;
+					const contentType = response.headers.get("content-type");
+					if (
+						contentType &&
+						contentType.includes("application/json")
+					) {
+						try {
+							data = await response.json();
+						} catch (error) {
+							this.logger.warn(
+								"[FamilySearch SDK] Failed to parse JSON response:",
+								error
+							);
+						}
+					}
+
+					const apiResponse: FamilySearchApiResponse<T> = {
+						data,
+						statusCode: response.status,
+						statusText: response.statusText,
+						headers: responseHeaders,
+					};
+
+					if (!response.ok) {
+						// Use enhanced error handling
+						const fsError = createErrorFromResponse(
+							apiResponse,
+							context
+						);
+						// Add response to error for backward compatibility
+						// Since all errors from createErrorFromResponse extend FamilySearchError,
+						// we can safely add these properties
+						Object.assign(fsError, {
+							response: apiResponse,
+							statusCode: response.status,
+						} as Partial<FamilySearchApiError>);
+						throw fsError;
+					}
+
+					return apiResponse;
 				} catch (error) {
-					this.logger.warn(
-						"[FamilySearch SDK] Failed to parse JSON response:",
+					// If it's already a FamilySearchError (from our error handling), rethrow
+					if (error instanceof FamilySearchError) {
+						throw error;
+					}
+					// Otherwise, wrap in NetworkError
+					this.logger.error(
+						"[FamilySearch SDK] Request failed:",
 						error
 					);
+					throw createNetworkError(error);
 				}
+			},
+			{
+				onRetry: (attempt, delay) => {
+					this.logger.warn(
+						`[FamilySearch SDK] Rate limit hit, retrying (attempt ${attempt}) after ${delay}ms`
+					);
+				},
 			}
-
-			const apiResponse: FamilySearchApiResponse<T> = {
-				data,
-				statusCode: response.status,
-				statusText: response.statusText,
-				headers: responseHeaders,
-			};
-
-			if (!response.ok) {
-				const error = new Error(
-					`FamilySearch API error: ${response.status} ${response.statusText}`
-				) as FamilySearchApiError;
-				error.statusCode = response.status;
-				error.response = apiResponse;
-				throw error;
-			}
-
-			return apiResponse;
-		} catch (error) {
-			this.logger.error("[FamilySearch SDK] Request failed:", error);
-			throw error;
-		}
+		);
 	}
 
 	/**
@@ -269,706 +421,55 @@ export class FamilySearchSDK {
 		return this.request<T>(url, { ...options, method: "DELETE" });
 	}
 
+	/**
+	 * OPTIONS request
+	 *
+	 * Used to check endpoint capabilities and availability.
+	 * Returns response headers that indicate allowed methods, warnings, etc.
+	 */
+	async options(
+		url: string,
+		requestOptions: RequestInit = {}
+	): Promise<FamilySearchApiResponse<void>> {
+		return this.request<void>(url, {
+			...requestOptions,
+			method: "OPTIONS",
+		});
+	}
+
+	/**
+	 * HEAD request
+	 *
+	 * Used to check resource existence and retrieve metadata without fetching the body.
+	 * Returns response headers including content-type, last-modified, etc.
+	 */
+	async head(
+		url: string,
+		requestOptions: RequestInit = {}
+	): Promise<FamilySearchApiResponse<void>> {
+		return this.request<void>(url, { ...requestOptions, method: "HEAD" });
+	}
+
 	// ====================================
 	// User API
 	// ====================================
-
-	/**
-	 * Get current authenticated user
-	 */
-	async getCurrentUser(): Promise<FamilySearchUser | null> {
-		try {
-			const response = await this.get<{ users: FamilySearchUser[] }>(
-				"/platform/users/current"
-			);
-
-			const user = response.data?.users?.[0];
-			return user || null;
-		} catch (error) {
-			this.logger.error(
-				"[FamilySearch SDK] Failed to get current user:",
-				error
-			);
-			return null;
-		}
-	}
+	// Note: Use this.user.readCurrentUser() instead of direct implementation
 
 	// ====================================
 	// Tree/Pedigree API
 	// ====================================
-
-	/**
-	 * Get person by ID
-	 */
-	async getPerson(personId: string): Promise<FamilySearchPerson | null> {
-		try {
-			const response = await this.get<{ persons: FamilySearchPerson[] }>(
-				`/platform/tree/persons/${personId}`
-			);
-
-			const person = response.data?.persons?.[0];
-			return person || null;
-		} catch (error) {
-			this.logger.error(
-				`[FamilySearch SDK] Failed to get person ${personId}:`,
-				error
-			);
-			return null;
-		}
-	}
-
-	/**
-	 * Get person with full details
-	 * @param personId - FamilySearch person ID
-	 * @param options - Optional query parameters
-	 * @param options.sourceDescriptions - Include source descriptions (default: false)
-	 */
-	async getPersonWithDetails(
-		personId: string,
-		options: { sourceDescriptions?: boolean } = {}
-	): Promise<PersonWithRelationships | null> {
-		try {
-			const queryParams = options.sourceDescriptions
-				? "?sourceDescriptions=true"
-				: "";
-			const response = await this.get(
-				`/platform/tree/persons/${personId}${queryParams}`
-			);
-			return (response.data as PersonWithRelationships) || null;
-		} catch (error) {
-			this.logger.error(
-				`[FamilySearch SDK] Failed to get person details ${personId}:`,
-				error
-			);
-			return null;
-		}
-	}
-
-	/**
-	 * Get notes for a person
-	 */
-	async getPersonNotes(
-		personId: string
-	): Promise<PersonNotesResponse | null> {
-		try {
-			const response = await this.get<PersonNotesResponse>(
-				`/platform/tree/persons/${personId}/notes`
-			);
-			return response.data || null;
-		} catch (error) {
-			this.logger.error(
-				`[FamilySearch SDK] Failed to get notes for ${personId}:`,
-				error
-			);
-			return null;
-		}
-	}
-
-	/**
-	 * Get memories for a person
-	 */
-	async getPersonMemories(
-		personId: string
-	): Promise<PersonMemoriesResponse | null> {
-		try {
-			const response = await this.get<PersonMemoriesResponse>(
-				`/platform/tree/persons/${personId}/memories`
-			);
-			return response.data || null;
-		} catch (error) {
-			this.logger.error(
-				`[FamilySearch SDK] Failed to get memories for ${personId}:`,
-				error
-			);
-			return null;
-		}
-	}
-
-	/**
-	 * Get sources for a person
-	 * Fetches all source references linked to a person
-	 *
-	 * @param personId - FamilySearch person ID
-	 * @returns Person sources response with source references and descriptions, or null if error
-	 *
-	 * @example
-	 * ```typescript
-	 * const sources = await sdk.getPersonSources('KWQS-BBQ');
-	 * if (sources?.persons?.[0]?.sources) {
-	 *   sources.persons[0].sources.forEach(source => {
-	 *     console.log('Source:', source.descriptionId);
-	 *   });
-	 * }
-	 * ```
-	 */
-	async getPersonSources(
-		personId: string
-	): Promise<PersonSourcesResponse | null> {
-		try {
-			const response = await this.get<PersonSourcesResponse>(
-				`/platform/tree/persons/${personId}/sources`
-			);
-			return response.data || null;
-		} catch (error) {
-			this.logger.error(
-				`[FamilySearch SDK] Failed to get sources for ${personId}:`,
-				error
-			);
-			return null;
-		}
-	}
-
-	/**
-	 * Get tree person matches
-	 * Fetches possible matches between a person in the FamilySearch Tree and historical records
-	 *
-	 * @param personId - FamilySearch person ID
-	 * @param options - Optional query parameters
-	 * @returns Tree person matches response with match information, or null if error
-	 *
-	 * @example
-	 * ```typescript
-	 * const matches = await sdk.getTreePersonMatches('KWQS-BBQ');
-	 * if (matches?.sourceDescriptions) {
-	 *   matches.sourceDescriptions.forEach(match => {
-	 *     console.log('Match:', match.titles?.[0]?.value);
-	 *   });
-	 * }
-	 * ```
-	 */
-	async getTreePersonMatches(
-		personId: string,
-		options: TreePersonMatchesOptions = {}
-	): Promise<TreePersonMatchesResponse | null> {
-		try {
-			const params = new URLSearchParams();
-			if (options.status) params.append("status", options.status);
-			if (options.collection)
-				params.append("collection", options.collection);
-			if (options.count !== undefined)
-				params.append("count", options.count.toString());
-			if (options.start !== undefined)
-				params.append("start", options.start.toString());
-
-			const queryString = params.toString();
-			const url = `/platform/tree/persons/${personId}/matches${
-				queryString ? `?${queryString}` : ""
-			}`;
-
-			const response = await this.get<TreePersonMatchesResponse>(url);
-			return response.data || null;
-		} catch (error) {
-			this.logger.error(
-				`[FamilySearch SDK] Failed to get matches for ${personId}:`,
-				error
-			);
-			return null;
-		}
-	}
-
-	/**
-	 * Match person from external GEDCOM data
-	 * Submits a virtual person profile to find matching persons in the FamilySearch Tree
-	 * Use this for persons from external GEDCOM files or manually created trees
-	 *
-	 * @param person - Person data to match (name, dates, places, etc.)
-	 * @param options - Optional query parameters
-	 * @returns Tree person matches response with potential matches, or null if error
-	 *
-	 * @example
-	 * ```typescript
-	 * const matches = await sdk.matchPerson({
-	 *   givenName: 'John',
-	 *   familyName: 'Smith',
-	 *   birthDate: '1850',
-	 *   birthPlace: 'London, England',
-	 *   deathDate: '1920',
-	 *   deathPlace: 'New York, USA'
-	 * });
-	 *
-	 * if (matches?.entries) {
-	 *   matches.entries.forEach(match => {
-	 *     console.log('Potential match:', match.title);
-	 *     console.log('Score:', match.content?.score);
-	 *   });
-	 * }
-	 * ```
-	 */
-	async matchPerson(
-		person: PersonMatchInput,
-		options: PersonMatchOptions = {}
-	): Promise<TreePersonMatchesResponse | null> {
-		try {
-			// Build the GedcomX person object for the API
-			const gedcomxPerson: {
-				names?: Array<{
-					nameForms?: Array<{
-						fullText?: string;
-						parts?: Array<{ type?: string; value?: string }>;
-					}>;
-				}>;
-				gender?: { type?: string };
-				facts?: Array<{
-					type?: string;
-					date?: { original?: string };
-					place?: { original?: string };
-				}>;
-			} = {};
-
-			// Add name information
-			if (person.fullName || person.givenName || person.familyName) {
-				const nameParts: Array<{ type?: string; value?: string }> = [];
-				if (person.givenName) {
-					nameParts.push({
-						type: "http://gedcomx.org/Given",
-						value: person.givenName,
-					});
-				}
-				if (person.familyName) {
-					nameParts.push({
-						type: "http://gedcomx.org/Surname",
-						value: person.familyName,
-					});
-				}
-
-				// Build full name, avoiding extra spaces
-				const fullText =
-					person.fullName ||
-					[person.givenName, person.familyName]
-						.filter(Boolean)
-						.join(" ");
-
-				gedcomxPerson.names = [
-					{
-						nameForms: [
-							{
-								fullText,
-								parts:
-									nameParts.length > 0
-										? nameParts
-										: undefined,
-							},
-						],
-					},
-				];
-			}
-
-			// Add gender (validate against known GedcomX types)
-			if (person.gender) {
-				// Normalize gender to proper case and validate
-				const normalizedGender =
-					person.gender.charAt(0).toUpperCase() +
-					person.gender.slice(1).toLowerCase();
-
-				// Only add if it's a valid GedcomX gender type
-				if (["Male", "Female", "Unknown"].includes(normalizedGender)) {
-					gedcomxPerson.gender = {
-						type: `http://gedcomx.org/${normalizedGender}`,
-					};
-				}
-			}
-
-			// Add facts (birth, death, marriage)
-			const facts: Array<{
-				type?: string;
-				date?: { original?: string };
-				place?: { original?: string };
-			}> = [];
-
-			if (person.birthDate || person.birthPlace) {
-				facts.push({
-					type: "http://gedcomx.org/Birth",
-					date: person.birthDate
-						? { original: person.birthDate }
-						: undefined,
-					place: person.birthPlace
-						? { original: person.birthPlace }
-						: undefined,
-				});
-			}
-
-			if (person.deathDate || person.deathPlace) {
-				facts.push({
-					type: "http://gedcomx.org/Death",
-					date: person.deathDate
-						? { original: person.deathDate }
-						: undefined,
-					place: person.deathPlace
-						? { original: person.deathPlace }
-						: undefined,
-				});
-			}
-
-			if (person.marriageDate || person.marriagePlace) {
-				facts.push({
-					type: "http://gedcomx.org/Marriage",
-					date: person.marriageDate
-						? { original: person.marriageDate }
-						: undefined,
-					place: person.marriagePlace
-						? { original: person.marriagePlace }
-						: undefined,
-				});
-			}
-
-			if (facts.length > 0) {
-				gedcomxPerson.facts = facts;
-			}
-
-			// Build query parameters
-			const params = new URLSearchParams();
-			if (options.collection) {
-				params.append("collection", options.collection);
-			}
-			if (options.count !== undefined) {
-				params.append("count", options.count.toString());
-			}
-
-			const queryString = params.toString();
-			const url = `/platform/tree/matches${queryString ? `?${queryString}` : ""}`;
-
-			// Create a source description for the external GEDCOM person
-			const sourceDescription = {
-				id: "sd1",
-				about: "#primaryPerson",
-				resourceType: "http://gedcomx.org/DigitalArtifact",
-				titles: [
-					{
-						value: "External GEDCOM File",
-					},
-				],
-			};
-
-			// Submit the person data to the matches endpoint
-			// The description field links to the source description via fragment identifier
-			const requestBody = {
-				description: "#sd1",
-				persons: [
-					{
-						id: "primaryPerson",
-						...gedcomxPerson,
-					},
-				],
-				sourceDescriptions: [sourceDescription],
-			};
-
-			const response = await this.post<TreePersonMatchesResponse>(
-				url,
-				requestBody
-			);
-			return response.data || null;
-		} catch (error) {
-			this.logger.error(
-				"[FamilySearch SDK] Failed to match person:",
-				error
-			);
-			return null;
-		}
-	}
-
-	/**
-	 * Search for persons using external GEDCOM data
-	 * Converts person data to search query parameters and searches FamilySearch
-	 * Works with both Tree and Records collections
-	 *
-	 * @param person - Person data to search for (name, dates, places, etc.)
-	 * @param options - Search options (collection, pagination)
-	 * @returns Search response with matching persons
-	 *
-	 * @example
-	 * ```typescript
-	 * const results = await sdk.searchPersonByData({
-	 *   givenName: 'John',
-	 *   familyName: 'Smith',
-	 *   birthDate: '1850',
-	 *   birthPlace: 'London, England'
-	 * }, { collection: 'tree', count: 20 });
-	 * ```
-	 */
-	async searchPersonByData(
-		person: PersonMatchInput,
-		options: {
-			start?: number;
-			count?: number;
-			collection?: "tree" | "records";
-		} = {}
-	): Promise<FamilySearchApiResponse<PersonSearchResponse>> {
-		// Build query parameters from person data
-		const query: Record<string, string> = {};
-
-		// Add name
-		if (person.givenName) {
-			query["q.givenName"] = person.givenName;
-		}
-		if (person.familyName) {
-			query["q.surname"] = person.familyName;
-		}
-
-		// Add birth info
-		if (person.birthDate) {
-			// Extract year from date (FamilySearch expects +YYYY format)
-			const year = person.birthDate.match(/\d{4}/)?.[0];
-			if (year) {
-				query["q.birthLikeDate"] = `+${year}`;
-			}
-		}
-		if (person.birthPlace) {
-			query["q.birthLikePlace"] = person.birthPlace;
-		}
-
-		// Add death info
-		if (person.deathDate) {
-			const year = person.deathDate.match(/\d{4}/)?.[0];
-			if (year) {
-				query["q.deathLikeDate"] = `+${year}`;
-			}
-		}
-		if (person.deathPlace) {
-			query["q.deathLikePlace"] = person.deathPlace;
-		}
-
-		// Add marriage info
-		if (person.marriageDate) {
-			const year = person.marriageDate.match(/\d{4}/)?.[0];
-			if (year) {
-				query["q.marriageLikeDate"] = `+${year}`;
-			}
-		}
-		if (person.marriagePlace) {
-			query["q.marriageLikePlace"] = person.marriagePlace;
-		}
-
-		// Add father info
-		if (person.fatherGivenName) {
-			query["q.fatherGivenName"] = person.fatherGivenName;
-		}
-		if (person.fatherFamilyName) {
-			query["q.fatherSurname"] = person.fatherFamilyName;
-		}
-
-		// Add mother info
-		if (person.motherGivenName) {
-			query["q.motherGivenName"] = person.motherGivenName;
-		}
-		if (person.motherFamilyName) {
-			query["q.motherSurname"] = person.motherFamilyName;
-		}
-
-		// Add spouse info
-		if (person.spouseGivenName) {
-			query["q.spouseGivenName"] = person.spouseGivenName;
-		}
-		if (person.spouseFamilyName) {
-			query["q.spouseSurname"] = person.spouseFamilyName;
-		}
-
-		return this.searchPersons(query, options);
-	}
-
-	/**
-	 * Get couple relationship details
-	 */
-	async getCoupleRelationship(
-		relationshipId: string
-	): Promise<RelationshipDetails | null> {
-		try {
-			const response = await this.get<RelationshipDetails>(
-				`/platform/tree/couple-relationships/${relationshipId}`
-			);
-			return response.data || null;
-		} catch (error) {
-			this.logger.error(
-				`[FamilySearch SDK] Failed to get couple relationship ${relationshipId}:`,
-				error
-			);
-			return null;
-		}
-	}
-
-	/**
-	 * Get child-and-parents relationship details
-	 */
-	async getChildAndParentsRelationship(
-		relationshipId: string
-	): Promise<RelationshipDetails | null> {
-		try {
-			const response = await this.get<RelationshipDetails>(
-				`/platform/tree/child-and-parents-relationships/${relationshipId}`
-			);
-			return response.data || null;
-		} catch (error) {
-			this.logger.error(
-				`[FamilySearch SDK] Failed to get child-and-parents relationship ${relationshipId}:`,
-				error
-			);
-			return null;
-		}
-	}
-
-	/**
-	 * Get ancestry for a person
-	 */
-	async getAncestry(
-		personId: string,
-		generations: number = 4
-	): Promise<FamilySearchApiResponse<PedigreeData>> {
-		return this.get<PedigreeData>(
-			`/platform/tree/ancestry?person=${personId}&generations=${generations}`
-		);
-	}
-
-	/**
-	 * Get descendancy for a person
-	 */
-	async getDescendancy(
-		personId: string,
-		generations: number = 2
-	): Promise<FamilySearchApiResponse<PedigreeData>> {
-		return this.get<PedigreeData>(
-			`/platform/tree/descendancy?person=${personId}&generations=${generations}`
-		);
-	}
-
-	/**
-	 * Search for persons
-	 */
-	/**
-	 * Search for persons in FamilySearch Tree and Records
-	 * Uses query parameters to search for persons by name, dates, places, etc.
-	 *
-	 * @param query - Query parameters (e.g., q.givenName, q.surname, q.birthLikeDate, q.birthLikePlace)
-	 * @param options - Search options (pagination, collection filter)
-	 * @returns Search response with matching persons
-	 *
-	 * @example
-	 * ```typescript
-	 * const results = await sdk.searchPersons({
-	 *   'q.givenName': 'John',
-	 *   'q.surname': 'Smith',
-	 *   'q.birthLikeDate': '+1850',
-	 *   'q.birthLikePlace': 'London, England'
-	 * }, { count: 20 });
-	 * ```
-	 */
-	async searchPersons(
-		query: Record<string, string>,
-		options: {
-			start?: number;
-			count?: number;
-			collection?: "tree" | "records";
-		} = {}
-	): Promise<FamilySearchApiResponse<PersonSearchResponse>> {
-		const params = new URLSearchParams({
-			...query,
-			...(options.start !== undefined && {
-				start: options.start.toString(),
-			}),
-			...(options.count !== undefined && {
-				count: options.count.toString(),
-			}),
-		});
-
-		// Note: Collection filtering is not supported in the current FamilySearch Search API
-		// The search will return results from all available collections
-		// We'll need to filter results client-side if needed
-
-		return this.get<PersonSearchResponse>(
-			`/platform/tree/search?${params.toString()}`
-		);
-	}
+	// Note: Person matching, searching moved to api/tree modules
+	// Use this.matches.* and this.search.* for these operations
 
 	// ====================================
 	// Places API
 	// ====================================
-
-	/**
-	 * Search for places
-	 */
-	async searchPlaces(
-		name: string,
-		options: {
-			parentId?: string;
-			typeId?: string;
-			date?: string;
-			start?: number;
-			count?: number;
-		} = {}
-	): Promise<{ places: FamilySearchPlace[] } | null> {
-		try {
-			const params = new URLSearchParams({
-				name,
-				...(options.parentId && { parentId: options.parentId }),
-				...(options.typeId && { typeId: options.typeId }),
-				...(options.date && { date: options.date }),
-				...(options.start !== undefined && {
-					start: options.start.toString(),
-				}),
-				...(options.count !== undefined && {
-					count: options.count.toString(),
-				}),
-			});
-
-			const response = await this.get<{ places: FamilySearchPlace[] }>(
-				`/platform/places/search?${params.toString()}`
-			);
-
-			return response.data || null;
-		} catch (error) {
-			this.logger.error(
-				"[FamilySearch SDK] Failed to search places:",
-				error
-			);
-			return null;
-		}
-	}
-
-	/**
-	 * Get place by ID
-	 */
-	async getPlace(placeId: string): Promise<FamilySearchPlace | null> {
-		try {
-			const response = await this.get<{ places: FamilySearchPlace[] }>(
-				`/platform/places/${placeId}`
-			);
-
-			const place = response.data?.places?.[0];
-			return place || null;
-		} catch (error) {
-			this.logger.error(
-				`[FamilySearch SDK] Failed to get place ${placeId}:`,
-				error
-			);
-			return null;
-		}
-	}
+	// Note: Use this.places.* for place operations
 
 	// ====================================
 	// Import/Export API
 	// ====================================
-
-	/**
-	 * Get GEDCOM export for a person and their ancestors
-	 */
-	async exportGEDCOM(personId: string): Promise<string | null> {
-		try {
-			const response = await this.get<string>(
-				`/platform/tree/persons/${personId}/gedcomx`,
-				{
-					headers: {
-						Accept: "application/x-gedcomx-v1+json",
-					},
-				}
-			);
-
-			return response.data || null;
-		} catch (error) {
-			this.logger.error(
-				"[FamilySearch SDK] Failed to export GEDCOM:",
-				error
-			);
-			return null;
-		}
-	}
+	// Note: GEDCOM export moved to api/tree/export module
 }
 
 // ====================================

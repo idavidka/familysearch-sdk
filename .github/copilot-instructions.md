@@ -130,7 +130,7 @@ npm publish
      - `authenticate(code)`: Exchange auth code for access token
      - `getPerson(id)`: Fetch person record
      - `getPedigree(id, options)`: Fetch ancestor tree
-     - `getCurrentUser()`: Get authenticated user info
+     - `readCurrentUser()`: Get authenticated user info
 
 2. **Auth Utilities**
    - `generateAuthUrl(appKey, redirectUri, state)`

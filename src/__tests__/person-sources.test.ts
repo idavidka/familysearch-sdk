@@ -154,21 +154,29 @@ describe("Person Sources API", () => {
 		});
 
 		it("should handle API rate limiting (429)", async () => {
-			(global.fetch as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
+			// Mock multiple 429 responses to simulate rate limiting with retries
+			const mockResponse = {
 				ok: false,
 				status: 429,
 				statusText: "Too Many Requests",
 				headers: new Headers({
 					"content-type": "application/json",
-					"retry-after": "60",
+					"retry-after": "1", // Use short retry for testing
 				}),
 				json: async () => ({ error: "Rate limit exceeded" }),
-			});
+			};
+
+			// Mock 4 failed attempts (initial + 3 retries)
+			(global.fetch as ReturnType<typeof vi.fn>)
+				.mockResolvedValueOnce(mockResponse)
+				.mockResolvedValueOnce(mockResponse)
+				.mockResolvedValueOnce(mockResponse)
+				.mockResolvedValueOnce(mockResponse);
 
 			const result = await sdk.getPersonSources("KWQS-BBQ");
 
 			expect(result).toBeNull();
-		});
+		}, 10000); // Increase timeout for retry delays
 
 		it("should handle server errors (500)", async () => {
 			(global.fetch as ReturnType<typeof vi.fn>).mockResolvedValueOnce({

@@ -1,6 +1,6 @@
 {
 	"name": "@treeviz/familysearch-sdk",
-	"version": "1.0.25",
+	"version": "2.0.0",
 	"description": "Modern TypeScript SDK for FamilySearch API v3 - OAuth, Places API, Tree API, and GEDCOM utilities",
 	"type": "module",
 	"main": "./dist/index.js",
@@ -45,7 +45,11 @@
 		"test:watch": "vitest",
 		"lint": "tsc --noEmit",
 		"clean": "rm -rf dist",
-		"prepublishOnly": "npm run build"
+		"prepublishOnly": "npm run build",
+		"fetch-docs": "node scripts/fetch-api-docs.cjs",
+		"fetch-doc": "node scripts/fetch-api-docs.cjs",
+		"analyze-endpoints": "node scripts/analyze-endpoints.cjs",
+		"check-coverage": "node scripts/check-coverage.cjs"
 	},
 	"keywords": [
 		"familysearch",
@@ -68,7 +72,7 @@
 	},
 	"devDependencies": {
 		"@types/node": "^25.0.9",
-		"jsdom": "^27.2.0",
+		"jsdom": "^27.4.0",
 		"tsup": "^8.0.0",
 		"typescript": "^5.1.6",
 		"vitest": "^3.0.7"

@@ -3,3 +3,7 @@ dist/
 *.log
 .DS_Store
 coverage/
+
+# API documentation cache (fetched for offline analysis)
+api-docs-cache/
+# api-docs-cache/*.html

@@ -28,4 +28,6 @@ export {
 	clearAllTokens,
 	// Constants
 	OAUTH_ENDPOINTS,
+	// API Class
+	OAuthAPI,
 } from "./oauth";

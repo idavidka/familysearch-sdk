@@ -46,6 +46,7 @@ export type {
 	// Configuration
 	FamilySearchSDKConfig,
 	SDKLogger,
+	RateLimiterConfig,
 	// API Response
 	FamilySearchApiResponse,
 	FamilySearchApiError,
@@ -72,6 +73,41 @@ export type {
 	PersonMatchOptions,
 	SourceDescription,
 	SourceReference,
+	SourceDescriptionDetail,
+	SourceDescriptionResponse,
+	SourceDescriptionsResponse,
+	// Discussions
+	Discussion,
+	DiscussionComment,
+	PersonDiscussionsResponse,
+	// Portraits
+	PersonPortrait,
+	PersonPortraitsResponse,
+	// Change History
+	ChangeEntry,
+	PersonChangeHistoryResponse,
+	// Memories
+	MemoryArtifact,
+	MemoryComment,
+	MemoryWithCommentsResponse,
+	UserMemoriesResponse,
+	// Memory Personas
+	MemoryPersona,
+	MemoryPersonasResponse,
+	MemoryPersonaResponse,
+	// Vocabularies
+	VocabularyMetadata,
+	VocabulariesResponse,
+	VocabularyConceptDetail,
+	VocabularyConceptsResponse,
+	VocabularyConceptResponse,
+	// Names (Standards)
+	NameScriptResponse,
+	NameSegment,
+	NameSegmentsResponse,
+	// Dates (Standards)
+	StandardizedDate,
+	DateStandardizationResponse,
 	// Places
 	FamilySearchPlace,
 	PlaceDescription,
@@ -89,7 +125,37 @@ export type {
 	OAuthStateValidation,
 	// Progress
 	ProgressCallback,
+	// Person CRUD
+	PersonInput,
+	CreatePersonResponse,
+	UpdatePersonResponse,
+	DeletePersonResponse,
+	// Relationship CRUD
+	CreateCoupleRelationshipInput,
+	CreateChildAndParentsRelationshipInput,
+	CreateRelationshipResponse,
+	UpdateRelationshipResponse,
+	// Person Merge
+	PersonMergeAnalysis,
+	PersonMergeInput,
+	PersonMergeResponse,
+	// Notes CRUD
+	NoteInput,
+	Note,
+	NoteResponse,
+	// Source Attachment
+	AttachSourceInput,
+	AttachSourceResponse,
+	// Pedigrees
+	PedigreeResponse,
+	// Search Results
+	PersonSearchResult,
+	// Matches
+	MatchesResponse,
 } from "./types";
+
+// Errors
+export * from "./errors";
 
 // Auth module
 export * from "./auth";
@@ -102,3 +168,11 @@ export * from "./tree";
 
 // Utils module
 export * from "./utils";
+
+// API modules (modularized endpoints)
+export * as TreeAPI from "./api/tree";
+export * as MemoriesAPI from "./api/memories";
+export * as StandardsAPI from "./api/standards";
+export * as UserAPI from "./api/user";
+export * as GenealogiesAPI from "./api/genealogies";
+export * as VocabAPI from "./api/vocab";

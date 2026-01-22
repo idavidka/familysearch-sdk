@@ -5,6 +5,10 @@
  * including pedigree, ancestry, and relationship information.
  */
 
+import { readPersonNotes } from "../api/tree/notes";
+import { readAncestry } from "../api/tree/pedigrees";
+import { readPersonWithDetails as readPersonWithDetailsAPI } from "../api/tree/persons";
+import { readCoupleRelationship } from "../api/tree/relationships";
 import type { FamilySearchSDK } from "../client";
 import type {
 	EnhancedPedigreeData,
@@ -62,11 +66,9 @@ export async function fetchPedigree(
 			percent: 0,
 		});
 
-		const currentUser = await sdk.getCurrentUser();
+		const currentUser = await sdk.user.readCurrentUser();
 		targetPersonId =
-			currentUser?.personId ||
-			currentUser?.treeUserId ||
-			currentUser?.id;
+			currentUser?.personId || currentUser?.treeUserId || currentUser?.id;
 
 		if (!targetPersonId) {
 			throw new Error("Could not determine person ID for current user");
@@ -81,8 +83,16 @@ export async function fetchPedigree(
 		percent: 10,
 	});
 
-	const ancestryResponse = await sdk.getAncestry(targetPersonId, generations);
-	const ancestry = ancestryResponse.data as PedigreeData;
+	const ancestryResponse = await readAncestry(
+		sdk,
+		targetPersonId,
+		generations
+	);
+	if (!ancestryResponse) {
+		throw new Error("Failed to fetch ancestry data");
+	}
+
+	const ancestry = ancestryResponse as PedigreeData;
 
 	if (!ancestry.persons || ancestry.persons.length === 0) {
 		throw new Error("No persons found in ancestry");
@@ -112,7 +122,8 @@ export async function fetchPedigree(
 
 			// Fetch full person details with optional sources
 			if (includeDetails) {
-				enhanced.fullDetails = (await sdk.getPersonWithDetails(
+				enhanced.fullDetails = (await readPersonWithDetailsAPI(
+					sdk,
 					person.id,
 					{ sourceDescriptions: includeSourceDescriptions }
 				)) as EnhancedPerson["fullDetails"];
@@ -120,7 +131,8 @@ export async function fetchPedigree(
 
 			// Fetch notes
 			if (includeNotes) {
-				enhanced.notes = (await sdk.getPersonNotes(
+				enhanced.notes = (await readPersonNotes(
+					sdk,
 					person.id
 				)) as EnhancedPerson["notes"];
 			}
@@ -157,7 +169,10 @@ export async function fetchPedigree(
 			try {
 				// Only fetch details for couple relationships
 				if (rel.type?.includes?.("Couple")) {
-					const relDetails = await sdk.getCoupleRelationship(rel.id);
+					const relDetails = await readCoupleRelationship(
+						sdk,
+						rel.id
+					);
 					relationshipsWithDetails.push({
 						...rel,
 						details: relDetails as Relationship["details"],
@@ -207,7 +222,10 @@ export async function fetchPedigree(
 		const relationships = person.fullDetails?.relationships;
 		if (relationships && Array.isArray(relationships)) {
 			relationships.forEach((rel) => {
-				if (rel.type?.includes?.("Couple") && !relationshipIds.has(rel.id)) {
+				if (
+					rel.type?.includes?.("Couple") &&
+					!relationshipIds.has(rel.id)
+				) {
 					relationshipIds.add(rel.id);
 					allRelationships.push({
 						id: rel.id,
@@ -238,46 +256,10 @@ export async function fetchPedigree(
 /**
  * Get current user information
  */
-export async function getCurrentUser(
+export async function readCurrentUser(
 	sdk: FamilySearchSDK
 ): Promise<FamilySearchUser | null> {
-	return sdk.getCurrentUser();
-}
-
-/**
- * Get person by ID with full details
- */
-export async function getPersonWithDetails(
-	sdk: FamilySearchSDK,
-	personId: string,
-	options: { sourceDescriptions?: boolean } = {}
-): Promise<EnhancedPerson | null> {
-	try {
-		const [details, notes] = await Promise.all([
-			sdk.getPersonWithDetails(personId, options),
-			sdk.getPersonNotes(personId),
-		]);
-
-		if (!details) {
-			return null;
-		}
-
-		// The details response contains the person data in persons array
-		const fullDetails = details as EnhancedPerson["fullDetails"];
-		const personData = fullDetails?.persons?.[0];
-
-		if (!personData) {
-			return null;
-		}
-
-		return {
-			...personData,
-			fullDetails: fullDetails,
-			notes: notes as EnhancedPerson["notes"],
-		};
-	} catch {
-		return null;
-	}
+	return sdk.user.readCurrentUser();
 }
 
 /**
@@ -290,4 +272,42 @@ export async function fetchMultiplePersons(
 	const pids = personIds.join(",");
 	const response = await sdk.get(`/platform/tree/persons?pids=${pids}`);
 	return response.data;
+}
+
+/**
+ * PedigreeAPI class provides convenient methods for fetching pedigree and ancestry data.
+ */
+export class PedigreeAPI {
+	constructor(private sdk: FamilySearchSDK) {}
+
+	/**
+	 * Fetch pedigree/ancestry data with enhanced details
+	 */
+	async fetchPedigree(
+		personId?: string,
+		options?: {
+			generations?: number;
+			onProgress?: ProgressCallback;
+			includeDetails?: boolean;
+			includeNotes?: boolean;
+			includeRelationshipDetails?: boolean;
+			includeSourceDescriptions?: boolean;
+		}
+	): Promise<EnhancedPedigreeData> {
+		return fetchPedigree(this.sdk, personId, options);
+	}
+
+	/**
+	 * Get current user information
+	 */
+	async readCurrentUser(): Promise<FamilySearchUser | null> {
+		return readCurrentUser(this.sdk);
+	}
+
+	/**
+	 * Fetch multiple persons at once
+	 */
+	async fetchMultiplePersons(personIds: string[]): Promise<unknown> {
+		return fetchMultiplePersons(this.sdk, personIds);
+	}
 }
