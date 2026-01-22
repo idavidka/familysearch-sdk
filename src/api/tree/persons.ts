@@ -838,6 +838,39 @@ export async function createPersonMemory(
 }
 
 /**
+ * Export person and ancestors as GEDCOM
+ *
+ * Gets the GEDCOM export data for a person and their ancestors.
+ *
+ * @param sdk - SDK instance
+ * @param personId - Person ID to export
+ * @returns GEDCOM data as string, or null if failed
+ */
+export async function exportGEDCOM(
+	sdk: FamilySearchSDK,
+	personId: string
+): Promise<string | null> {
+	try {
+		const response = await sdk.get<string>(
+			`/platform/tree/persons/${personId}/gedcomx`,
+			{
+				headers: {
+					Accept: "application/x-gedcomx-v1+json",
+				},
+			}
+		);
+
+		return typeof response.data === "string" ? response.data : null;
+	} catch (error) {
+		sdk.logger.error(
+			`Failed to export GEDCOM for person ${personId}:`,
+			error
+		);
+		return null;
+	}
+}
+
+/**
  * PersonsAPI class provides a convenient interface for person-related operations.
  * All methods delegate to the functional API implementations.
  */
@@ -954,5 +987,9 @@ export class PersonsAPI {
 
 	async createPersonMemory(personId: string, memoryData: unknown) {
 		return createPersonMemory(this.sdk, personId, memoryData);
+	}
+
+	async exportGEDCOM(personId: string) {
+		return exportGEDCOM(this.sdk, personId);
 	}
 }

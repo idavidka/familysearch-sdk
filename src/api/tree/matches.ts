@@ -536,6 +536,188 @@ export async function deletePersonNotAMatch(
 }
 
 /**
+ * Match person using external GEDCOM data
+ *
+ * Submits person data in GedcomX format to find matching persons in FamilySearch.
+ * This is a higher-level convenience function that constructs a proper GedcomX
+ * person object from simple input data.
+ *
+ * @param sdk - SDK instance
+ * @param person - Person data with name, gender, birth/death/marriage facts
+ * @param options - Match options (collection filter, result count)
+ * @returns Tree person matches response with potential matches
+ *
+ * @example
+ * ```typescript
+ * const matches = await matchPerson(sdk, {
+ *   givenName: 'John',
+ *   familyName: 'Smith',
+ *   birthDate: '1850',
+ *   birthPlace: 'London, England'
+ * }, { count: 20 });
+ * ```
+ */
+export async function matchPerson(
+	sdk: FamilySearchSDK,
+	person: PersonMatchInput,
+	options: PersonMatchOptions = {}
+): Promise<TreePersonMatchesResponse | null> {
+	try {
+		// Build the GedcomX person object for the API
+		const gedcomxPerson: {
+			names?: Array<{
+				nameForms?: Array<{
+					fullText?: string;
+					parts?: Array<{ type?: string; value?: string }>;
+				}>;
+			}>;
+			gender?: { type?: string };
+			facts?: Array<{
+				type?: string;
+				date?: { original?: string };
+				place?: { original?: string };
+			}>;
+		} = {};
+
+		// Add name information
+		if (person.fullName || person.givenName || person.familyName) {
+			const nameParts: Array<{ type?: string; value?: string }> = [];
+			if (person.givenName) {
+				nameParts.push({
+					type: "http://gedcomx.org/Given",
+					value: person.givenName,
+				});
+			}
+			if (person.familyName) {
+				nameParts.push({
+					type: "http://gedcomx.org/Surname",
+					value: person.familyName,
+				});
+			}
+
+			// Build full name, avoiding extra spaces
+			const fullText =
+				person.fullName ||
+				[person.givenName, person.familyName].filter(Boolean).join(" ");
+
+			gedcomxPerson.names = [
+				{
+					nameForms: [
+						{
+							fullText,
+							parts: nameParts.length > 0 ? nameParts : undefined,
+						},
+					],
+				},
+			];
+		}
+
+		// Add gender (validate against known GedcomX types)
+		if (person.gender) {
+			// Normalize gender to proper case and validate
+			const normalizedGender =
+				person.gender.charAt(0).toUpperCase() +
+				person.gender.slice(1).toLowerCase();
+			// Only add if it's a valid GedcomX gender type
+			if (["Male", "Female", "Unknown"].includes(normalizedGender)) {
+				gedcomxPerson.gender = {
+					type: `http://gedcomx.org/${normalizedGender}`,
+				};
+			}
+		}
+
+		// Add facts (birth, death, marriage)
+		const facts: Array<{
+			type?: string;
+			date?: { original?: string };
+			place?: { original?: string };
+		}> = [];
+
+		if (person.birthDate || person.birthPlace) {
+			facts.push({
+				type: "http://gedcomx.org/Birth",
+				date: person.birthDate ? { original: person.birthDate } : undefined,
+				place: person.birthPlace
+					? { original: person.birthPlace }
+					: undefined,
+			});
+		}
+
+		if (person.deathDate || person.deathPlace) {
+			facts.push({
+				type: "http://gedcomx.org/Death",
+				date: person.deathDate ? { original: person.deathDate } : undefined,
+				place: person.deathPlace
+					? { original: person.deathPlace }
+					: undefined,
+			});
+		}
+
+		if (person.marriageDate || person.marriagePlace) {
+			facts.push({
+				type: "http://gedcomx.org/Marriage",
+				date: person.marriageDate
+					? { original: person.marriageDate }
+					: undefined,
+				place: person.marriagePlace
+					? { original: person.marriagePlace }
+					: undefined,
+			});
+		}
+
+		if (facts.length > 0) {
+			gedcomxPerson.facts = facts;
+		}
+
+		// Build query parameters
+		const params = new URLSearchParams();
+		if (options.collection) {
+			params.append("collection", options.collection);
+		}
+		if (options.count !== undefined) {
+			params.append("count", options.count.toString());
+		}
+
+		const queryString = params.toString();
+		const url = `/platform/tree/matches${queryString ? `?${queryString}` : ""}`;
+
+		// Create a source description for the external GEDCOM person
+		const sourceDescription = {
+			id: "sd1",
+			about: "#primaryPerson",
+			resourceType: "http://gedcomx.org/DigitalArtifact",
+			titles: [
+				{
+					value: "External GEDCOM File",
+				},
+			],
+		};
+
+		// Submit the person data to the matches endpoint
+		// The description field links to the source description via fragment identifier
+		const requestBody = {
+			description: "#sd1",
+			persons: [
+				{
+					id: "primaryPerson",
+					...gedcomxPerson,
+				},
+			],
+			sourceDescriptions: [sourceDescription],
+		};
+
+		const response = await sdk.post<TreePersonMatchesResponse>(
+			url,
+			requestBody
+		);
+		return response.data || null;
+	} catch (error) {
+		sdk.logger.error("[FamilySearch SDK] Failed to match person:", error);
+		return null;
+	}
+}
+
+/**
  * Find person matches by example (GEDCOM X)
  *
  * Searches for matching persons in the FamilySearch tree using a GEDCOM X document.
@@ -693,6 +875,13 @@ export class MatchesAPI {
 
 	async deletePersonNotAMatch(personId: string, notAMatchPersonId: string) {
 		return deletePersonNotAMatch(this.sdk, personId, notAMatchPersonId);
+	}
+
+	async matchPerson(
+		person: PersonMatchInput,
+		options: PersonMatchOptions = {}
+	) {
+		return matchPerson(this.sdk, person, options);
 	}
 
 	async performPersonMatchesByExample(gedcomxData: unknown) {

@@ -39,6 +39,7 @@ export {
 	deletePersonSourceReference,
 	deleteTreePersonReference,
 	createPersonMemory,
+	exportGEDCOM,
 } from "./persons";
 
 // Relationships API
@@ -75,7 +76,7 @@ export {
 export { readAncestry, readDescendancy } from "./pedigrees";
 
 // Search API
-export { searchPersons } from "./search";
+export { searchPersons, searchPersonByData } from "./search";
 
 // Matches API
 export {
@@ -91,6 +92,7 @@ export {
 	deletePersonNotAMatches,
 	deletePersonNotAMatch,
 	readTreeMatches,
+	matchPerson,
 	performPersonMatchesByExample,
 } from "./matches";
 
