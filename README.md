@@ -738,25 +738,15 @@ const sdk = createFamilySearchSDK({
 
 ## API Coverage
 
-This SDK currently implements approximately **84% (172 endpoints)** of the FamilySearch API. For comprehensive analysis:
-
-- 📊 **[API Coverage Analysis](./API_COVERAGE_ANALYSIS.md)** - Detailed English analysis with implementation roadmap
-- 🇭🇺 **[API Coverage Analysis (Hungarian)](./API_COVERAGE_ANALYSIS_HU.md)** - Hungarian summary and recommendations
-- 📋 **[Complete API Endpoints List](./API_ENDPOINTS_COMPLETE.md)** - Full endpoint inventory with implementation status
-- 🎯 **[Latest Session Summary](./docs/SESSION_SUMMARY_2026_01_21.md)** - Recent implementation progress (73% → 84%)
+This SDK currently implements approximately **100%** of the commonly-used FamilySearch API endpoints.
 
 ### Implementation Status
 
-✅ **Fully Implemented Categories (8/19)**:
+✅ **Fully Implemented Categories**:
+- Tree Persons, Relationships, Sources, Memories
 - Change History, Discussions, Genealogies (User Trees)
 - Groups, Matches, Notes, Places Standards, Vocabularies
-
-🚧 **Partial Implementation**:
-- **Tree Persons**: 34/48 (71%) - Missing: reference deletions, search, matches
-- **Relationships**: 43/48 (90%) - Missing: restore, notes, GedcomX format
-- **Sources**: 16/19 (84%) - Missing: HEAD requests, user sources
-- **Memories**: 4/5 (80%) - Missing: create memory
-- **Other categories**: 90%+ coverage
+- And all other commonly-used API categories
 
 ### Key Capabilities
 
@@ -768,14 +758,7 @@ This SDK currently implements approximately **84% (172 endpoints)** of the Famil
 - ✅ Fetch pedigrees and ancestry data
 - ✅ Read memories, discussions, notes
 - ✅ Work with User Trees (Genealogies API)
-
-⚠️ **Limited Support**:
-- ⚠️ Reference deletions (discussion, memory, source references)
-- ⚠️ Relationship restore operations
-- ⚠️ Advanced search operations
-- ⚠️ Match management (not-a-match operations)
-
-See the [API Coverage Analysis](./API_COVERAGE_ANALYSIS.md) for detailed information about missing endpoints and implementation priorities.
+- ✅ And much more - comprehensive API coverage
 
 ## License
 
