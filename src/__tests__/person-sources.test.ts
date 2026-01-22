@@ -27,14 +27,20 @@ describe("Person Sources API", () => {
 								descriptionId: "source-1",
 								description: "#source-1",
 								qualifiers: [
-									{ name: "http://gedcomx.org/Name", value: "Birth" },
+									{
+										name: "http://gedcomx.org/Name",
+										value: "Birth",
+									},
 								],
 							},
 							{
 								descriptionId: "source-2",
 								description: "#source-2",
 								qualifiers: [
-									{ name: "http://gedcomx.org/Name", value: "Census" },
+									{
+										name: "http://gedcomx.org/Name",
+										value: "Census",
+									},
 								],
 							},
 						],
@@ -54,7 +60,9 @@ describe("Person Sources API", () => {
 						id: "source-2",
 						about: "https://example.com/source2",
 						titles: [{ value: "1910 US Census" }],
-						citations: [{ value: "US Census, 1910, County Records" }],
+						citations: [
+							{ value: "US Census, 1910, County Records" },
+						],
 						resourceType: "http://gedcomx.org/PhysicalArtifact",
 					},
 				],
@@ -68,7 +76,7 @@ describe("Person Sources API", () => {
 				json: async () => mockResponse,
 			});
 
-			const result = await sdk.getPersonSources("KWQS-BBQ");
+			const result = await sdk.persons.readPersonSources("KWQS-BBQ");
 
 			expect(fetch).toHaveBeenCalledWith(
 				"https://api-integ.familysearch.org/platform/tree/persons/KWQS-BBQ/sources",
@@ -95,7 +103,7 @@ describe("Person Sources API", () => {
 				json: async () => ({ error: "Person not found" }),
 			});
 
-			const result = await sdk.getPersonSources("INVALID-ID");
+			const result = await sdk.persons.readPersonSources("INVALID-ID");
 
 			expect(result).toBeNull();
 		});
@@ -119,7 +127,7 @@ describe("Person Sources API", () => {
 				json: async () => mockResponse,
 			});
 
-			const result = await sdk.getPersonSources("KWQS-BBQ");
+			const result = await sdk.persons.readPersonSources("KWQS-BBQ");
 
 			expect(result).toEqual(mockResponse);
 			expect(result?.persons?.[0]?.sources).toHaveLength(0);
@@ -138,7 +146,8 @@ describe("Person Sources API", () => {
 				json: async () => ({ error: "Unauthorized" }),
 			});
 
-			const result = await unauthorizedSDK.getPersonSources("KWQS-BBQ");
+			const result =
+				await unauthorizedSDK.persons.readPersonSources("KWQS-BBQ");
 
 			expect(result).toBeNull();
 		});
@@ -148,7 +157,7 @@ describe("Person Sources API", () => {
 				new Error("Network error")
 			);
 
-			const result = await sdk.getPersonSources("KWQS-BBQ");
+			const result = await sdk.persons.readPersonSources("KWQS-BBQ");
 
 			expect(result).toBeNull();
 		});
@@ -173,7 +182,7 @@ describe("Person Sources API", () => {
 				.mockResolvedValueOnce(mockResponse)
 				.mockResolvedValueOnce(mockResponse);
 
-			const result = await sdk.getPersonSources("KWQS-BBQ");
+			const result = await sdk.persons.readPersonSources("KWQS-BBQ");
 
 			expect(result).toBeNull();
 		}, 10000); // Increase timeout for retry delays
@@ -187,7 +196,7 @@ describe("Person Sources API", () => {
 				json: async () => ({ error: "Server error" }),
 			});
 
-			const result = await sdk.getPersonSources("KWQS-BBQ");
+			const result = await sdk.persons.readPersonSources("KWQS-BBQ");
 
 			expect(result).toBeNull();
 		});
@@ -210,7 +219,7 @@ describe("Person Sources API", () => {
 				json: async () => mockResponse,
 			});
 
-			await prodSdk.getPersonSources("TEST-123");
+			await prodSdk.persons.readPersonSources("TEST-123");
 
 			expect(fetch).toHaveBeenCalledWith(
 				"https://api.familysearch.org/platform/tree/persons/TEST-123/sources",
@@ -229,7 +238,7 @@ describe("Person Sources API", () => {
 				},
 			});
 
-			const result = await sdk.getPersonSources("KWQS-BBQ");
+			const result = await sdk.persons.readPersonSources("KWQS-BBQ");
 
 			// Should still complete but with undefined data
 			expect(result).toBeNull();
@@ -244,7 +253,10 @@ describe("Person Sources API", () => {
 							{
 								descriptionId: "source-1",
 								qualifiers: [
-									{ name: "http://gedcomx.org/Name", value: "Birth" },
+									{
+										name: "http://gedcomx.org/Name",
+										value: "Birth",
+									},
 									{
 										name: "http://gedcomx.org/Gender",
 										value: "Male",
@@ -270,7 +282,7 @@ describe("Person Sources API", () => {
 				json: async () => mockResponse,
 			});
 
-			const result = await sdk.getPersonSources("KWQS-BBQ");
+			const result = await sdk.persons.readPersonSources("KWQS-BBQ");
 
 			expect(result?.persons?.[0]?.sources?.[0]?.qualifiers).toHaveLength(
 				2

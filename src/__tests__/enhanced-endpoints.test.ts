@@ -34,14 +34,12 @@ describe("Enhanced API Endpoints", () => {
 				}),
 			});
 
-			const result = await sdk.getPersonDiscussions("KWQS-BBQ");
+			const result = await sdk.persons.readPersonDiscussions("KWQS-BBQ");
 
 			expect(result).not.toBeNull();
 			expect(result?.discussions).toHaveLength(1);
 			expect(result?.discussions?.[0].id).toBe("DISC-001");
-			expect(result?.discussions?.[0].title).toBe(
-				"Birth Date Question"
-			);
+			expect(result?.discussions?.[0].title).toBe("Birth Date Question");
 		});
 
 		it("should return null for non-existent person ID (404)", async () => {
@@ -53,7 +51,8 @@ describe("Enhanced API Endpoints", () => {
 				json: async () => ({ error: "Person not found" }),
 			});
 
-			const result = await sdk.getPersonDiscussions("INVALID-ID");
+			const result =
+				await sdk.persons.readPersonDiscussions("INVALID-ID");
 
 			expect(result).toBeNull();
 		});
@@ -69,7 +68,7 @@ describe("Enhanced API Endpoints", () => {
 				}),
 			});
 
-			const result = await sdk.getPersonDiscussions("KWQS-BBQ");
+			const result = await sdk.persons.readPersonDiscussions("KWQS-BBQ");
 
 			expect(result).not.toBeNull();
 			expect(result?.discussions).toHaveLength(0);
@@ -96,7 +95,7 @@ describe("Enhanced API Endpoints", () => {
 				}),
 			});
 
-			const result = await sdk.getPersonPortraits("KWQS-BBQ");
+			const result = await sdk.persons.readPersonPortraits("KWQS-BBQ");
 
 			expect(result).not.toBeNull();
 			expect(result?.sourceDescriptions).toHaveLength(1);
@@ -115,7 +114,7 @@ describe("Enhanced API Endpoints", () => {
 				json: async () => ({ error: "Authentication required" }),
 			});
 
-			const result = await sdk.getPersonPortraits("KWQS-BBQ");
+			const result = await sdk.persons.readPersonPortraits("KWQS-BBQ");
 
 			expect(result).toBeNull();
 		});
@@ -146,7 +145,8 @@ describe("Enhanced API Endpoints", () => {
 				}),
 			});
 
-			const result = await sdk.getPersonChangeHistory("KWQS-BBQ");
+			const result =
+				await sdk.persons.readPersonChangeHistory("KWQS-BBQ");
 
 			expect(result).not.toBeNull();
 			expect(result?.entries).toHaveLength(1);
@@ -163,7 +163,8 @@ describe("Enhanced API Endpoints", () => {
 				json: async () => ({ error: "Server error" }),
 			});
 
-			const result = await sdk.getPersonChangeHistory("KWQS-BBQ");
+			const result =
+				await sdk.persons.readPersonChangeHistory("KWQS-BBQ");
 
 			expect(result).toBeNull();
 		});
@@ -179,7 +180,8 @@ describe("Enhanced API Endpoints", () => {
 				}),
 			});
 
-			const result = await sdk.getPersonChangeHistory("KWQS-BBQ");
+			const result =
+				await sdk.persons.readPersonChangeHistory("KWQS-BBQ");
 
 			expect(result).not.toBeNull();
 			expect(result?.entries).toHaveLength(0);

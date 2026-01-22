@@ -36,8 +36,14 @@ describe("Person Match API (External GEDCOM)", () => {
 													{
 														fullText: "John Smith",
 														parts: [
-															{ type: "http://gedcomx.org/Given", value: "John" },
-															{ type: "http://gedcomx.org/Surname", value: "Smith" },
+															{
+																type: "http://gedcomx.org/Given",
+																value: "John",
+															},
+															{
+																type: "http://gedcomx.org/Surname",
+																value: "Smith",
+															},
 														],
 													},
 												],
@@ -71,7 +77,7 @@ describe("Person Match API (External GEDCOM)", () => {
 				birthPlace: "London, England",
 			};
 
-			const result = await sdk.matchPerson(person);
+			const result = await sdk.matches.matchPerson(person);
 
 			expect(fetch).toHaveBeenCalledWith(
 				"https://api-integ.familysearch.org/platform/tree/matches",
@@ -86,11 +92,18 @@ describe("Person Match API (External GEDCOM)", () => {
 			);
 
 			// Verify the body structure
-			const callArgs = (global.fetch as ReturnType<typeof vi.fn>).mock.calls[0];
+			const callArgs = (global.fetch as ReturnType<typeof vi.fn>).mock
+				.calls[0];
 			const body = JSON.parse(callArgs[1].body);
-			expect(body.persons[0].names[0].nameForms[0].parts[0].value).toBe("John");
-			expect(body.persons[0].names[0].nameForms[0].parts[1].value).toBe("Smith");
-			expect(body.persons[0].facts[0].type).toBe("http://gedcomx.org/Birth");
+			expect(body.persons[0].names[0].nameForms[0].parts[0].value).toBe(
+				"John"
+			);
+			expect(body.persons[0].names[0].nameForms[0].parts[1].value).toBe(
+				"Smith"
+			);
+			expect(body.persons[0].facts[0].type).toBe(
+				"http://gedcomx.org/Birth"
+			);
 
 			expect(result).toEqual(mockResponse);
 			expect(result?.entries).toHaveLength(1);
@@ -116,16 +129,19 @@ describe("Person Match API (External GEDCOM)", () => {
 				birthPlace: "New York, New York, USA",
 			};
 
-			const result = await sdk.matchPerson(person);
+			const result = await sdk.matches.matchPerson(person);
 
 			expect(fetch).toHaveBeenCalledWith(
 				"https://api-integ.familysearch.org/platform/tree/matches",
 				expect.anything()
 			);
 
-			const callArgs = (global.fetch as ReturnType<typeof vi.fn>).mock.calls[0];
+			const callArgs = (global.fetch as ReturnType<typeof vi.fn>).mock
+				.calls[0];
 			const body = JSON.parse(callArgs[1].body);
-			expect(body.persons[0].names[0].nameForms[0].fullText).toBe("Mary Elizabeth Jones");
+			expect(body.persons[0].names[0].nameForms[0].fullText).toBe(
+				"Mary Elizabeth Jones"
+			);
 		});
 
 		it("should match person with gender information", async () => {
@@ -148,11 +164,14 @@ describe("Person Match API (External GEDCOM)", () => {
 				birthDate: "1880",
 			};
 
-			await sdk.matchPerson(person);
+			await sdk.matches.matchPerson(person);
 
-			const callArgs = (global.fetch as ReturnType<typeof vi.fn>).mock.calls[0];
+			const callArgs = (global.fetch as ReturnType<typeof vi.fn>).mock
+				.calls[0];
 			const body = JSON.parse(callArgs[1].body);
-			expect(body.persons[0].gender.type).toBe("http://gedcomx.org/Female");
+			expect(body.persons[0].gender.type).toBe(
+				"http://gedcomx.org/Female"
+			);
 		});
 
 		it("should match person with birth and death information", async () => {
@@ -185,12 +204,13 @@ describe("Person Match API (External GEDCOM)", () => {
 				deathPlace: "Chicago, Illinois",
 			};
 
-			await sdk.matchPerson(person);
+			await sdk.matches.matchPerson(person);
 
-			const callArgs = (global.fetch as ReturnType<typeof vi.fn>).mock.calls[0];
+			const callArgs = (global.fetch as ReturnType<typeof vi.fn>).mock
+				.calls[0];
 			const body = JSON.parse(callArgs[1].body);
 			const facts = body.persons[0].facts;
-			
+
 			expect(facts).toHaveLength(2);
 			expect(facts[0].type).toBe("http://gedcomx.org/Birth");
 			expect(facts[0].date.original).toBe("1825");
@@ -220,14 +240,16 @@ describe("Person Match API (External GEDCOM)", () => {
 				marriagePlace: "London, England",
 			};
 
-			await sdk.matchPerson(person);
+			await sdk.matches.matchPerson(person);
 
-			const callArgs = (global.fetch as ReturnType<typeof vi.fn>).mock.calls[0];
+			const callArgs = (global.fetch as ReturnType<typeof vi.fn>).mock
+				.calls[0];
 			const body = JSON.parse(callArgs[1].body);
 			const marriageFact = body.persons[0].facts.find(
-				(f: { type: string }) => f.type === "http://gedcomx.org/Marriage"
+				(f: { type: string }) =>
+					f.type === "http://gedcomx.org/Marriage"
 			);
-			
+
 			expect(marriageFact).toBeDefined();
 			expect(marriageFact.date.original).toBe("1850");
 			expect(marriageFact.place.original).toBe("London, England");
@@ -251,7 +273,7 @@ describe("Person Match API (External GEDCOM)", () => {
 				familyName: "Anderson",
 			};
 
-			await sdk.matchPerson(person, {
+			await sdk.matches.matchPerson(person, {
 				collection: "census",
 			});
 
@@ -279,7 +301,7 @@ describe("Person Match API (External GEDCOM)", () => {
 				familyName: "Wilson",
 			};
 
-			await sdk.matchPerson(person, {
+			await sdk.matches.matchPerson(person, {
 				count: 50,
 			});
 
@@ -307,7 +329,7 @@ describe("Person Match API (External GEDCOM)", () => {
 				familyName: "Taylor",
 			};
 
-			await sdk.matchPerson(person, {
+			await sdk.matches.matchPerson(person, {
 				collection: "census",
 				count: 30,
 			});
@@ -331,7 +353,7 @@ describe("Person Match API (External GEDCOM)", () => {
 				givenName: "Invalid",
 			};
 
-			const result = await sdk.matchPerson(person);
+			const result = await sdk.matches.matchPerson(person);
 
 			expect(result).toBeNull();
 		});
@@ -346,7 +368,7 @@ describe("Person Match API (External GEDCOM)", () => {
 				familyName: "User",
 			};
 
-			const result = await sdk.matchPerson(person);
+			const result = await sdk.matches.matchPerson(person);
 
 			expect(result).toBeNull();
 		});
@@ -369,7 +391,7 @@ describe("Person Match API (External GEDCOM)", () => {
 				familyName: "Doe",
 			};
 
-			const result = await unauthorizedSDK.matchPerson(person);
+			const result = await unauthorizedSDK.matches.matchPerson(person);
 
 			expect(result).toBeNull();
 		});
@@ -397,7 +419,7 @@ describe("Person Match API (External GEDCOM)", () => {
 				familyName: "Person",
 			};
 
-			await prodSdk.matchPerson(person);
+			await prodSdk.matches.matchPerson(person);
 
 			expect(fetch).toHaveBeenCalledWith(
 				"https://api.familysearch.org/platform/tree/matches",
@@ -428,7 +450,7 @@ describe("Person Match API (External GEDCOM)", () => {
 				familyName: "Test",
 			};
 
-			await betaSdk.matchPerson(person);
+			await betaSdk.matches.matchPerson(person);
 
 			expect(fetch).toHaveBeenCalledWith(
 				"https://apibeta.familysearch.org/platform/tree/matches",
@@ -453,12 +475,15 @@ describe("Person Match API (External GEDCOM)", () => {
 				givenName: "John",
 			};
 
-			const result = await sdk.matchPerson(person);
+			const result = await sdk.matches.matchPerson(person);
 
 			expect(result).toEqual(mockResponse);
-			const callArgs = (global.fetch as ReturnType<typeof vi.fn>).mock.calls[0];
+			const callArgs = (global.fetch as ReturnType<typeof vi.fn>).mock
+				.calls[0];
 			const body = JSON.parse(callArgs[1].body);
-			expect(body.persons[0].names[0].nameForms[0].parts[0].value).toBe("John");
+			expect(body.persons[0].names[0].nameForms[0].parts[0].value).toBe(
+				"John"
+			);
 		});
 
 		it("should handle person with only family name", async () => {
@@ -479,11 +504,14 @@ describe("Person Match API (External GEDCOM)", () => {
 				birthDate: "1800",
 			};
 
-			await sdk.matchPerson(person);
+			await sdk.matches.matchPerson(person);
 
-			const callArgs = (global.fetch as ReturnType<typeof vi.fn>).mock.calls[0];
+			const callArgs = (global.fetch as ReturnType<typeof vi.fn>).mock
+				.calls[0];
 			const body = JSON.parse(callArgs[1].body);
-			expect(body.persons[0].names[0].nameForms[0].parts[0].value).toBe("Smith");
+			expect(body.persons[0].names[0].nameForms[0].parts[0].value).toBe(
+				"Smith"
+			);
 		});
 
 		it("should handle person with only dates (no places)", async () => {
@@ -506,12 +534,13 @@ describe("Person Match API (External GEDCOM)", () => {
 				deathDate: "1900",
 			};
 
-			await sdk.matchPerson(person);
+			await sdk.matches.matchPerson(person);
 
-			const callArgs = (global.fetch as ReturnType<typeof vi.fn>).mock.calls[0];
+			const callArgs = (global.fetch as ReturnType<typeof vi.fn>).mock
+				.calls[0];
 			const body = JSON.parse(callArgs[1].body);
 			const facts = body.persons[0].facts;
-			
+
 			expect(facts[0].date).toBeDefined();
 			expect(facts[0].place).toBeUndefined();
 			expect(facts[1].date).toBeDefined();
@@ -538,12 +567,13 @@ describe("Person Match API (External GEDCOM)", () => {
 				deathPlace: "Berlin, Germany",
 			};
 
-			await sdk.matchPerson(person);
+			await sdk.matches.matchPerson(person);
 
-			const callArgs = (global.fetch as ReturnType<typeof vi.fn>).mock.calls[0];
+			const callArgs = (global.fetch as ReturnType<typeof vi.fn>).mock
+				.calls[0];
 			const body = JSON.parse(callArgs[1].body);
 			const facts = body.persons[0].facts;
-			
+
 			expect(facts[0].date).toBeUndefined();
 			expect(facts[0].place).toBeDefined();
 			expect(facts[1].date).toBeUndefined();
@@ -584,20 +614,23 @@ describe("Person Match API (External GEDCOM)", () => {
 				marriagePlace: "Chester, Cheshire, England",
 			};
 
-			const result = await sdk.matchPerson(person);
+			const result = await sdk.matches.matchPerson(person);
 
 			expect(result?.entries?.[0]?.content?.score).toBe(99);
-			
-			const callArgs = (global.fetch as ReturnType<typeof vi.fn>).mock.calls[0];
+
+			const callArgs = (global.fetch as ReturnType<typeof vi.fn>).mock
+				.calls[0];
 			const body = JSON.parse(callArgs[1].body);
 			const personData = body.persons[0];
-			
+
 			expect(personData.names[0].nameForms[0].parts).toHaveLength(2);
 			expect(personData.gender.type).toBe("http://gedcomx.org/Female");
 			expect(personData.facts).toHaveLength(3);
 			expect(personData.facts[0].type).toBe("http://gedcomx.org/Birth");
 			expect(personData.facts[1].type).toBe("http://gedcomx.org/Death");
-			expect(personData.facts[2].type).toBe("http://gedcomx.org/Marriage");
+			expect(personData.facts[2].type).toBe(
+				"http://gedcomx.org/Marriage"
+			);
 		});
 
 		it("should handle empty person data gracefully", async () => {
@@ -615,11 +648,12 @@ describe("Person Match API (External GEDCOM)", () => {
 
 			const person: PersonMatchInput = {};
 
-			await sdk.matchPerson(person);
+			await sdk.matches.matchPerson(person);
 
-			const callArgs = (global.fetch as ReturnType<typeof vi.fn>).mock.calls[0];
+			const callArgs = (global.fetch as ReturnType<typeof vi.fn>).mock
+				.calls[0];
 			const body = JSON.parse(callArgs[1].body);
-			
+
 			// Should still create a persons array with an empty person object
 			expect(body.persons).toHaveLength(1);
 		});
@@ -643,12 +677,15 @@ describe("Person Match API (External GEDCOM)", () => {
 				gender: "female", // lowercase
 			};
 
-			await sdk.matchPerson(person);
+			await sdk.matches.matchPerson(person);
 
-			const callArgs = (global.fetch as ReturnType<typeof vi.fn>).mock.calls[0];
+			const callArgs = (global.fetch as ReturnType<typeof vi.fn>).mock
+				.calls[0];
 			const body = JSON.parse(callArgs[1].body);
 			// Should normalize to proper case
-			expect(body.persons[0].gender.type).toBe("http://gedcomx.org/Female");
+			expect(body.persons[0].gender.type).toBe(
+				"http://gedcomx.org/Female"
+			);
 		});
 
 		it("should ignore invalid gender values", async () => {
@@ -670,9 +707,10 @@ describe("Person Match API (External GEDCOM)", () => {
 				gender: "Invalid", // invalid value
 			};
 
-			await sdk.matchPerson(person);
+			await sdk.matches.matchPerson(person);
 
-			const callArgs = (global.fetch as ReturnType<typeof vi.fn>).mock.calls[0];
+			const callArgs = (global.fetch as ReturnType<typeof vi.fn>).mock
+				.calls[0];
 			const body = JSON.parse(callArgs[1].body);
 			// Gender should not be included
 			expect(body.persons[0].gender).toBeUndefined();
@@ -695,12 +733,15 @@ describe("Person Match API (External GEDCOM)", () => {
 				familyName: "Smith",
 			};
 
-			await sdk.matchPerson(person);
+			await sdk.matches.matchPerson(person);
 
-			const callArgs = (global.fetch as ReturnType<typeof vi.fn>).mock.calls[0];
+			const callArgs = (global.fetch as ReturnType<typeof vi.fn>).mock
+				.calls[0];
 			const body = JSON.parse(callArgs[1].body);
 			// Should not have leading/trailing spaces
-			expect(body.persons[0].names[0].nameForms[0].fullText).toBe("Smith");
+			expect(body.persons[0].names[0].nameForms[0].fullText).toBe(
+				"Smith"
+			);
 		});
 
 		it("should handle name with only givenName without extra spaces", async () => {
@@ -720,9 +761,10 @@ describe("Person Match API (External GEDCOM)", () => {
 				givenName: "John",
 			};
 
-			await sdk.matchPerson(person);
+			await sdk.matches.matchPerson(person);
 
-			const callArgs = (global.fetch as ReturnType<typeof vi.fn>).mock.calls[0];
+			const callArgs = (global.fetch as ReturnType<typeof vi.fn>).mock
+				.calls[0];
 			const body = JSON.parse(callArgs[1].body);
 			// Should not have leading/trailing spaces
 			expect(body.persons[0].names[0].nameForms[0].fullText).toBe("John");

@@ -16,7 +16,7 @@ describe("Tree Person Matches API", () => {
 		vi.clearAllMocks();
 	});
 
-	describe("getTreePersonMatches", () => {
+	describe("matches.readPersonMatches", () => {
 		it("should fetch matches for a valid person ID", async () => {
 			const mockResponse: TreePersonMatchesResponse = {
 				sourceDescriptions: [
@@ -24,7 +24,9 @@ describe("Tree Person Matches API", () => {
 						id: "match-1",
 						about: "https://example.com/record1",
 						titles: [{ value: "1900 US Census Record" }],
-						citations: [{ value: "US Census, 1900, County Records" }],
+						citations: [
+							{ value: "US Census, 1900, County Records" },
+						],
 						resourceType: "http://gedcomx.org/DigitalArtifact",
 					},
 					{
@@ -61,7 +63,7 @@ describe("Tree Person Matches API", () => {
 				json: async () => mockResponse,
 			});
 
-			const result = await sdk.getTreePersonMatches("KWQS-BBQ");
+			const result = await sdk.matches.readPersonMatches("KWQS-BBQ");
 
 			expect(fetch).toHaveBeenCalledWith(
 				"https://api-integ.familysearch.org/platform/tree/persons/KWQS-BBQ/matches",
@@ -93,7 +95,7 @@ describe("Tree Person Matches API", () => {
 				json: async () => mockResponse,
 			});
 
-			await sdk.getTreePersonMatches("KWQS-BBQ", {
+			await sdk.matches.readPersonMatches("KWQS-BBQ", {
 				status: "pending",
 				collection: "census",
 				count: 20,
@@ -115,7 +117,7 @@ describe("Tree Person Matches API", () => {
 				json: async () => ({ error: "Person not found" }),
 			});
 
-			const result = await sdk.getTreePersonMatches("INVALID-ID");
+			const result = await sdk.matches.readPersonMatches("INVALID-ID");
 
 			expect(result).toBeNull();
 		});
@@ -134,7 +136,7 @@ describe("Tree Person Matches API", () => {
 				json: async () => mockResponse,
 			});
 
-			const result = await sdk.getTreePersonMatches("KWQS-BBQ");
+			const result = await sdk.matches.readPersonMatches("KWQS-BBQ");
 
 			expect(result).toEqual(mockResponse);
 			expect(result?.sourceDescriptions).toHaveLength(0);
@@ -153,7 +155,8 @@ describe("Tree Person Matches API", () => {
 				json: async () => ({ error: "Unauthorized" }),
 			});
 
-			const result = await unauthorizedSDK.getTreePersonMatches("KWQS-BBQ");
+			const result =
+				await unauthorizedSDK.matches.readPersonMatches("KWQS-BBQ");
 
 			expect(result).toBeNull();
 		});
@@ -163,7 +166,7 @@ describe("Tree Person Matches API", () => {
 				new Error("Network error")
 			);
 
-			const result = await sdk.getTreePersonMatches("KWQS-BBQ");
+			const result = await sdk.matches.readPersonMatches("KWQS-BBQ");
 
 			expect(result).toBeNull();
 		});
@@ -188,7 +191,7 @@ describe("Tree Person Matches API", () => {
 				.mockResolvedValueOnce(mockResponse)
 				.mockResolvedValueOnce(mockResponse);
 
-			const result = await sdk.getTreePersonMatches("KWQS-BBQ");
+			const result = await sdk.matches.readPersonMatches("KWQS-BBQ");
 
 			expect(result).toBeNull();
 		}, 10000); // Increase timeout for retry delays
@@ -202,7 +205,7 @@ describe("Tree Person Matches API", () => {
 				json: async () => ({ error: "Server error" }),
 			});
 
-			const result = await sdk.getTreePersonMatches("KWQS-BBQ");
+			const result = await sdk.matches.readPersonMatches("KWQS-BBQ");
 
 			expect(result).toBeNull();
 		});
@@ -225,7 +228,7 @@ describe("Tree Person Matches API", () => {
 				json: async () => mockResponse,
 			});
 
-			await prodSdk.getTreePersonMatches("TEST-123");
+			await prodSdk.matches.readPersonMatches("TEST-123");
 
 			expect(fetch).toHaveBeenCalledWith(
 				"https://api.familysearch.org/platform/tree/persons/TEST-123/matches",
@@ -244,7 +247,7 @@ describe("Tree Person Matches API", () => {
 				},
 			});
 
-			const result = await sdk.getTreePersonMatches("KWQS-BBQ");
+			const result = await sdk.matches.readPersonMatches("KWQS-BBQ");
 
 			// Should still complete but with null data
 			expect(result).toBeNull();
@@ -263,7 +266,7 @@ describe("Tree Person Matches API", () => {
 				json: async () => mockResponse,
 			});
 
-			await sdk.getTreePersonMatches("KWQS-BBQ", {
+			await sdk.matches.readPersonMatches("KWQS-BBQ", {
 				status: "pending",
 			});
 
@@ -300,7 +303,7 @@ describe("Tree Person Matches API", () => {
 				json: async () => mockResponse,
 			});
 
-			const result = await sdk.getTreePersonMatches("KWQS-BBQ");
+			const result = await sdk.matches.readPersonMatches("KWQS-BBQ");
 
 			expect(result?.entries?.[0]?.content?.score).toBe(98);
 			expect(result?.entries?.[0]?.title).toBe("High Confidence Match");
@@ -317,7 +320,7 @@ describe("Tree Person Matches API", () => {
 				json: async () => mockResponse,
 			});
 
-			const result = await sdk.getTreePersonMatches("KWQS-BBQ");
+			const result = await sdk.matches.readPersonMatches("KWQS-BBQ");
 
 			expect(result).toEqual(mockResponse);
 		});
@@ -340,7 +343,7 @@ describe("Tree Person Matches API", () => {
 				json: async () => mockResponse,
 			});
 
-			await betaSdk.getTreePersonMatches("TEST-123");
+			await betaSdk.matches.readPersonMatches("TEST-123");
 
 			expect(fetch).toHaveBeenCalledWith(
 				"https://apibeta.familysearch.org/platform/tree/persons/TEST-123/matches",
