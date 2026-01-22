@@ -14,6 +14,9 @@ import type {
 	NotAMatchResponse,
 	NotAMatchInput,
 	DeleteResponse,
+	PersonMatchInput,
+	PersonMatchOptions,
+	TreePersonMatchesResponse,
 } from "../../types";
 
 /**

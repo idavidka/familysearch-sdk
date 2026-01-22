@@ -66,7 +66,7 @@ export async function fetchPedigree(
 			percent: 0,
 		});
 
-		const currentUser = await sdk.readCurrentUser();
+		const currentUser = await sdk.user.readCurrentUser();
 		targetPersonId =
 			currentUser?.personId || currentUser?.treeUserId || currentUser?.id;
 
@@ -259,7 +259,7 @@ export async function fetchPedigree(
 export async function readCurrentUser(
 	sdk: FamilySearchSDK
 ): Promise<FamilySearchUser | null> {
-	return sdk.readCurrentUser();
+	return sdk.user.readCurrentUser();
 }
 
 /**
