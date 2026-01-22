@@ -21,34 +21,129 @@ import type {
 } from "../../types";
 
 /**
+ * Place search query parameters
+ *
+ * Structured parameters for building FamilySearch Places API queries.
+ * All name-value pairs support '+' operator to require, '-' to exclude.
+ *
+ * @see https://developers.familysearch.org/main/reference/readplaces
+ */
+export interface PlaceSearchQuery {
+	/** The name of the place. Supports '?' and '*' wildcards (not at beginning). 
+	 * Supports '~' suffix for fuzzy search. Example: 'New York, New York' */
+	name?: string;
+	/** Partial name for type-ahead use cases. If used, 'name' parameter is ignored. */
+	partialName?: string;
+	/** Date or date range. Use '+' prefix to require. Format: YYYY or YYYY/YYYY. 
+	 * Example: '+date:1800/1900' or 'date:1823' */
+	date?: string;
+	/** Place type ID. Use '+' to require, '-' to exclude. Example: '+typeId:186' for cities */
+	typeId?: string | string[];
+	/** Place type group ID. Use '+' to require, '-' to exclude. Supports multiple. */
+	typeGroupId?: string | string[];
+	/** Parent jurisdiction ID. Use '+' to require, '-' to exclude. 
+	 * Use '*' suffix for "any child". Example: '+parentId:1*' for all US places */
+	parentId?: string | string[];
+	/** Latitude of centroid to search near */
+	latitude?: number;
+	/** Longitude of centroid to search near */
+	longitude?: number;
+	/** Distance from centroid. Units: 'K' for kilometers, 'M' for miles. 
+	 * Example: '45K' or '30M'. Default: miles */
+	distance?: string;
+	/** Place hint - comma-delimited Place Rep IDs or semi-colon-delimited names */
+	placeHint?: string;
+}
+
+/**
  * Search for places
  *
- * Searches for places by name with optional pagination support.
+ * Searches for places using structured query parameters.
+ * Supports name search, date filtering, type filtering, parent jurisdiction, and more.
  *
  * @param sdk - SDK instance
- * @param query - Search query (place name)
- * @param count - Number of results (default: 20)
- * @param start - Starting index for pagination (default: 0)
+ * @param query - Structured search query or simple string (interpreted as name)
+ * @param options - Optional parameters
+ * @param options.count - Number of results (default: 20)
+ * @param options.start - Starting index for pagination (default: 0)
  * @returns Place search results or null
  *
  * @example
  * ```typescript
- * // Basic search
- * const places = await searchPlaces(sdk, 'London, England', 10);
+ * // Simple name search
+ * const places = await searchPlaces(sdk, { name: 'London, England' });
  *
- * // With pagination
- * const nextPage = await searchPlaces(sdk, 'London, England', 10, 10);
+ * // Search with date filter
+ * const places = await searchPlaces(sdk, { 
+ *   name: 'New York', 
+ *   date: '+date:1800/1900' 
+ * });
+ *
+ * // Legacy string query (backward compatible)
+ * const places = await searchPlaces(sdk, 'London, England', { count: 10 });
  * ```
  */
 export async function searchPlaces(
 	sdk: FamilySearchSDK,
-	query: string,
-	count: number = 20,
-	start: number = 0
+	query: string | PlaceSearchQuery,
+	options?: {
+		count?: number;
+		start?: number;
+	}
 ): Promise<PlaceSearchResponse | null> {
 	try {
+		const count = options?.count || 20;
+		const start = options?.start || 0;
+
+		let queryString: string;
+
+		// Build query string from structured query or use raw string
+		if (typeof query === 'string') {
+			// Backward compatibility: treat string as raw query
+			queryString = query;
+		} else {
+			// Build structured query
+			const queryParts: string[] = [];
+
+			if (query.name) {
+				queryParts.push(`name:"${query.name}"`);
+			}
+			if (query.partialName) {
+				queryParts.push(`partialName:"${query.partialName}"`);
+			}
+			if (query.date) {
+				queryParts.push(query.date);
+			}
+			if (query.typeId) {
+				const typeIds = Array.isArray(query.typeId) ? query.typeId : [query.typeId];
+				typeIds.forEach(id => queryParts.push(id));
+			}
+			if (query.typeGroupId) {
+				const groupIds = Array.isArray(query.typeGroupId) ? query.typeGroupId : [query.typeGroupId];
+				groupIds.forEach(id => queryParts.push(id));
+			}
+			if (query.parentId) {
+				const parentIds = Array.isArray(query.parentId) ? query.parentId : [query.parentId];
+				parentIds.forEach(id => queryParts.push(id));
+			}
+			if (query.latitude !== undefined) {
+				queryParts.push(`latitude:${query.latitude}`);
+			}
+			if (query.longitude !== undefined) {
+				queryParts.push(`longitude:${query.longitude}`);
+			}
+			if (query.distance) {
+				queryParts.push(`distance:${query.distance}`);
+			}
+			if (query.placeHint) {
+				queryParts.push(`placeHint:${query.placeHint}`);
+			}
+
+			queryString = queryParts.join(' ');
+		}
+
 		const params = new URLSearchParams({
-			q: query,
+			q: queryString,
 			count: count.toString(),
 			start: start.toString(),
 		});
@@ -59,7 +154,7 @@ export async function searchPlaces(
 		return response.data || null;
 	} catch (error) {
 		sdk.logger.error(
-			`[FamilySearch SDK] Failed to search places for "${query}":`,
+			`[FamilySearch SDK] Failed to search places:`,
 			error
 		);
 		return null;
@@ -508,8 +603,11 @@ export async function readPlaceDescriptionsGroup(
 export class PlacesAPI {
 	constructor(private sdk: FamilySearchSDK) {}
 
-	async searchPlaces(name: string, count?: number, start?: number) {
-		return searchPlaces(this.sdk, name, count, start);
+	async searchPlaces(
+		query: string | PlaceSearchQuery,
+		options?: { count?: number; start?: number }
+	) {
+		return searchPlaces(this.sdk, query, options);
 	}
 
 	async readPlaceDetails(placeId: string) {

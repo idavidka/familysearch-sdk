@@ -25,11 +25,11 @@ import type {
  *
  * @example
  * ```typescript
- * const script = await readNameScript(sdk, 'John Smith');
+ * const script = await getNameScript(sdk, 'John Smith');
  * console.log('Script:', script?.script); // "Latn"
  * ```
  */
-export async function readNameScript(
+export async function getNameScript(
 	sdk: FamilySearchSDK,
 	text: string
 ): Promise<NameScriptResponse | null> {
@@ -63,12 +63,12 @@ export async function readNameScript(
  *
  * @example
  * ```typescript
- * const segments = await readNameSegments(sdk, 'John Robert Smith', 'en-US');
+ * const segments = await segmentAName(sdk, 'John Robert Smith', 'en-US');
  * console.log('Given:', segments?.givenName); // "John Robert"
  * console.log('Surname:', segments?.surname); // "Smith"
  * ```
  */
-export async function readNameSegments(
+export async function segmentAName(
 	sdk: FamilySearchSDK,
 	fullName: string,
 	locale?: string,
@@ -109,7 +109,7 @@ export async function readNameSegments(
  *
  * @example
  * ```typescript
- * const result = await createNameSegments(sdk, {
+ * const result = await composeFullName(sdk, {
  *   segments: [
  *     { type: 'Given', value: 'John' },
  *     { type: 'Given', value: 'Michael' },
@@ -119,7 +119,7 @@ export async function readNameSegments(
  * console.log('Full name:', result?.name); // "John Michael Smith"
  * ```
  */
-export async function createNameSegments(
+export async function composeFullName(
 	sdk: FamilySearchSDK,
 	input: CreateNameSegmentsInput
 ): Promise<CreateNameSegmentsResponse | null> {
@@ -144,15 +144,15 @@ export async function createNameSegments(
 export class NamesAPI {
 	constructor(private sdk: FamilySearchSDK) {}
 
-	async readNameScript(text: string) {
-		return readNameScript(this.sdk, text);
+	async getNameScript(text: string) {
+		return getNameScript(this.sdk, text);
 	}
 
-	async readNameSegments(fullName: string, locale?: string, lang?: string) {
-		return readNameSegments(this.sdk, fullName, locale, lang);
+	async segmentAName(fullName: string, locale?: string, lang?: string) {
+		return segmentAName(this.sdk, fullName, locale, lang);
 	}
 
-	async createNameSegments(input: CreateNameSegmentsInput) {
-		return createNameSegments(this.sdk, input);
+	async composeFullName(input: CreateNameSegmentsInput) {
+		return composeFullName(this.sdk, input);
 	}
 }

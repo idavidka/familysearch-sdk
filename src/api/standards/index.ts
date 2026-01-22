@@ -21,14 +21,18 @@ export {
 	readPlaceTypeGroup,
 	searchParentPlaces,
 	checkPlaceIsChild,
+	readPlaceAttributes,
+	readPlaceDescriptionWithRelated,
+	readPlaceDescriptionsGroup,
 	PlacesAPI,
 } from "./places";
+export type { PlaceSearchQuery } from "./places";
 
 // Dates API
 export { normalizeDate, DatesAPI } from "./dates";
 
 // Names API
-export { readNameScript, readNameSegments, NamesAPI } from "./names";
+export { getNameScript, segmentAName, NamesAPI } from "./names";
 
 // Vocabularies API
 export {
