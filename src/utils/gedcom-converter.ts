@@ -353,6 +353,15 @@ export function convertToGedcom(
 	lines.push("1 SOUR FamilySearch");
 	lines.push("2 VERS 1.0");
 	lines.push("2 NAME FamilySearch API");
+
+	// Add tree name with RIN (similar to Ancestry format)
+	if (treeName) {
+		lines.push(`2 _TREE ${treeName}`);
+		// Generate a random RIN (Record Identification Number)
+		const randomRIN = Math.floor(Math.random() * 100000000);
+		lines.push(`3 RIN ${randomRIN}`);
+	}
+
 	lines.push("1 DEST ANY");
 	lines.push("1 DATE " + formatDateForGedcom(new Date()));
 	lines.push("1 SUBM @SUBM1@");
