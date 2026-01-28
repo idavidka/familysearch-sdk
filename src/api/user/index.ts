@@ -27,10 +27,28 @@ export async function readCurrentUser(
 	sdk: FamilySearchSDK
 ): Promise<FamilySearchUser | null> {
 	try {
-		const response = await sdk.get<FamilySearchUser>(
-			"/platform/users/current"
-		);
-		return response.data || null;
+		const response = await sdk.get<
+			FamilySearchUser | { users?: FamilySearchUser[] | FamilySearchUser }
+		>("/platform/users/current");
+
+		if (response.data && "users" in response.data) {
+			// Handle case where response contains 'users' array
+			const users = response.data.users;
+			if (Array.isArray(users) && users.length > 0) {
+				return users[0];
+			} else if (users && typeof users === "object") {
+				return users as FamilySearchUser;
+			} else {
+				return null;
+			}
+		}
+
+		// Type guard to ensure response.data is FamilySearchUser
+		if (response.data && "id" in response.data) {
+			return response.data;
+		}
+
+		return null;
 	} catch (error) {
 		sdk.logger.error(
 			"[FamilySearch SDK] Failed to get current user:",
