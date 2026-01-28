@@ -43,7 +43,12 @@ export async function readCurrentUser(
 			}
 		}
 
-		return response.data || null;
+		// Type guard to ensure response.data is FamilySearchUser
+		if (response.data && "id" in response.data) {
+			return response.data;
+		}
+
+		return null;
 	} catch (error) {
 		sdk.logger.error(
 			"[FamilySearch SDK] Failed to get current user:",
