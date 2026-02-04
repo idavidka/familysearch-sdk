@@ -249,6 +249,21 @@ export class FamilySearchSDK {
 	}
 
 	/**
+	 * Get web base URL for current environment
+	 * (e.g., https://www.familysearch.org for production)
+	 */
+	getWebBaseUrl(): string {
+		switch (this.environment) {
+			case "beta":
+				return "https://beta.familysearch.org";
+			case "integration":
+				return "https://integration.familysearch.org";
+			default:
+				return "https://www.familysearch.org";
+		}
+	}
+
+	/**
 	 * Make authenticated API request with rate limiting and error handling
 	 */
 	private async request<T>(
