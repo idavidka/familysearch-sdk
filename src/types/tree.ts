@@ -1,6 +1,6 @@
 /**
  * Tree API Types
- * 
+ *
  * Types for person, relationship, and pedigree operations
  */
 
@@ -47,6 +47,8 @@ export interface PersonDisplay {
 	deathPlace?: string;
 	marriageDate?: string; // Marriage date
 	marriagePlace?: string; // Marriage place
+	/** Ahnentafel number from /platform/tree/ancestry (e.g. "1", "2", "3"). */
+	ascendancyNumber?: string;
 }
 
 /**
