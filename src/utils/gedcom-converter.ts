@@ -118,6 +118,102 @@ function transformSourceUrl(url: string): string {
 }
 
 /**
+ * Sanitize a value for safe inclusion in a GEDCOM line.
+ * Embedded line breaks would otherwise inject bogus lines into the file
+ * and corrupt every record after them.
+ */
+function sanitizeGedcomValue(value: string): string {
+	return value.replace(/[\r\n\t]+/g, " ").trim();
+}
+
+const GEDCOM_MONTHS = [
+	"JAN",
+	"FEB",
+	"MAR",
+	"APR",
+	"MAY",
+	"JUN",
+	"JUL",
+	"AUG",
+	"SEP",
+	"OCT",
+	"NOV",
+	"DEC",
+];
+
+/**
+ * Convert a single GEDCOM-X simple date ("+1888-03-14", "+1850-03", "+1850")
+ * to a GEDCOM 5.5 date phrase. Returns undefined for unsupported values
+ * (e.g. BCE years, which GEDCOM 5.5 cannot express).
+ */
+function formatSimpleFormalDate(value: string): string | undefined {
+	const match = value.match(/^([+-])(\d{1,6})(?:-(\d{2}))?(?:-(\d{2}))?/);
+	if (!match) return undefined;
+	const [, sign, yearPart, monthPart, dayPart] = match;
+	if (sign === "-") return undefined;
+
+	const year = String(parseInt(yearPart, 10));
+	if (!monthPart) return year;
+
+	const month = GEDCOM_MONTHS[parseInt(monthPart, 10) - 1];
+	if (!month) return undefined;
+	if (!dayPart) return `${month} ${year}`;
+
+	return `${parseInt(dayPart, 10)} ${month} ${year}`;
+}
+
+/**
+ * Convert a GEDCOM-X formal date to a GEDCOM 5.5 DATE value.
+ *
+ * Handles approximate ("A+1880" → "ABT 1880"), closed ranges
+ * ("+1880/+1890" → "BET 1880 AND 1890") and open ranges
+ * ("+1880/" → "FROM 1880", "/+1890" → "TO 1890").
+ * Returns undefined when the value cannot be represented.
+ */
+export function convertFormalDateToGedcom(
+	formal?: string
+): string | undefined {
+	if (!formal) return undefined;
+
+	let value = formal.trim();
+	let approximate = false;
+	if (value.startsWith("A")) {
+		approximate = true;
+		value = value.slice(1);
+	}
+
+	if (value.includes("/")) {
+		const slashIndex = value.indexOf("/");
+		const start = value.slice(0, slashIndex);
+		const end = value.slice(slashIndex + 1);
+		const startDate = start ? formatSimpleFormalDate(start) : undefined;
+		const endDate = end ? formatSimpleFormalDate(end) : undefined;
+		if (start && !startDate) return undefined;
+		if (end && !endDate) return undefined;
+		if (startDate && endDate) return `BET ${startDate} AND ${endDate}`;
+		if (startDate) return `FROM ${startDate}`;
+		if (endDate) return `TO ${endDate}`;
+		return undefined;
+	}
+
+	const simple = formatSimpleFormalDate(value);
+	if (!simple) return undefined;
+	return approximate ? `ABT ${simple}` : simple;
+}
+
+/**
+ * Resolve the best GEDCOM date value for a fact: converted formal date
+ * when possible, otherwise the user-entered original text.
+ */
+function resolveFactDate(date?: {
+	formal?: string;
+	original?: string;
+}): string | undefined {
+	if (!date) return undefined;
+	return convertFormalDateToGedcom(date.formal) || date.original;
+}
+
+/**
  * Extract name from FamilySearch person
  */
 function extractName(person?: PersonData): string | null {
@@ -133,8 +229,14 @@ function extractName(person?: PersonData): string | null {
 		const surname =
 			parts.find((p) => p.type?.includes("Surname"))?.value || "";
 
-		if (given || surname) {
-			return `${given} /${surname}/`.trim();
+		if (given && surname) {
+			return `${given} /${surname}/`;
+		}
+		if (surname) {
+			return `/${surname}/`;
+		}
+		if (given) {
+			return given;
 		}
 
 		if (nameForm.fullText) {
@@ -185,11 +287,9 @@ function extractFact(
 	const fact = person.facts?.find((f) => f.type === factTypeUrl);
 
 	if (fact) {
-		if (fact.date?.formal || fact.date?.original) {
-			result.date = (fact.date?.formal || fact.date?.original)?.replace(
-				/^(-|\+)/,
-				""
-			);
+		const resolvedDate = resolveFactDate(fact.date);
+		if (resolvedDate) {
+			result.date = resolvedDate;
 		}
 		if (fact.place?.original) {
 			result.place = fact.place.original;
@@ -261,9 +361,17 @@ function convertFactToGedcom(fact: PersonFact): string[] {
 
 	// Special handling for occupation with value
 	if (gedcomTag === "OCCU" && fact.value) {
-		lines.push(`1 OCCU ${fact.value}`);
+		lines.push(`1 OCCU ${sanitizeGedcomValue(fact.value)}`);
 	} else {
 		lines.push(`1 ${gedcomTag}`);
+	}
+
+	// Generic events need a TYPE to stay meaningful in GEDCOM
+	if (gedcomTag === "EVEN") {
+		const typeName = fact.type.split("/").pop();
+		if (typeName) {
+			lines.push(`2 TYPE ${sanitizeGedcomValue(typeName)}`);
+		}
 	}
 
 	// Add FamilySearch link for this specific fact/event (conclusion link)
@@ -274,20 +382,19 @@ function convertFactToGedcom(fact: PersonFact): string[] {
 	}
 
 	// Add date
-	if (fact.date?.formal || fact.date?.original) {
-		lines.push(
-			`2 DATE ${(fact.date?.formal || fact.date?.original)?.replace(/^(-|\+)/, "")}`
-		);
+	const resolvedDate = resolveFactDate(fact.date);
+	if (resolvedDate) {
+		lines.push(`2 DATE ${sanitizeGedcomValue(resolvedDate)}`);
 	}
 
 	// Add place
 	if (fact.place?.original) {
-		lines.push(`2 PLAC ${fact.place.original}`);
+		lines.push(`2 PLAC ${sanitizeGedcomValue(fact.place.original)}`);
 	}
 
 	// Add value as note for non-occupation facts
 	if (fact.value && gedcomTag !== "OCCU") {
-		lines.push(`2 NOTE ${fact.value}`);
+		lines.push(`2 NOTE ${sanitizeGedcomValue(fact.value)}`);
 	}
 
 	return lines;
@@ -356,7 +463,7 @@ export function convertToGedcom(
 
 	// Add tree name with RIN (similar to Ancestry format)
 	if (treeName) {
-		lines.push(`2 _TREE ${treeName}`);
+		lines.push(`2 _TREE ${sanitizeGedcomValue(treeName)}`);
 		// Generate a random RIN (Record Identification Number)
 		const randomRIN = Math.floor(Math.random() * 100000000);
 		lines.push(`3 RIN ${randomRIN}`);
@@ -365,7 +472,7 @@ export function convertToGedcom(
 	lines.push("1 DEST ANY");
 	lines.push("1 DATE " + formatDateForGedcom(new Date()));
 	lines.push("1 SUBM @SUBM1@");
-	lines.push("1 FILE " + treeName);
+	lines.push("1 FILE " + sanitizeGedcomValue(treeName));
 	lines.push("1 GEDC");
 	lines.push("2 VERS 5.5");
 	lines.push("2 FORM LINEAGE-LINKED");
@@ -401,11 +508,11 @@ export function convertToGedcom(
 
 		// Add title (use titles[0] if available, otherwise default)
 		const title = source.titles?.[0]?.value || "FamilySearch Source";
-		lines.push(`1 TITL ${title}`);
+		lines.push(`1 TITL ${sanitizeGedcomValue(title)}`);
 
 		// Add citation as TEXT
 		if (source.citations?.[0]?.value) {
-			lines.push(`1 TEXT ${source.citations[0].value}`);
+			lines.push(`1 TEXT ${sanitizeGedcomValue(source.citations[0].value)}`);
 		}
 
 		// Add web link if available
@@ -416,7 +523,9 @@ export function convertToGedcom(
 
 		// Add resource type as NOTE
 		if (source.resourceType) {
-			lines.push(`1 NOTE Resource Type: ${source.resourceType}`);
+			lines.push(
+				`1 NOTE Resource Type: ${sanitizeGedcomValue(source.resourceType)}`
+			);
 		}
 	});
 
@@ -432,7 +541,9 @@ export function convertToGedcom(
 			notes: Set<string>;
 		}
 	>();
-	let fsSourCounter = 1;
+	// Continue numbering after the sourceMap records above: both groups emit
+	// @S<n>@ xrefs, so a separate counter would produce duplicate record IDs.
+	let fsSourCounter = sourceCounter;
 
 	pedigreeData.persons.forEach((person) => {
 		if (person.sources?.persons?.[0]?.sources) {
@@ -505,12 +616,12 @@ export function convertToGedcom(
 
 		// Add title
 		if (source.titles?.[0]?.value) {
-			lines.push(`1 TITL ${source.titles[0].value}`);
+			lines.push(`1 TITL ${sanitizeGedcomValue(source.titles[0].value)}`);
 		}
 
 		// Add citation as TEXT
 		if (source.citations?.[0]?.value) {
-			lines.push(`1 TEXT ${source.citations[0].value}`);
+			lines.push(`1 TEXT ${sanitizeGedcomValue(source.citations[0].value)}`);
 		}
 
 		// Add web link (about URL)
@@ -521,12 +632,14 @@ export function convertToGedcom(
 
 		// Add resource type as NOTE
 		if (source.resourceType) {
-			lines.push(`1 NOTE Resource Type: ${source.resourceType}`);
+			lines.push(
+				`1 NOTE Resource Type: ${sanitizeGedcomValue(source.resourceType)}`
+			);
 		}
 
 		// Add collected notes from all persons referencing this source
 		notes.forEach((note) => {
-			lines.push(`1 NOTE ${note}`);
+			lines.push(`1 NOTE ${sanitizeGedcomValue(note)}`);
 		});
 	});
 
@@ -559,7 +672,7 @@ export function convertToGedcom(
 
 		// Add title if available
 		if (entry.title) {
-			lines.push(`1 TITL ${entry.title}`);
+			lines.push(`1 TITL ${sanitizeGedcomValue(entry.title)}`);
 		}
 
 		// Add match score as SCORE field
@@ -589,7 +702,7 @@ export function convertToGedcom(
 				const statusName = matchInfo.status.includes("/")
 					? matchInfo.status.split("/").pop()
 					: matchInfo.status;
-				lines.push(`1 NOTE Status: ${statusName}`);
+				lines.push(`1 NOTE Status: ${sanitizeGedcomValue(statusName || "")}`);
 			}
 		}
 		lines.push(`1 TYPE ${collectionType}`);
@@ -612,13 +725,13 @@ export function convertToGedcom(
 
 			// Add display name as TEXT
 			if (matchedPerson.display?.name) {
-				lines.push(`1 TEXT ${matchedPerson.display.name}`);
+				lines.push(`1 TEXT ${sanitizeGedcomValue(matchedPerson.display.name)}`);
 			}
 
 			// Add lifespan as NOTE
 			if (matchedPerson.display?.lifespan) {
 				lines.push(
-					`1 NOTE Lifespan: ${matchedPerson.display.lifespan}`
+					`1 NOTE Lifespan: ${sanitizeGedcomValue(matchedPerson.display.lifespan)}`
 				);
 			}
 
@@ -627,12 +740,14 @@ export function convertToGedcom(
 				matchedPerson.display?.birthDate ||
 				matchedPerson.display?.birthPlace
 			) {
-				const birthInfo = [
-					matchedPerson.display.birthDate,
-					matchedPerson.display.birthPlace,
-				]
-					.filter(Boolean)
-					.join(", ");
+				const birthInfo = sanitizeGedcomValue(
+					[
+						matchedPerson.display.birthDate,
+						matchedPerson.display.birthPlace,
+					]
+						.filter(Boolean)
+						.join(", ")
+				);
 				if (birthInfo) {
 					lines.push(`1 NOTE Birth: ${birthInfo}`);
 				}
@@ -643,12 +758,14 @@ export function convertToGedcom(
 				matchedPerson.display?.deathDate ||
 				matchedPerson.display?.deathPlace
 			) {
-				const deathInfo = [
-					matchedPerson.display.deathDate,
-					matchedPerson.display.deathPlace,
-				]
-					.filter(Boolean)
-					.join(", ");
+				const deathInfo = sanitizeGedcomValue(
+					[
+						matchedPerson.display.deathDate,
+						matchedPerson.display.deathPlace,
+					]
+						.filter(Boolean)
+						.join(", ")
+				);
 				if (deathInfo) {
 					lines.push(`1 NOTE Death: ${deathInfo}`);
 				}
@@ -656,7 +773,9 @@ export function convertToGedcom(
 
 			// Add gender as NOTE
 			if (matchedPerson.display?.gender) {
-				lines.push(`1 NOTE Gender: ${matchedPerson.display.gender}`);
+				lines.push(
+					`1 NOTE Gender: ${sanitizeGedcomValue(matchedPerson.display.gender)}`
+				);
 			}
 		}
 
@@ -666,12 +785,16 @@ export function convertToGedcom(
 
 			// Add citation as NOTE
 			if (sourceDesc.citations?.[0]?.value) {
-				lines.push(`1 NOTE Citation: ${sourceDesc.citations[0].value}`);
+				lines.push(
+					`1 NOTE Citation: ${sanitizeGedcomValue(sourceDesc.citations[0].value)}`
+				);
 			}
 
 			// Add resource type as NOTE
 			if (sourceDesc.resourceType) {
-				lines.push(`1 NOTE Resource Type: ${sourceDesc.resourceType}`);
+				lines.push(
+					`1 NOTE Resource Type: ${sanitizeGedcomValue(sourceDesc.resourceType)}`
+				);
 			}
 
 			// Add source link (about URL) as NOTE
@@ -1044,7 +1167,7 @@ export function convertToGedcom(
 		// Name
 		const name = extractName(personData);
 		if (name) {
-			lines.push(`1 NAME ${name}`);
+			lines.push(`1 NAME ${sanitizeGedcomValue(name)}`);
 		}
 
 		// Gender
@@ -1058,10 +1181,10 @@ export function convertToGedcom(
 		if (birth) {
 			lines.push("1 BIRT");
 			if (birth.date) {
-				lines.push(`2 DATE ${birth.date}`);
+				lines.push(`2 DATE ${sanitizeGedcomValue(birth.date)}`);
 			}
 			if (birth.place) {
-				lines.push(`2 PLAC ${birth.place}`);
+				lines.push(`2 PLAC ${sanitizeGedcomValue(birth.place)}`);
 			}
 		}
 
@@ -1070,10 +1193,10 @@ export function convertToGedcom(
 		if (death) {
 			lines.push("1 DEAT");
 			if (death.date) {
-				lines.push(`2 DATE ${death.date}`);
+				lines.push(`2 DATE ${sanitizeGedcomValue(death.date)}`);
 			}
 			if (death.place) {
-				lines.push(`2 PLAC ${death.place}`);
+				lines.push(`2 PLAC ${sanitizeGedcomValue(death.place)}`);
 			}
 		}
 
@@ -1093,8 +1216,7 @@ export function convertToGedcom(
 		if (includeNotes && person.notes?.persons?.[0]?.notes) {
 			person.notes.persons[0].notes.forEach((note) => {
 				if (note.text) {
-					const noteText = note.text.replace(/\n/g, " ");
-					lines.push(`1 NOTE ${noteText}`);
+					lines.push(`1 NOTE ${sanitizeGedcomValue(note.text)}`);
 				}
 			});
 		}
@@ -1127,7 +1249,7 @@ export function convertToGedcom(
 					sourceRef.qualifiers.forEach((qualifier) => {
 						if (qualifier.name && qualifier.value) {
 							lines.push(
-								`2 NOTE ${qualifier.name}: ${qualifier.value}`
+								`2 NOTE ${sanitizeGedcomValue(`${qualifier.name}: ${qualifier.value}`)}`
 							);
 						}
 					});
@@ -1367,12 +1489,15 @@ function addMarriageFacts(
 
 	if (!rel) return;
 
+	const isMarriageEvent = (type?: string) =>
+		!!type && (type.includes("Marriage") || type.includes("Divorce"));
+
 	const marriageFacts: PersonFact[] = [];
 
 	// Check facts directly on relationship
 	if (rel.facts && Array.isArray(rel.facts)) {
 		rel.facts.forEach((f) => {
-			if (f.type?.includes("Marriage")) {
+			if (isMarriageEvent(f.type)) {
 				marriageFacts.push(f);
 			}
 		});
@@ -1381,7 +1506,7 @@ function addMarriageFacts(
 	// Check details.facts
 	if (rel.details?.facts && Array.isArray(rel.details.facts)) {
 		marriageFacts.push(
-			...rel.details.facts.filter((f) => f.type?.includes("Marriage"))
+			...rel.details.facts.filter((f) => isMarriageEvent(f.type))
 		);
 	}
 
@@ -1390,7 +1515,7 @@ function addMarriageFacts(
 		rel.details.persons.forEach((p) => {
 			if (p.facts && Array.isArray(p.facts)) {
 				p.facts.forEach((f) => {
-					if (f.type?.includes("Marriage")) {
+					if (isMarriageEvent(f.type)) {
 						marriageFacts.push(f);
 					}
 				});
@@ -1398,8 +1523,13 @@ function addMarriageFacts(
 		});
 	}
 
-	// Add marriage facts to FAM record
+	// The same fact can surface in several of the buckets above; only emit
+	// each unique event once.
+	const seenFacts = new Set<string>();
 	marriageFacts.forEach((mf) => {
+		const key = `${mf.type}|${resolveFactDate(mf.date) || ""}|${mf.place?.original || ""}`;
+		if (seenFacts.has(key)) return;
+		seenFacts.add(key);
 		const factLines = convertFactToGedcom(mf);
 		factLines.forEach((line) => lines.push(line));
 	});
