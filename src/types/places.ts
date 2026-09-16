@@ -42,6 +42,8 @@ export interface PlaceDescription {
 	};
 	latitude?: number;
 	longitude?: number;
+	/** Persistent Place authority URLs (gazetteer Place IDs), not Description IDs */
+	identifiers?: Record<string, string[]>;
 	place?: {
 		original?: string;
 		description?: string;
@@ -49,6 +51,11 @@ export interface PlaceDescription {
 	jurisdiction?: {
 		id?: string;
 		name?: string;
+	};
+	display?: {
+		name?: string;
+		fullName?: string;
+		type?: string;
 	};
 	spatialDescription?: {
 		type?: string;
@@ -132,6 +139,8 @@ export interface PlaceDescriptionsResponse {
  * Single place description response
  */
 export interface PlaceDescriptionResponse {
+	/** Top-level places array returned by /platform/places/description/{id} */
+	places?: PlaceDescription[];
 	sourceDescriptions?: Array<{
 		id?: string;
 		resourceType?: string;

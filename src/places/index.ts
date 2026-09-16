@@ -21,3 +21,13 @@ export {
 	readPlaceDescriptionsGroup,
 	PlacesAPI,
 } from "../api/standards/places";
+
+export {
+	extractGazetteerPlaceId,
+	familySearchResearchPlaceUrl,
+	numericPlaceIdFromRef,
+	pickBestPlaceSearchResult,
+	type FamilySearchPlacePayload,
+} from "./gazetteer-id";
+
+export { resolveGazetteerPlaceId } from "./resolve-gazetteer-id";
