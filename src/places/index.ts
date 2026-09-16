@@ -29,5 +29,3 @@ export {
 	pickBestPlaceSearchResult,
 	type FamilySearchPlacePayload,
 } from "./gazetteer-id";
-
-export { resolveGazetteerPlaceId } from "./resolve-gazetteer-id";
