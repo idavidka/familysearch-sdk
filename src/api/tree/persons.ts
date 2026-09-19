@@ -29,6 +29,15 @@ import type {
 } from "../../types";
 
 /**
+ * The Family Tree person endpoints answer plain `application/json` bodies with
+ * 415, so writes have to use the FamilySearch GEDCOM X media type.
+ */
+const PERSON_WRITE_HEADERS = {
+	"Content-Type": "application/x-fs-v1+json",
+	Accept: "application/x-fs-v1+json",
+} as const;
+
+/**
  * Read person by ID
  *
  * @param sdk - SDK instance
@@ -119,7 +128,7 @@ export async function createPerson(
 	reason?: string
 ): Promise<CreatePersonResponse | null> {
 	try {
-		const headers: Record<string, string> = {};
+		const headers: Record<string, string> = { ...PERSON_WRITE_HEADERS };
 		if (reason) {
 			headers["X-Reason"] = reason;
 		}
@@ -162,7 +171,7 @@ export async function updatePerson(
 	reason?: string
 ): Promise<UpdatePersonResponse | null> {
 	try {
-		const headers: Record<string, string> = {};
+		const headers: Record<string, string> = { ...PERSON_WRITE_HEADERS };
 		if (reason) {
 			headers["X-Reason"] = reason;
 		}

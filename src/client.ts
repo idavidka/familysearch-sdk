@@ -313,10 +313,8 @@ export class FamilySearchSDK {
 
 					let data: T | undefined;
 					const contentType = response.headers.get("content-type");
-					if (
-						contentType &&
-						contentType.includes("application/json")
-					) {
+					// Covers the GEDCOM X types too (`application/x-fs-v1+json`).
+					if (contentType && contentType.includes("json")) {
 						try {
 							data = await response.json();
 						} catch (error) {
