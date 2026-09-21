@@ -10,3 +10,5 @@ export {
 	transformFamilySearchUrl,
 	type GedcomConversionOptions,
 } from "./gedcom-converter";
+
+export { toLatin1HeaderValue } from "./headers";

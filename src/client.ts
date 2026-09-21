@@ -65,6 +65,7 @@ import type {
 	RateLimiterConfig,
 	SDKLogger,
 } from "./types";
+import { toLatin1HeaderValue } from "./utils/headers";
 
 // Environment configuration
 const ENVIRONMENT_CONFIGS: Record<FamilySearchEnvironment, EnvironmentConfig> =
@@ -294,6 +295,10 @@ export class FamilySearchSDK {
 				// Add app key if available
 				if (this.appKey) {
 					headers["X-FS-App-Key"] = this.appKey;
+				}
+
+				for (const key of Object.keys(headers)) {
+					headers[key] = toLatin1HeaderValue(headers[key]);
 				}
 
 				this.logger.log(
