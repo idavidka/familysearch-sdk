@@ -423,6 +423,18 @@ export interface GedcomConversionOptions {
 	 * Used to determine which persons are "connectable" to the root person.
 	 */
 	ancestryPersonIds?: Set<string>;
+
+	/**
+	 * 1-based number of the first INDI xref (`@I1@` when omitted).
+	 * Pass the current tree's nextIndiKey number when appending relatives.
+	 */
+	indiIdStart?: number;
+
+	/**
+	 * 1-based number of the first FAM xref (`@F1@` when omitted).
+	 * Pass the current tree's nextFamKey number when appending relatives.
+	 */
+	famIdStart?: number;
 }
 
 /**
@@ -448,6 +460,8 @@ export function convertToGedcom(
 		includeNotes = true,
 		environment = "production",
 	} = options;
+	const indiIdStart = Math.max(1, Math.floor(options.indiIdStart ?? 1));
+	const famIdStart = Math.max(1, Math.floor(options.famIdStart ?? 1));
 
 	if (!pedigreeData || !pedigreeData.persons) {
 		throw new Error("Invalid FamilySearch data: no persons found");
@@ -812,7 +826,7 @@ export function convertToGedcom(
 	// ==============================================
 	const personIdMap = new Map<string, string>();
 	pedigreeData.persons.forEach((person, index) => {
-		const gedcomId = `@I${index + 1}@`;
+		const gedcomId = `@I${indiIdStart + index}@`;
 		personIdMap.set(person.id, gedcomId);
 	});
 
@@ -1297,7 +1311,7 @@ export function convertToGedcom(
 	// ==============================================
 
 	// Create FAM records
-	let famIndex = 1;
+	let famIndex = famIdStart;
 	const familyIdMap = new Map<string, string>();
 
 	families.forEach((family, key) => {
