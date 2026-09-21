@@ -50,7 +50,7 @@ export async function readPerson(
 ): Promise<FamilySearchPerson | null> {
 	try {
 		const response = await sdk.get<{ persons: FamilySearchPerson[] }>(
-			`/platform/tree/persons/${personId}`
+			`/platform/tree/persons/${encodeURIComponent(personId)}`
 		);
 
 		const person = response.data?.persons?.[0];
@@ -82,7 +82,7 @@ export async function readPersonWithDetails(
 			? "?sourceDescriptions=true"
 			: "";
 		const response = await sdk.get(
-			`/platform/tree/persons/${personId}${queryParams}`
+			`/platform/tree/persons/${encodeURIComponent(personId)}${queryParams}`
 		);
 		return (response.data as PersonWithRelationships) || null;
 	} catch (error) {
@@ -177,7 +177,7 @@ export async function updatePerson(
 		}
 
 		const response = await sdk.post<UpdatePersonResponse>(
-			`/platform/tree/persons/${personId}`,
+			`/platform/tree/persons/${encodeURIComponent(personId)}`,
 			{ persons: [{ ...person, id: personId }] },
 			{ headers }
 		);
@@ -218,7 +218,7 @@ export async function deletePerson(
 		}
 
 		const response = await sdk.delete<DeletePersonResponse>(
-			`/platform/tree/persons/${personId}`,
+			`/platform/tree/persons/${encodeURIComponent(personId)}`,
 			{ headers }
 		);
 		return {
@@ -252,7 +252,7 @@ export async function restorePerson(
 ): Promise<UpdatePersonResponse | null> {
 	try {
 		const response = await sdk.post<UpdatePersonResponse>(
-			`/platform/tree/persons/${personId}/restore`,
+			`/platform/tree/persons/${encodeURIComponent(personId)}/restore`,
 			{}
 		);
 		return response.data || null;
@@ -278,7 +278,7 @@ export async function readPersonMemories(
 ): Promise<PersonMemoriesResponse | null> {
 	try {
 		const response = await sdk.get<PersonMemoriesResponse>(
-			`/platform/tree/persons/${personId}/memories`
+			`/platform/tree/persons/${encodeURIComponent(personId)}/memories`
 		);
 		return response.data || null;
 	} catch (error) {
@@ -303,7 +303,7 @@ export async function readPersonSources(
 ): Promise<PersonSourcesResponse | null> {
 	try {
 		const response = await sdk.get<PersonSourcesResponse>(
-			`/platform/tree/persons/${personId}/sources`
+			`/platform/tree/persons/${encodeURIComponent(personId)}/sources`
 		);
 		return response.data || null;
 	} catch (error) {
@@ -328,7 +328,7 @@ export async function readPersonDiscussions(
 ): Promise<PersonDiscussionsResponse | null> {
 	try {
 		const response = await sdk.get<PersonDiscussionsResponse>(
-			`/platform/tree/persons/${personId}/discussion-references`
+			`/platform/tree/persons/${encodeURIComponent(personId)}/discussion-references`
 		);
 		return response.data || null;
 	} catch (error) {
@@ -353,7 +353,7 @@ export async function readPersonPortraits(
 ): Promise<PersonPortraitsResponse | null> {
 	try {
 		const response = await sdk.get<PersonPortraitsResponse>(
-			`/platform/tree/persons/${personId}/portraits`
+			`/platform/tree/persons/${encodeURIComponent(personId)}/portraits`
 		);
 		return response.data || null;
 	} catch (error) {
@@ -378,7 +378,7 @@ export async function readPersonChangeHistory(
 ): Promise<PersonChangeHistoryResponse | null> {
 	try {
 		const response = await sdk.get<PersonChangeHistoryResponse>(
-			`/platform/tree/persons/${personId}/changes`
+			`/platform/tree/persons/${encodeURIComponent(personId)}/changes`
 		);
 		return response.data || null;
 	} catch (error) {
@@ -420,7 +420,7 @@ export async function readPersonFamilies(
 ): Promise<PersonFamiliesResponse | null> {
 	try {
 		const response = await sdk.get<PersonFamiliesResponse>(
-			`/platform/tree/persons/${personId}/families`
+			`/platform/tree/persons/${encodeURIComponent(personId)}/families`
 		);
 		return response.data || null;
 	} catch (error) {
@@ -459,7 +459,7 @@ export async function readPersonParents(
 ): Promise<PersonParentsResponse | null> {
 	try {
 		const response = await sdk.get<PersonParentsResponse>(
-			`/platform/tree/persons/${personId}/parents`
+			`/platform/tree/persons/${encodeURIComponent(personId)}/parents`
 		);
 		return response.data || null;
 	} catch (error) {
@@ -498,7 +498,7 @@ export async function readPersonSpouses(
 ): Promise<PersonSpousesResponse | null> {
 	try {
 		const response = await sdk.get<PersonSpousesResponse>(
-			`/platform/tree/persons/${personId}/spouses`
+			`/platform/tree/persons/${encodeURIComponent(personId)}/spouses`
 		);
 		return response.data || null;
 	} catch (error) {
@@ -550,7 +550,7 @@ export async function updatePersonPortraits(
 		};
 
 		const response = await sdk.put<UpdatePersonPortraitsResponse>(
-			`/platform/tree/persons/${personId}/portraits`,
+			`/platform/tree/persons/${encodeURIComponent(personId)}/portraits`,
 			input
 		);
 		return response.data || { persons: [] };
@@ -586,7 +586,7 @@ export async function readPersonChildren(
 ): Promise<PersonChildrenResponse | null> {
 	try {
 		const response = await sdk.get<PersonChildrenResponse>(
-			`/platform/tree/persons/${personId}/children`
+			`/platform/tree/persons/${encodeURIComponent(personId)}/children`
 		);
 		return response.data || null;
 	} catch (error) {
@@ -623,7 +623,7 @@ export async function deletePersonPortrait(
 ): Promise<DeleteResponse> {
 	try {
 		const response = await sdk.delete<DeleteResponse>(
-			`/platform/tree/persons/${personId}/portraits/${portraitId}`
+			`/platform/tree/persons/${encodeURIComponent(personId)}/portraits/${portraitId}`
 		);
 		return {
 			statusCode: response.statusCode,
@@ -663,7 +663,7 @@ export async function deletePersonDiscussionReference(
 ): Promise<DeleteResponse> {
 	try {
 		const response = await sdk.delete<DeleteResponse>(
-			`/platform/tree/persons/${personId}/discussion-references/${discussionReferenceId}`
+			`/platform/tree/persons/${encodeURIComponent(personId)}/discussion-references/${discussionReferenceId}`
 		);
 		return {
 			statusCode: response.statusCode,
@@ -703,7 +703,7 @@ export async function deletePersonMemoriesPersonaReference(
 ): Promise<DeleteResponse> {
 	try {
 		const response = await sdk.delete<DeleteResponse>(
-			`/platform/tree/persons/${personId}/memory-references/${memoryReferenceId}`
+			`/platform/tree/persons/${encodeURIComponent(personId)}/memory-references/${memoryReferenceId}`
 		);
 		return {
 			statusCode: response.statusCode,
@@ -743,7 +743,7 @@ export async function deletePersonSourceReference(
 ): Promise<DeleteResponse> {
 	try {
 		const response = await sdk.delete<DeleteResponse>(
-			`/platform/tree/persons/${personId}/source-references/${sourceReferenceId}`
+			`/platform/tree/persons/${encodeURIComponent(personId)}/source-references/${sourceReferenceId}`
 		);
 		return {
 			statusCode: response.statusCode,
@@ -783,7 +783,7 @@ export async function deleteTreePersonReference(
 ): Promise<DeleteResponse> {
 	try {
 		const response = await sdk.delete<DeleteResponse>(
-			`/platform/tree/persons/${personId}/tree-person-reference/${treePersonReferenceId}`
+			`/platform/tree/persons/${encodeURIComponent(personId)}/tree-person-reference/${treePersonReferenceId}`
 		);
 		return {
 			statusCode: response.statusCode,
@@ -833,7 +833,7 @@ export async function createPersonMemory(
 ): Promise<unknown> {
 	try {
 		const response = await sdk.post<unknown>(
-			`/platform/tree/persons/${personId}/memories`,
+			`/platform/tree/persons/${encodeURIComponent(personId)}/memories`,
 			memoryData
 		);
 		return response.data;
@@ -861,7 +861,7 @@ export async function exportGEDCOM(
 ): Promise<string | null> {
 	try {
 		const response = await sdk.get<string>(
-			`/platform/tree/persons/${personId}/gedcomx`,
+			`/platform/tree/persons/${encodeURIComponent(personId)}/gedcomx`,
 			{
 				headers: {
 					Accept: "application/x-gedcomx-v1+json",

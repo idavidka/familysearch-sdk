@@ -3,8 +3,11 @@
  * 0x00–0xFF (Hungarian ő/ű, CJK, emoji, …) throws before the request is sent.
  *
  * Latin-1 stays as-is. Other letters are decomposed (NFKD) to a Latin-1 base
- * when that exists; remaining code points become `?`.
+ * when that exists; remaining code points become `?`. CR, LF, and NUL are
+ * stripped so a reason string cannot split the header.
  */
+const HEADER_FORBIDDEN = /[\r\n\0]/g;
+
 const isLatin1 = (value: string): boolean =>
 	[...value].every((char) => char.charCodeAt(0) <= 0xff);
 
@@ -17,4 +20,5 @@ export const toLatin1HeaderValue = (value: string): string =>
 			const stripped = char.normalize("NFKD").replace(/\p{M}/gu, "");
 			return stripped && isLatin1(stripped) ? stripped : "?";
 		})
-		.join("");
+		.join("")
+		.replace(HEADER_FORBIDDEN, "");

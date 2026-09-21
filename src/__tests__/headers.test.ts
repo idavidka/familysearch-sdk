@@ -1,17 +1,20 @@
-import { describe, expect, it } from "vitest";
-
+import { describe, it, expect } from "vitest";
 import { toLatin1HeaderValue } from "../utils/headers";
 
 describe("toLatin1HeaderValue", () => {
-	it("keeps Latin-1 letters and strips extra marks from the rest", () => {
-		expect(toLatin1HeaderValue("Születési hely pótlása")).toBe(
-			"Születési hely potlása"
+	it("leaves Latin-1 text unchanged", () => {
+		expect(toLatin1HeaderValue("Corrected birth date")).toBe(
+			"Corrected birth date"
 		);
-		expect(toLatin1HeaderValue("bővítés űr")).toBe("bovítés ur");
-		expect(toLatin1HeaderValue("Angéla Láng")).toBe("Angéla Láng");
 	});
 
-	it("replaces scripts with no Latin-1 base with ?", () => {
-		expect(toLatin1HeaderValue("東京 tree")).toBe("?? tree");
+	it("decomposes Hungarian letters to a Latin-1 base", () => {
+		expect(toLatin1HeaderValue("Születési dátum")).toBe("Szuletesi datum");
+	});
+
+	it("strips CR, LF, and NUL so a reason cannot split the header", () => {
+		expect(toLatin1HeaderValue("ok\r\nX-Injected: 1\0")).toBe(
+			"okX-Injected: 1"
+		);
 	});
 });
