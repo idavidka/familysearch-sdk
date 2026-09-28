@@ -8,8 +8,9 @@ describe("toLatin1HeaderValue", () => {
 		);
 	});
 
-	it("decomposes Hungarian letters to a Latin-1 base", () => {
-		expect(toLatin1HeaderValue("Születési dátum")).toBe("Szuletesi datum");
+	it("keeps Latin-1 accents and decomposes letters outside Latin-1", () => {
+		expect(toLatin1HeaderValue("Születési dátum")).toBe("Születési dátum");
+		expect(toLatin1HeaderValue("Őrségi gyűjtés")).toBe("Orségi gyujtés");
 	});
 
 	it("strips CR, LF, and NUL so a reason cannot split the header", () => {
