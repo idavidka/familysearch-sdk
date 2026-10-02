@@ -19,6 +19,10 @@ const isCallerAbort = (error: unknown): boolean => {
 export class RateLimiter {
 	private tokens: number;
 	private lastRefill: number;
+	/** After a throttle response, every caller waits — not only the request that failed. */
+	private cooldownUntil = 0;
+	/** After the pause, stay under the normal pace so the next burst does not trip the limit again. */
+	private slowedUntil = 0;
 	private readonly requestsPerSecond: number;
 	private readonly maxBurst: number;
 	private readonly maxRetries: number;
@@ -38,22 +42,42 @@ export class RateLimiter {
 		this.lastRefill = Date.now();
 	}
 
+	/** Normal pace is 10/s. After a throttle we stay at 4/s for a short while. */
+	private pacePerSecond(): number {
+		if (Date.now() < this.slowedUntil) {
+			return Math.min(this.requestsPerSecond, 4);
+		}
+		return this.requestsPerSecond;
+	}
+
 	/**
 	 * Refill tokens based on elapsed time
 	 */
 	private refillTokens(): void {
 		const now = Date.now();
+		// A penalty pause must not bank a fresh burst of tokens.
+		if (now < this.cooldownUntil) {
+			return;
+		}
 		const elapsed = now - this.lastRefill;
-		const tokensToAdd = (elapsed / 1000) * this.requestsPerSecond;
+		const tokensToAdd = (elapsed / 1000) * this.pacePerSecond();
 
 		this.tokens = Math.min(this.maxBurst, this.tokens + tokensToAdd);
 		this.lastRefill = now;
+	}
+
+	private async waitOutCooldown(): Promise<void> {
+		const pause = this.cooldownUntil - Date.now();
+		if (pause > 0) {
+			await new Promise((resolve) => setTimeout(resolve, pause));
+		}
 	}
 
 	/**
 	 * Wait for a token to become available
 	 */
 	private async waitForToken(): Promise<void> {
+		await this.waitOutCooldown();
 		this.refillTokens();
 
 		if (this.tokens >= 1) {
@@ -62,7 +86,7 @@ export class RateLimiter {
 		}
 
 		// Calculate wait time for next token
-		const waitMs = (1 / this.requestsPerSecond) * 1000;
+		const waitMs = (1 / this.pacePerSecond()) * 1000;
 		await new Promise((resolve) => setTimeout(resolve, waitMs));
 
 		// Try again after waiting
@@ -123,6 +147,18 @@ export class RateLimiter {
 					const delay = this.calculateBackoff(
 						attempt + 1,
 						retryAfter
+					);
+					// Hold every later request for the same pause, and start
+					// the bucket empty so we don't burst again at 20.
+					this.cooldownUntil = Math.max(
+						this.cooldownUntil,
+						Date.now() + delay
+					);
+					this.tokens = 0;
+					this.lastRefill = this.cooldownUntil;
+					this.slowedUntil = Math.max(
+						this.slowedUntil,
+						this.cooldownUntil + 20_000
 					);
 
 					options.onRetry?.(attempt + 1, delay);
@@ -187,5 +223,7 @@ export class RateLimiter {
 	reset(): void {
 		this.tokens = this.maxBurst;
 		this.lastRefill = Date.now();
+		this.cooldownUntil = 0;
+		this.slowedUntil = 0;
 	}
 }
