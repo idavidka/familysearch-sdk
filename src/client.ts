@@ -67,6 +67,28 @@ import type {
 } from "./types";
 import { toLatin1HeaderValue } from "./utils/headers";
 
+/** A stalled FamilySearch socket must fail instead of freezing an import. */
+const REQUEST_TIMEOUT_MS = 20_000;
+
+const withRequestTimeout = (
+	callerSignal?: AbortSignal | null
+): AbortSignal | undefined => {
+	if (
+		typeof AbortSignal === "undefined" ||
+		typeof AbortSignal.timeout !== "function"
+	) {
+		return callerSignal ?? undefined;
+	}
+	const timeoutSignal = AbortSignal.timeout(REQUEST_TIMEOUT_MS);
+	if (!callerSignal) {
+		return timeoutSignal;
+	}
+	if (typeof AbortSignal.any === "function") {
+		return AbortSignal.any([callerSignal, timeoutSignal]);
+	}
+	return timeoutSignal;
+};
+
 // Environment configuration
 const ENVIRONMENT_CONFIGS: Record<FamilySearchEnvironment, EnvironmentConfig> =
 	{
@@ -306,9 +328,11 @@ export class FamilySearchSDK {
 				);
 
 				try {
+					const { signal: callerSignal, ...fetchOptions } = options;
 					const response = await fetch(fullUrl, {
-						...options,
+						...fetchOptions,
 						headers,
+						signal: withRequestTimeout(callerSignal),
 					});
 
 					const responseHeaders: Record<string, string> = {};

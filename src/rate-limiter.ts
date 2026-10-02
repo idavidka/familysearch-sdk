@@ -5,7 +5,16 @@
  * with exponential backoff for 429 responses.
  */
 
+import { isRetryableError } from "./errors";
 import type { RateLimiterConfig } from "./types";
+
+/** Our own deadline abort must not be retried. A CORS-hidden 429 arrives as a network error and should. */
+const isCallerAbort = (error: unknown): boolean => {
+	const original = (error as { originalError?: { name?: string } })
+		?.originalError;
+	const name = original?.name ?? (error as { name?: string })?.name;
+	return name === "AbortError" || name === "TimeoutError";
+};
 
 export class RateLimiter {
 	private tokens: number;
@@ -99,13 +108,22 @@ export class RateLimiter {
 			} catch (error) {
 				lastError = error as Error;
 
-				// Check if it's a 429 (Too Many Requests) error
-				const statusCode =
-					(error as { statusCode?: number }).statusCode;
-				if (statusCode === 429 && attempt < this.maxRetries) {
-					// Extract Retry-After header if available
-					const retryAfter = this.extractRetryAfter(error);
-					const delay = this.calculateBackoff(attempt + 1, retryAfter);
+				// 429 often never reaches JS: FamilySearch omits CORS headers,
+				// so the browser reports net::ERR_ABORTED and we only see a
+				// network error. 503 is a normal response. Both are worth
+				// another try; a timeout abort is not.
+				if (
+					attempt < this.maxRetries &&
+					!isCallerAbort(error) &&
+					isRetryableError(error)
+				) {
+					const retryAfter =
+						this.extractRetryAfter(error) ??
+						(error as { retryAfter?: number }).retryAfter;
+					const delay = this.calculateBackoff(
+						attempt + 1,
+						retryAfter
+					);
 
 					options.onRetry?.(attempt + 1, delay);
 
@@ -113,7 +131,6 @@ export class RateLimiter {
 					continue;
 				}
 
-				// For other errors or max retries reached, throw immediately
 				throw error;
 			}
 		}
