@@ -4,6 +4,7 @@
  * Converts FamilySearch API responses into GEDCOM 5.5 format
  */
 
+import { isDownloadableRecordImageUrl } from "../api/records/images";
 import type {
 	EnhancedPedigreeData,
 	PersonData,
@@ -136,6 +137,30 @@ export function memoryArtifactUrl(
 		return fromLinks;
 	}
 	return desc.about || undefined;
+}
+
+/**
+ * Downloadable registry / record-page image attached during FS source import.
+ * Only set when the binary was resolved and cached (contract-restricted
+ * collections leave this empty so we keep WWW only).
+ */
+export function sourceRecordImageUrl(
+	desc: SourceDescription
+): string | undefined {
+	const links = desc.links;
+	const href =
+		links?.["image-high-res"]?.href ||
+		links?.image?.href ||
+		links?.artifact?.href;
+	if (!href) {
+		return undefined;
+	}
+	// Only stamp FILE when the href is a real binary (dist.jpg / image.*).
+	// Bare DAS containers return `dgs:…` as text/plain and must stay WWW-only.
+	if (!isDownloadableRecordImageUrl(href)) {
+		return undefined;
+	}
+	return href;
 }
 
 /** Stories and text-only memories become NOTE; binary media become OBJE. */
@@ -676,6 +701,18 @@ export function convertToGedcom(
 		}
 	});
 
+	// Pre-allocate OBJE xrefs for sources that already have a cached record image
+	const sourceObjeByFsId = new Map<string, string>();
+	let sourceObjeCounter = 1;
+	fsSourMap.forEach(({ id, source }) => {
+		if (!sourceRecordImageUrl(source)) {
+			return;
+		}
+		sourceObjeByFsId.set(id, `@O${sourceObjeCounter++}@`);
+	});
+	// Memories continue numbering after source images so @On@ stay unique.
+	const memoryObjeIdStart = sourceObjeCounter;
+
 	// Create SOUR records (standard GEDCOM with _IS_FS Y marker)
 	fsSourMap.forEach(({ gedcomId, id, source, notes }) => {
 		lines.push(`0 ${gedcomId} SOUR`);
@@ -695,6 +732,11 @@ export function convertToGedcom(
 		if (source.about) {
 			const webUrl = transformSourceUrl(source.about);
 			lines.push(`1 WWW ${webUrl}`);
+		}
+
+		const sourceObjeId = sourceObjeByFsId.get(id);
+		if (sourceObjeId) {
+			lines.push(`1 OBJE ${sourceObjeId}`);
 		}
 
 		// Add resource type as NOTE
@@ -1168,16 +1210,43 @@ export function convertToGedcom(
 	});
 
 	// ==============================================
-	// CREATE OBJE RECORDS (FamilySearch memories / portraits)
+	// CREATE OBJE RECORDS (source registry pages + memories / portraits)
 	// ==============================================
 	const fsObjeMap = new Map<
 		string,
-		{ gedcomId: string; desc: SourceDescription }
+		{ gedcomId: string; desc: SourceDescription; kind: "source" | "memory" }
 	>();
 	const personObjeIds = new Map<string, string[]>();
-	let fsObjeCounter = 1;
+	let fsObjeCounter = memoryObjeIdStart;
+
+	// Source record-page images (only when import resolved + cached a binary)
+	fsSourMap.forEach(({ id, source }) => {
+		const fileUrl = sourceRecordImageUrl(source);
+		const gedcomId = sourceObjeByFsId.get(id);
+		if (!fileUrl || !gedcomId) {
+			return;
+		}
+		fsObjeMap.set(`source:${id}`, {
+			gedcomId,
+			desc: source,
+			kind: "source",
+		});
+	});
 
 	pedigreeData.persons.forEach((person) => {
+		// Attach source images to people who cite them
+		person.sources?.persons?.[0]?.sources?.forEach((sourceRef) => {
+			const sourceId = sourceRef.descriptionId;
+			if (!sourceId) return;
+			const objeId = sourceObjeByFsId.get(sourceId);
+			if (!objeId) return;
+			const list = personObjeIds.get(person.id) || [];
+			if (!list.includes(objeId)) {
+				list.push(objeId);
+				personObjeIds.set(person.id, list);
+			}
+		});
+
 		const descriptions = person.memories?.sourceDescriptions;
 		if (!descriptions?.length) {
 			return;
@@ -1193,7 +1262,7 @@ export function convertToGedcom(
 			let entry = fsObjeMap.get(desc.id);
 			if (!entry) {
 				const gedcomId = `@O${fsObjeCounter++}@`;
-				entry = { gedcomId, desc };
+				entry = { gedcomId, desc, kind: "memory" };
 				fsObjeMap.set(desc.id, entry);
 			}
 			const list = personObjeIds.get(person.id) || [];
@@ -1204,16 +1273,40 @@ export function convertToGedcom(
 		}
 	});
 
-	fsObjeMap.forEach(({ gedcomId, desc }) => {
-		const fileUrl = memoryArtifactUrl(desc)!;
-		const title = desc.titles?.[0]?.value;
+	fsObjeMap.forEach(({ gedcomId, desc, kind }) => {
+		const fileUrl =
+			kind === "source"
+				? sourceRecordImageUrl(desc)!
+				: memoryArtifactUrl(desc)!;
+		const title =
+			desc.titles?.[0]?.value ||
+			(kind === "source" ? "FamilySearch record image" : undefined);
 		const form = formFromMediaType(desc.mediaType, fileUrl);
+		const webUrl =
+			kind === "source" && desc.about
+				? transformSourceUrl(desc.about)
+				: desc.about &&
+					  /familysearch\.org/i.test(desc.about) &&
+					  !/\/platform\/|dist\.jpg|\/service\/records\/storage\//i.test(
+							desc.about
+					  )
+					? transformFamilySearchUrl(desc.about)
+					: desc.id
+						? `https://www.familysearch.org/photos/artifacts/${desc.id}`
+						: undefined;
 		lines.push(`0 ${gedcomId} OBJE`);
 		lines.push(`1 _IS_FS Y`);
-		lines.push(`1 _FS_ID ${desc.id}`);
+		if (desc.id) {
+			lines.push(`1 _FS_ID ${desc.id}`);
+		}
+		if (webUrl) {
+			lines.push(`1 WWW ${sanitizeGedcomValue(webUrl)}`);
+		}
 		lines.push(`1 FILE ${sanitizeGedcomValue(fileUrl)}`);
 		lines.push(`1 FORM ${form}`);
-		lines.push(`1 MEDI ${mediTypeFromMemory(desc)}`);
+		lines.push(
+			`1 MEDI ${kind === "source" ? "document" : mediTypeFromMemory(desc)}`
+		);
 		if (title) {
 			lines.push(`1 TITL ${sanitizeGedcomValue(title)}`);
 		}

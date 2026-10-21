@@ -25,6 +25,9 @@ export * from "./genealogies";
 // Memories API
 export * from "./memories";
 
+// Historical Records (images / ark resolution)
+export * from "./records";
+
 // Discussions API
 export * from "./discussions";
 
