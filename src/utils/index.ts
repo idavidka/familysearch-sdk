@@ -8,6 +8,8 @@ export {
 	convertToGedcom,
 	convertFamilySearchToGedcom,
 	transformFamilySearchUrl,
+	memoryArtifactUrl,
+	isStoryMemory,
 	type GedcomConversionOptions,
 } from "./gedcom-converter";
 

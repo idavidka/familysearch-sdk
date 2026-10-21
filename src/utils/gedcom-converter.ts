@@ -122,6 +122,60 @@ function transformSourceUrl(url: string): string {
  * Embedded line breaks would otherwise inject bogus lines into the file
  * and corrupt every record after them.
  */
+/** Prefer artifact / high-res image links; fall back to `about`. */
+export function memoryArtifactUrl(
+	desc: SourceDescription
+): string | undefined {
+	const links = desc.links;
+	const fromLinks =
+		links?.["image-high-res"]?.href ||
+		links?.image?.href ||
+		links?.artifact?.href ||
+		links?.content?.href;
+	if (fromLinks) {
+		return fromLinks;
+	}
+	return desc.about || undefined;
+}
+
+/** Stories and text-only memories become NOTE; binary media become OBJE. */
+export function isStoryMemory(desc: SourceDescription): boolean {
+	const resourceType = (desc.resourceType || "").toLowerCase();
+	const mediaType = (desc.mediaType || "").toLowerCase();
+	if (mediaType.startsWith("text/")) {
+		return true;
+	}
+	if (resourceType.includes("story")) {
+		return true;
+	}
+	return !memoryArtifactUrl(desc);
+}
+
+const formFromMediaType = (mediaType?: string, url?: string): string => {
+	const mt = (mediaType || "").toLowerCase();
+	if (mt.includes("jpeg") || mt.includes("jpg")) return "jpg";
+	if (mt.includes("png")) return "png";
+	if (mt.includes("gif")) return "gif";
+	if (mt.includes("webp")) return "webp";
+	if (mt.includes("pdf")) return "pdf";
+	if (mt.includes("tif")) return "tif";
+	const path = (url || "").split(/[?#]/)[0] || "";
+	const ext = path.split(".").pop()?.toLowerCase();
+	if (ext && ext.length <= 5) {
+		return ext;
+	}
+	return "jpg";
+};
+
+const mediTypeFromMemory = (desc: SourceDescription): string => {
+	const resourceType = (desc.resourceType || "").toLowerCase();
+	const mediaType = (desc.mediaType || "").toLowerCase();
+	if (resourceType.includes("document") || mediaType.includes("pdf")) {
+		return "document";
+	}
+	return "photo";
+};
+
 function sanitizeGedcomValue(value: string): string {
 	return value.replace(/[\r\n\t]+/g, " ").trim();
 }
@@ -524,9 +578,9 @@ export function convertToGedcom(
 		const title = source.titles?.[0]?.value || "FamilySearch Source";
 		lines.push(`1 TITL ${sanitizeGedcomValue(title)}`);
 
-		// Add citation as TEXT
+		// Citation → PAGE (GEDCOM citation locator); keep WWW for the link
 		if (source.citations?.[0]?.value) {
-			lines.push(`1 TEXT ${sanitizeGedcomValue(source.citations[0].value)}`);
+			lines.push(`1 PAGE ${sanitizeGedcomValue(source.citations[0].value)}`);
 		}
 
 		// Add web link if available
@@ -633,9 +687,8 @@ export function convertToGedcom(
 			lines.push(`1 TITL ${sanitizeGedcomValue(source.titles[0].value)}`);
 		}
 
-		// Add citation as TEXT
 		if (source.citations?.[0]?.value) {
-			lines.push(`1 TEXT ${sanitizeGedcomValue(source.citations[0].value)}`);
+			lines.push(`1 PAGE ${sanitizeGedcomValue(source.citations[0].value)}`);
 		}
 
 		// Add web link (about URL)
@@ -1115,6 +1168,63 @@ export function convertToGedcom(
 	});
 
 	// ==============================================
+	// CREATE OBJE RECORDS (FamilySearch memories / portraits)
+	// ==============================================
+	const fsObjeMap = new Map<
+		string,
+		{ gedcomId: string; desc: SourceDescription }
+	>();
+	const personObjeIds = new Map<string, string[]>();
+	let fsObjeCounter = 1;
+
+	pedigreeData.persons.forEach((person) => {
+		const descriptions = person.memories?.sourceDescriptions;
+		if (!descriptions?.length) {
+			return;
+		}
+		for (const desc of descriptions) {
+			if (!desc.id || isStoryMemory(desc)) {
+				continue;
+			}
+			const fileUrl = memoryArtifactUrl(desc);
+			if (!fileUrl) {
+				continue;
+			}
+			let entry = fsObjeMap.get(desc.id);
+			if (!entry) {
+				const gedcomId = `@O${fsObjeCounter++}@`;
+				entry = { gedcomId, desc };
+				fsObjeMap.set(desc.id, entry);
+			}
+			const list = personObjeIds.get(person.id) || [];
+			if (!list.includes(entry.gedcomId)) {
+				list.push(entry.gedcomId);
+				personObjeIds.set(person.id, list);
+			}
+		}
+	});
+
+	fsObjeMap.forEach(({ gedcomId, desc }) => {
+		const fileUrl = memoryArtifactUrl(desc)!;
+		const title = desc.titles?.[0]?.value;
+		const form = formFromMediaType(desc.mediaType, fileUrl);
+		lines.push(`0 ${gedcomId} OBJE`);
+		lines.push(`1 _IS_FS Y`);
+		lines.push(`1 _FS_ID ${desc.id}`);
+		lines.push(`1 FILE ${sanitizeGedcomValue(fileUrl)}`);
+		lines.push(`1 FORM ${form}`);
+		lines.push(`1 MEDI ${mediTypeFromMemory(desc)}`);
+		if (title) {
+			lines.push(`1 TITL ${sanitizeGedcomValue(title)}`);
+		}
+		if (desc.descriptions?.[0]?.value) {
+			lines.push(
+				`1 NOTE ${sanitizeGedcomValue(desc.descriptions[0].value)}`
+			);
+		}
+	});
+
+	// ==============================================
 	// STEP 5: CREATE INDI RECORDS (WITH ORPHAN FILTERING)
 	// ==============================================
 
@@ -1304,6 +1414,28 @@ export function convertToGedcom(
 				lines.push(`1 MATCH ${fsMatch.gedcomId}`);
 			});
 		}
+
+		// Story memories → NOTE on the person
+		person.memories?.sourceDescriptions?.forEach((desc) => {
+			if (!isStoryMemory(desc)) {
+				return;
+			}
+			const title = desc.titles?.[0]?.value;
+			const body =
+				desc.descriptions?.[0]?.value ||
+				desc.citations?.[0]?.value ||
+				"";
+			const text = [title, body].filter(Boolean).join(" — ");
+			if (text) {
+				lines.push(`1 NOTE ${sanitizeGedcomValue(text)}`);
+			}
+		});
+
+		// Link OBJE records (photos / documents)
+		const objeIds = personObjeIds.get(person.id);
+		objeIds?.forEach((objeId) => {
+			lines.push(`1 OBJE ${objeId}`);
+		});
 	});
 
 	// ==============================================
