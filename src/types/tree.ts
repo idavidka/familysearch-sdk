@@ -311,6 +311,14 @@ export interface EnhancedPerson extends PersonData {
 	notes?: PersonNotesResponse;
 	sources?: PersonSourcesResponse;
 	matches?: TreePersonMatchesResponse;
+	/**
+	 * Person memories (photos, documents, stories) when includeMemories.
+	 * Shape matches PersonMemoriesResponse in types/memories.ts.
+	 */
+	memories?: {
+		sourceDescriptions?: SourceDescription[];
+		links?: Record<string, { href: string }>;
+	};
 }
 
 /**
@@ -407,7 +415,11 @@ export interface SourceDescription {
 	about?: string;
 	titles?: Array<{ value: string }>;
 	citations?: Array<{ value: string }>;
+	descriptions?: Array<{ value: string }>;
 	resourceType?: string;
+	mediaType?: string;
+	/** GEDCOMX link map (artifact / image URLs for memories). */
+	links?: Record<string, { href?: string }>;
 }
 
 /**

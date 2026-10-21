@@ -4,6 +4,7 @@
  * Converts FamilySearch API responses into GEDCOM 5.5 format
  */
 
+import { isDownloadableRecordImageUrl } from "../api/records/images";
 import type {
 	EnhancedPedigreeData,
 	PersonData,
@@ -122,6 +123,84 @@ function transformSourceUrl(url: string): string {
  * Embedded line breaks would otherwise inject bogus lines into the file
  * and corrupt every record after them.
  */
+/** Prefer artifact / high-res image links; fall back to `about`. */
+export function memoryArtifactUrl(
+	desc: SourceDescription
+): string | undefined {
+	const links = desc.links;
+	const fromLinks =
+		links?.["image-high-res"]?.href ||
+		links?.image?.href ||
+		links?.artifact?.href ||
+		links?.content?.href;
+	if (fromLinks) {
+		return fromLinks;
+	}
+	return desc.about || undefined;
+}
+
+/**
+ * Downloadable registry / record-page image attached during FS source import.
+ * Only set when the binary was resolved and cached (contract-restricted
+ * collections leave this empty so we keep WWW only).
+ */
+export function sourceRecordImageUrl(
+	desc: SourceDescription
+): string | undefined {
+	const links = desc.links;
+	const href =
+		links?.["image-high-res"]?.href ||
+		links?.image?.href ||
+		links?.artifact?.href;
+	if (!href) {
+		return undefined;
+	}
+	// Only stamp FILE when the href is a real binary (dist.jpg / image.*).
+	// Bare DAS containers return `dgs:…` as text/plain and must stay WWW-only.
+	if (!isDownloadableRecordImageUrl(href)) {
+		return undefined;
+	}
+	return href;
+}
+
+/** Stories and text-only memories become NOTE; binary media become OBJE. */
+export function isStoryMemory(desc: SourceDescription): boolean {
+	const resourceType = (desc.resourceType || "").toLowerCase();
+	const mediaType = (desc.mediaType || "").toLowerCase();
+	if (mediaType.startsWith("text/")) {
+		return true;
+	}
+	if (resourceType.includes("story")) {
+		return true;
+	}
+	return !memoryArtifactUrl(desc);
+}
+
+const formFromMediaType = (mediaType?: string, url?: string): string => {
+	const mt = (mediaType || "").toLowerCase();
+	if (mt.includes("jpeg") || mt.includes("jpg")) return "jpg";
+	if (mt.includes("png")) return "png";
+	if (mt.includes("gif")) return "gif";
+	if (mt.includes("webp")) return "webp";
+	if (mt.includes("pdf")) return "pdf";
+	if (mt.includes("tif")) return "tif";
+	const path = (url || "").split(/[?#]/)[0] || "";
+	const ext = path.split(".").pop()?.toLowerCase();
+	if (ext && ext.length <= 5) {
+		return ext;
+	}
+	return "jpg";
+};
+
+const mediTypeFromMemory = (desc: SourceDescription): string => {
+	const resourceType = (desc.resourceType || "").toLowerCase();
+	const mediaType = (desc.mediaType || "").toLowerCase();
+	if (resourceType.includes("document") || mediaType.includes("pdf")) {
+		return "document";
+	}
+	return "photo";
+};
+
 function sanitizeGedcomValue(value: string): string {
 	return value.replace(/[\r\n\t]+/g, " ").trim();
 }
@@ -524,9 +603,9 @@ export function convertToGedcom(
 		const title = source.titles?.[0]?.value || "FamilySearch Source";
 		lines.push(`1 TITL ${sanitizeGedcomValue(title)}`);
 
-		// Add citation as TEXT
+		// Citation → PAGE (GEDCOM citation locator); keep WWW for the link
 		if (source.citations?.[0]?.value) {
-			lines.push(`1 TEXT ${sanitizeGedcomValue(source.citations[0].value)}`);
+			lines.push(`1 PAGE ${sanitizeGedcomValue(source.citations[0].value)}`);
 		}
 
 		// Add web link if available
@@ -622,6 +701,18 @@ export function convertToGedcom(
 		}
 	});
 
+	// Pre-allocate OBJE xrefs for sources that already have a cached record image
+	const sourceObjeByFsId = new Map<string, string>();
+	let sourceObjeCounter = 1;
+	fsSourMap.forEach(({ id, source }) => {
+		if (!sourceRecordImageUrl(source)) {
+			return;
+		}
+		sourceObjeByFsId.set(id, `@O${sourceObjeCounter++}@`);
+	});
+	// Memories continue numbering after source images so @On@ stay unique.
+	const memoryObjeIdStart = sourceObjeCounter;
+
 	// Create SOUR records (standard GEDCOM with _IS_FS Y marker)
 	fsSourMap.forEach(({ gedcomId, id, source, notes }) => {
 		lines.push(`0 ${gedcomId} SOUR`);
@@ -633,15 +724,19 @@ export function convertToGedcom(
 			lines.push(`1 TITL ${sanitizeGedcomValue(source.titles[0].value)}`);
 		}
 
-		// Add citation as TEXT
 		if (source.citations?.[0]?.value) {
-			lines.push(`1 TEXT ${sanitizeGedcomValue(source.citations[0].value)}`);
+			lines.push(`1 PAGE ${sanitizeGedcomValue(source.citations[0].value)}`);
 		}
 
 		// Add web link (about URL)
 		if (source.about) {
 			const webUrl = transformSourceUrl(source.about);
 			lines.push(`1 WWW ${webUrl}`);
+		}
+
+		const sourceObjeId = sourceObjeByFsId.get(id);
+		if (sourceObjeId) {
+			lines.push(`1 OBJE ${sourceObjeId}`);
 		}
 
 		// Add resource type as NOTE
@@ -1115,6 +1210,114 @@ export function convertToGedcom(
 	});
 
 	// ==============================================
+	// CREATE OBJE RECORDS (source registry pages + memories / portraits)
+	// ==============================================
+	const fsObjeMap = new Map<
+		string,
+		{ gedcomId: string; desc: SourceDescription; kind: "source" | "memory" }
+	>();
+	const personObjeIds = new Map<string, string[]>();
+	let fsObjeCounter = memoryObjeIdStart;
+
+	// Source record-page images (only when import resolved + cached a binary)
+	fsSourMap.forEach(({ id, source }) => {
+		const fileUrl = sourceRecordImageUrl(source);
+		const gedcomId = sourceObjeByFsId.get(id);
+		if (!fileUrl || !gedcomId) {
+			return;
+		}
+		fsObjeMap.set(`source:${id}`, {
+			gedcomId,
+			desc: source,
+			kind: "source",
+		});
+	});
+
+	pedigreeData.persons.forEach((person) => {
+		// Attach source images to people who cite them
+		person.sources?.persons?.[0]?.sources?.forEach((sourceRef) => {
+			const sourceId = sourceRef.descriptionId;
+			if (!sourceId) return;
+			const objeId = sourceObjeByFsId.get(sourceId);
+			if (!objeId) return;
+			const list = personObjeIds.get(person.id) || [];
+			if (!list.includes(objeId)) {
+				list.push(objeId);
+				personObjeIds.set(person.id, list);
+			}
+		});
+
+		const descriptions = person.memories?.sourceDescriptions;
+		if (!descriptions?.length) {
+			return;
+		}
+		for (const desc of descriptions) {
+			if (!desc.id || isStoryMemory(desc)) {
+				continue;
+			}
+			const fileUrl = memoryArtifactUrl(desc);
+			if (!fileUrl) {
+				continue;
+			}
+			let entry = fsObjeMap.get(desc.id);
+			if (!entry) {
+				const gedcomId = `@O${fsObjeCounter++}@`;
+				entry = { gedcomId, desc, kind: "memory" };
+				fsObjeMap.set(desc.id, entry);
+			}
+			const list = personObjeIds.get(person.id) || [];
+			if (!list.includes(entry.gedcomId)) {
+				list.push(entry.gedcomId);
+				personObjeIds.set(person.id, list);
+			}
+		}
+	});
+
+	fsObjeMap.forEach(({ gedcomId, desc, kind }) => {
+		const fileUrl =
+			kind === "source"
+				? sourceRecordImageUrl(desc)!
+				: memoryArtifactUrl(desc)!;
+		const title =
+			desc.titles?.[0]?.value ||
+			(kind === "source" ? "FamilySearch record image" : undefined);
+		const form = formFromMediaType(desc.mediaType, fileUrl);
+		const webUrl =
+			kind === "source" && desc.about
+				? transformSourceUrl(desc.about)
+				: desc.about &&
+					  /familysearch\.org/i.test(desc.about) &&
+					  !/\/platform\/|dist\.jpg|\/service\/records\/storage\//i.test(
+							desc.about
+					  )
+					? transformFamilySearchUrl(desc.about)
+					: desc.id
+						? `https://www.familysearch.org/photos/artifacts/${desc.id}`
+						: undefined;
+		lines.push(`0 ${gedcomId} OBJE`);
+		lines.push(`1 _IS_FS Y`);
+		if (desc.id) {
+			lines.push(`1 _FS_ID ${desc.id}`);
+		}
+		if (webUrl) {
+			lines.push(`1 WWW ${sanitizeGedcomValue(webUrl)}`);
+		}
+		lines.push(`1 FILE ${sanitizeGedcomValue(fileUrl)}`);
+		lines.push(`1 FORM ${form}`);
+		lines.push(
+			`1 MEDI ${kind === "source" ? "document" : mediTypeFromMemory(desc)}`
+		);
+		if (title) {
+			lines.push(`1 TITL ${sanitizeGedcomValue(title)}`);
+		}
+		if (desc.descriptions?.[0]?.value) {
+			lines.push(
+				`1 NOTE ${sanitizeGedcomValue(desc.descriptions[0].value)}`
+			);
+		}
+	});
+
+	// ==============================================
 	// STEP 5: CREATE INDI RECORDS (WITH ORPHAN FILTERING)
 	// ==============================================
 
@@ -1304,6 +1507,28 @@ export function convertToGedcom(
 				lines.push(`1 MATCH ${fsMatch.gedcomId}`);
 			});
 		}
+
+		// Story memories → NOTE on the person
+		person.memories?.sourceDescriptions?.forEach((desc) => {
+			if (!isStoryMemory(desc)) {
+				return;
+			}
+			const title = desc.titles?.[0]?.value;
+			const body =
+				desc.descriptions?.[0]?.value ||
+				desc.citations?.[0]?.value ||
+				"";
+			const text = [title, body].filter(Boolean).join(" — ");
+			if (text) {
+				lines.push(`1 NOTE ${sanitizeGedcomValue(text)}`);
+			}
+		});
+
+		// Link OBJE records (photos / documents)
+		const objeIds = personObjeIds.get(person.id);
+		objeIds?.forEach((objeId) => {
+			lines.push(`1 OBJE ${objeId}`);
+		});
 	});
 
 	// ==============================================
