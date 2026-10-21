@@ -162,11 +162,19 @@ describe("Tree Person Matches API", () => {
 		});
 
 		it("should handle network errors gracefully", async () => {
+			// NetworkError is retryable (CORS-masked 429s). Disable retries so
+			// this assertion does not wait out exponential backoff.
+			const noRetrySdk = new FamilySearchSDK({
+				environment: "integration",
+				accessToken: "test-access-token",
+				rateLimiter: { maxRetries: 0 },
+			});
 			(global.fetch as ReturnType<typeof vi.fn>).mockRejectedValueOnce(
 				new Error("Network error")
 			);
 
-			const result = await sdk.matches.readPersonMatches("KWQS-BBQ");
+			const result =
+				await noRetrySdk.matches.readPersonMatches("KWQS-BBQ");
 
 			expect(result).toBeNull();
 		});

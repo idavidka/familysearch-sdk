@@ -359,6 +359,13 @@ describe("Person Match API (External GEDCOM)", () => {
 		});
 
 		it("should return null for network errors", async () => {
+			// NetworkError is retryable (CORS-masked 429s). Disable retries so
+			// this assertion does not wait out exponential backoff.
+			const noRetrySdk = new FamilySearchSDK({
+				environment: "integration",
+				accessToken: "test-access-token",
+				rateLimiter: { maxRetries: 0 },
+			});
 			(global.fetch as ReturnType<typeof vi.fn>).mockRejectedValueOnce(
 				new Error("Network error")
 			);
@@ -368,7 +375,7 @@ describe("Person Match API (External GEDCOM)", () => {
 				familyName: "User",
 			};
 
-			const result = await sdk.matches.matchPerson(person);
+			const result = await noRetrySdk.matches.matchPerson(person);
 
 			expect(result).toBeNull();
 		});
